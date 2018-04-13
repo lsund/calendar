@@ -1,0 +1,42 @@
+name:                planner
+version:             0.1.0.0
+github:              "lsund/planner"
+license:             BSD3
+author:              "Ludvig Sundström"
+maintainer:          "lud.sund@gmail.com"
+copyright:           "2018 Ludvig Sundström"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+description:         Please see the README on Github at ...
+
+dependencies:
+- base >= 4.7 && < 5
+- parsec
+
+library:
+  source-dirs: src
+
+executables:
+  planner-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - planner
+
+tests:
+  planner-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - planner
