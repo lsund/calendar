@@ -14,6 +14,7 @@ description:         Please see the README on Github at ...
 
 default-extensions:
     - OverloadedStrings
+    - NoImplicitPrelude
 
 dependencies:
 - base >= 4.7 && < 5
@@ -26,6 +27,7 @@ dependencies:
 - mtl
 - lucid
 - Spock-lucid
+- protolude
 
 library:
   source-dirs:
