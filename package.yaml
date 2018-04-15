@@ -24,11 +24,12 @@ dependencies:
 - http-types
 - text
 - mtl
+- lucid
+- Spock-lucid
 
 library:
   source-dirs:
     - src
-    - app
 
 executables:
   planner-exe:
