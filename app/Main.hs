@@ -2,14 +2,14 @@
 
 module Main where
 
--- import Lib
+import           Lib
 
 import           Control.Monad          (forM_)
 import           Control.Monad.IO.Class (liftIO)
 import           Data.IORef
 import           Data.Text              (Text)
 import           Lucid
-import           Protolude hiding (get)
+import           Protolude              hiding (get)
 import           Web.Spock
 import           Web.Spock.Config
 import           Web.Spock.Lucid        (lucid)
@@ -20,18 +20,21 @@ newtype ServerState = ServerState { notes :: IORef [Note] }
 
 type Server a = SpockM () () ServerState a
 
+todayFile = "data/2018/04/16.txt"
+
 app :: Server ()
 app = do
-    cont <- liftIO $ readFile "data/test.txt"
+    Right (Day x ys) <- liftIO $ parseFile todayFile
     get root $ do
         notes' <- getState >>= (liftIO . readIORef . notes)
         lucid $ do
-            h1_ "Notes"
-            p_ $ toHtml cont
-            ul_ $ forM_ notes' $ \note -> li_ $ do
-                toHtml (author note)
-                ": "
-                toHtml (contents note)
+            h1_ "Planner"
+            ul_ $ forM_ ys $ \e -> li_ $
+                toHtml (show e :: Text)
+            -- ul_ $ forM_ notes' $ \n -> li_ $ do
+            --     toHtml (author n)
+            --     ": "
+            --     toHtml (contents n)
             h2_ "New note"
             form_ [method_ "post"] $ do
                 label_ $ do
@@ -60,4 +63,3 @@ main = do
             , Note "Bob" "Must eat pizza" ]
     cfg <- defaultSpockCfg () PCNoDatabase st
     runSpock 8080 (spock cfg app)
-

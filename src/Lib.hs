@@ -2,8 +2,9 @@ module Lib where
 
 import           Data.Functor.Identity
 import           Data.List                     (unwords)
+import           GHC.Show
 import           Prelude                       (String, read)
-import           Protolude
+import           Protolude                     hiding ((<|>), Show, show)
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
@@ -16,9 +17,15 @@ data Date = Date
 data Time = Time
     { _hour   :: Int
     , _minute :: Int
-    } deriving (Show)
+    }
 
-data Entry = Entry Time String deriving (Show)
+data Entry = Entry { _time :: Time, _desc :: String, _done :: Bool }
+
+instance Show Time where
+    show (Time h m) = show h ++ ":" ++ show m
+
+instance Show Entry where
+    show (Entry t desc _) = show t ++ " " ++ desc
 
 data Day = Day Date [Entry] deriving (Show)
 
@@ -52,14 +59,23 @@ time = do
 
 
 word :: DayParser () String
-word = many1 letter
+word = many1 (noneOf "\n")
+
+
+done :: DayParser () Bool
+done = do
+    c <- char 'D' <|> char 'T'
+    space
+    return $ c == 'D'
+
 
 entry :: DayParser () Entry
 entry = do
+    d <- done
     t <- time
     _ <- space
     ss <- word `sepBy` char ' '
-    return $ Entry t (unwords ss)
+    return $ Entry t (unwords ss) d
 
 content :: DayParser () Day
 content = do
