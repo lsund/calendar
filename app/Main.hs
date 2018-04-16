@@ -8,6 +8,7 @@ import           Control.Monad          (forM_)
 import           Control.Monad.IO.Class (liftIO)
 import           Data.IORef
 import           Data.Text              (Text)
+import           Data.Time.LocalTime
 import           Lucid
 import           Protolude              hiding (get)
 import           Web.Spock
@@ -25,16 +26,14 @@ todayFile = "data/2018/04/16.txt"
 app :: Server ()
 app = do
     Right (Day x ys) <- liftIO $ parseFile todayFile
+    (ZonedTime lt tz) <- liftIO getZonedTime
+    print $ toTime lt
     get root $ do
         notes' <- getState >>= (liftIO . readIORef . notes)
         lucid $ do
             h1_ "Planner"
-            ul_ $ forM_ ys $ \e -> li_ $
+            ul_ $ forM_ ys $ \e -> li_ [class_ "test"] $
                 toHtml (show e :: Text)
-            -- ul_ $ forM_ notes' $ \n -> li_ $ do
-            --     toHtml (author n)
-            --     ": "
-            --     toHtml (contents n)
             h2_ "New note"
             form_ [method_ "post"] $ do
                 label_ $ do

@@ -3,8 +3,9 @@ module Lib where
 import           Data.Functor.Identity
 import           Data.List                     (unwords)
 import           GHC.Show
+import           Data.Time.LocalTime
 import           Prelude                       (String, read)
-import           Protolude                     hiding ((<|>), Show, show)
+import           Protolude                     hiding (Show, show, (<|>))
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
@@ -30,6 +31,9 @@ instance Show Entry where
 data Day = Day Date [Entry] deriving (Show)
 
 type DayParser u = ParsecT String u Identity
+
+toTime :: LocalTime -> Time
+toTime (LocalTime d tod) = Time (todHour tod) (todMin tod)
 
 filePath :: FilePath
 filePath = "data/data.txt"
