@@ -5,7 +5,7 @@ import           Control.Monad (forM_)
 import           Lucid
 import           Protolude
 
-import           Parser
+import           Day
 import           Time
 
 

@@ -2,10 +2,11 @@
 
 module Main where
 
+import           Day
 import           Handler
+import           Parser
 
 import           Data.IORef
-import           Parser
 import           Network.Wai.Middleware.Static
 import           Protolude
 import           Web.Spock

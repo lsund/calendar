@@ -2,26 +2,13 @@ module Parser where
 
 import           Data.Functor.Identity
 import           Data.List                     (unwords)
-import           GHC.Show
 import           Prelude                       (String, read)
-import           Protolude                     hiding (Show, show, (<|>))
+import           Protolude                     hiding ((<|>))
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
+import           Day
 import           Time
-
-data Date = Date
-    { _year  :: Int
-    , _month :: Int
-    , _day   :: Int
-    } deriving (Show)
-
-data Entry = Entry { _time :: Time, _desc :: String, _done :: Bool }
-
-instance Show Entry where
-    show (Entry t desc _) = show t ++ " " ++ desc
-
-data Day = Day Date [Entry] deriving (Show)
 
 type DayParser u = ParsecT String u Identity
 
