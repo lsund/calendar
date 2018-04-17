@@ -2,3 +2,11 @@
 .past {
     color: grey;
 }
+
+.done {
+    color: green;
+}
+
+ul {
+    list-style-type: none;
+}
