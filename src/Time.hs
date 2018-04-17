@@ -1,9 +1,9 @@
 
 module Time where
 
-import GHC.Show
-import Protolude hiding (Show, show)
 import           Data.Time.LocalTime
+import           Protolude hiding (show)
+import           GHC.Show  (Show, show)
 
 
 data Time = Time
@@ -13,14 +13,14 @@ data Time = Time
 
 
 instance Show Time where
-    show (Time h m) = show h ++ ":" ++ showi m
+    show (Time h m) = show h <> ":" <> showi m
         where showi i
-                | i < 10    = "0" ++ show i
-                | otherwise = show i
+                | i < 10    = "0" <> GHC.Show.show i
+                | otherwise = GHC.Show.show i
 
 
 toTime :: LocalTime -> Time
-toTime (LocalTime d tod) = Time (todHour tod) (todMin tod)
+toTime (LocalTime _ tod) = Time (todHour tod) (todMin tod)
 
 
 isPast :: Time -> Time -> Bool

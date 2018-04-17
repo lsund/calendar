@@ -1,7 +1,7 @@
 module Parser where
 
 import           Data.Functor.Identity
-import           Data.List                     (unwords)
+import           Data.Text                     (unwords, pack)
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
 import           Text.Parsec
@@ -56,7 +56,7 @@ entry = do
     t <- time
     _ <- space
     ss <- word `sepBy` char ' '
-    return $ Entry t (unwords ss) d
+    return $ Entry t (unwords (map pack ss)) d
 
 content :: DayParser () Day
 content = do
