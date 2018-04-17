@@ -1,4 +1,4 @@
-module Lib where
+module Parser where
 
 import           Data.Functor.Identity
 import           Data.List                     (unwords)

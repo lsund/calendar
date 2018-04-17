@@ -5,7 +5,7 @@ module Main where
 import           Handler
 
 import           Data.IORef
-import           Lib
+import           Parser
 import           Network.Wai.Middleware.Static
 import           Protolude
 import           Web.Spock
