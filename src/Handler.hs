@@ -29,12 +29,11 @@ classList e ct
 
 
 rootGET :: Server ()
-rootGET = do
-    (ZonedTime lt _) <- liftIO getZonedTime
-    es          <- getState >>= (liftIO . readIORef . entries)
-    let ct = toTime lt
-    get root $
-        -- notes' <- getState >>= (liftIO . readIORef . notes)
+rootGET =
+    get root $ do
+        es    <- getState >>= (liftIO . readIORef . entries)
+        (ZonedTime lt _) <- liftIO getZonedTime
+        let ct = toTime lt
         lucid $ do
             link_ [rel_ "stylesheet", href_ "styles.css"]
             h1_ $ toHtml (show ct :: Text)
@@ -56,11 +55,10 @@ rootPOST :: Server ()
 rootPOST =
     post root $ do
         a <- param' "author"
-        -- contents <- param' "contents"
-        -- notesRef <- notes <$> getState
-        -- liftIO $ atomicModifyIORef' notesRef $ \notes ->
-        --     (notes <> [Note author contents], ())
-        liftIO $ appendFile "data/test.txt" a
+        -- c <- param' "contents"
+        entriesRef <- entries <$> getState
+        liftIO $ atomicModifyIORef' entriesRef $ \es ->
+            (es <> [Entry (Time 8 0) a True], ())
         redirect "/"
 
 
