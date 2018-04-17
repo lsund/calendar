@@ -3,10 +3,9 @@
 module Main where
 
 import           Handler
-import           Lib
 
-import           Control.Monad.IO.Class        (liftIO)
 import           Data.IORef
+import           Lib
 import           Network.Wai.Middleware.Static
 import           Protolude
 import           Web.Spock
@@ -16,22 +15,16 @@ import           Web.Spock.Config
 -- data Note = Note { author :: Text, contents :: Text }
 -- newtype ServerState = ServerState { notes :: IORef [Note] }
 
-todayFile :: FilePath
-todayFile = "data/2018/04/17.txt"
-
 app :: Server ()
 app = do
-    Right (Day x ys) <- liftIO $ parseFile todayFile
     middleware $ staticPolicy $ addBase "static"
-    rootGET ys
+    rootGET
     rootPOST
 
 
 main :: IO ()
 main = do
-    st <- ServerState <$>
-            newIORef
-            [ Note "Alice" "Must not forget to walk the dog"
-            , Note "Bob" "Must eat pizza" ]
+    Right (Day _ ys) <- liftIO $ parseFile todayFile
+    st <- ServerState <$> newIORef ys
     cfg <- defaultSpockCfg () PCNoDatabase st
     runSpock 8080 (spock cfg app)

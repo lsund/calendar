@@ -1,5 +1,6 @@
 module Handler where
 
+import           Control.Monad.IO.Class        (liftIO)
 import           Control.Monad   (forM_)
 import           Data.IORef
 import           Lucid
@@ -13,8 +14,12 @@ import           Time
 
 
 type Server a = SpockM () () ServerState a
-data Note = Note { author :: Text, contents :: Text }
-newtype ServerState = ServerState { notes :: IORef [Note] }
+newtype ServerState = ServerState { entries :: IORef [Entry] }
+
+
+todayFile :: FilePath
+todayFile = "data/2018/04/17.txt"
+
 
 classList :: Entry -> Time -> [Attribute]
 classList e ct
@@ -23,16 +28,17 @@ classList e ct
     | otherwise           = []
 
 
-rootGET :: [Entry] -> Server ()
-rootGET ys = do
-    (ZonedTime lt tz) <- liftIO getZonedTime
+rootGET :: Server ()
+rootGET = do
+    (ZonedTime lt _) <- liftIO getZonedTime
+    es          <- getState >>= (liftIO . readIORef . entries)
     let ct = toTime lt
-    get root $ do
-        notes' <- getState >>= (liftIO . readIORef . notes)
+    get root $
+        -- notes' <- getState >>= (liftIO . readIORef . notes)
         lucid $ do
             link_ [rel_ "stylesheet", href_ "styles.css"]
-            h1_ "Planner"
-            ul_ $ forM_ ys $ \e ->
+            h1_ $ toHtml (show ct :: Text)
+            ul_ $ forM_ es $ \e ->
                 let cs = classList e ct
                 in li_ cs $ toHtml (show e :: Text)
             h2_ "New note"
@@ -49,12 +55,12 @@ rootGET ys = do
 rootPOST :: Server ()
 rootPOST =
     post root $ do
-        author <- param' "author"
-        contents <- param' "contents"
-        notesRef <- notes <$> getState
-        liftIO $ atomicModifyIORef' notesRef $ \notes ->
-            (notes <> [Note author contents], ())
-        liftIO $ appendFile "data/test.txt" author
+        a <- param' "author"
+        -- contents <- param' "contents"
+        -- notesRef <- notes <$> getState
+        -- liftIO $ atomicModifyIORef' notesRef $ \notes ->
+        --     (notes <> [Note author contents], ())
+        liftIO $ appendFile "data/test.txt" a
         redirect "/"
 
 
