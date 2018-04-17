@@ -23,7 +23,11 @@ data Time = Time
 data Entry = Entry { _time :: Time, _desc :: String, _done :: Bool }
 
 instance Show Time where
-    show (Time h m) = show h ++ ":" ++ show m
+    show (Time h m) = show h ++ ":" ++ showi m
+        where showi i
+                | i < 10    = "0" ++ show i
+                | otherwise = show i
+
 
 instance Show Entry where
     show (Entry t desc _) = show t ++ " " ++ desc
