@@ -4,6 +4,8 @@
 [x] Couple files with interface
 [x] Make past events grey
 [x] Put the Entries in the state
-[ ] Function for changing state in some way
+[x] Function for changing state in some way
 [ ] Read in todays file based on the actual date today
 [ ] Create new today file (and directory structure) if it does not exist
+[ ] Write entries to file again
+[ ] Add weather information through external API
