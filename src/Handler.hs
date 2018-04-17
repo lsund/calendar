@@ -40,25 +40,31 @@ rootGET =
             ul_ $ forM_ es $ \e ->
                 let cs = classList e ct
                 in li_ cs $ toHtml (show e :: Text)
-            h2_ "New note"
+            h2_ "New Entry"
             form_ [method_ "post"] $ do
                 label_ $ do
-                    "Author:"
-                    input_ [name_ "author"]
+                    "Hour:"
+                    input_ [type_ "number", name_ "hour"]
                 label_ $ do
-                    "Contents: "
-                    textarea_ [name_ "contents"] ""
+                    "Minute:"
+                    input_ [type_ "number", name_ "minute"]
+                br_ []
+                label_ $ do
+                    "Description: "
+                    textarea_ [name_ "desc"] ""
+                br_ []
                 input_
-                    [type_ "submit", value_ "Add note"]
+                    [type_ "submit", value_ "Add Entry"]
 
 rootPOST :: Server ()
 rootPOST =
     post root $ do
-        a <- param' "author"
-        -- c <- param' "contents"
+        h <- param' "hour"
+        m <- param' "minute"
+        desc <- param' "desc"
         entriesRef <- entries <$> getState
         liftIO $ atomicModifyIORef' entriesRef $ \es ->
-            (es <> [Entry (Time 8 0) a True], ())
+            (es <> [Entry (Time h m) desc False], ())
         redirect "/"
 
 
