@@ -32,8 +32,8 @@ rootGET =
         lucid $ do
             link_ [rel_ "stylesheet", href_ "styles.css"]
             h1_ $ toHtml (show time :: Text)
-            entryList today time
-            entryList tomorrow time
+            entryList today date time
+            entryList tomorrow (succDate date) time
             entryForm
 
 

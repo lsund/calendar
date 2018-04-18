@@ -10,7 +10,7 @@ data Date = Date
     { _year  :: Integer
     , _month :: Int
     , _day   :: Int
-    } deriving (Show)
+    }
 
 
 data Time = Time
@@ -24,6 +24,14 @@ instance Show Time where
         where showi i
                 | i < 10    = "0" <> GHC.Show.show i
                 | otherwise = GHC.Show.show i
+
+
+instance Show Date where
+    show (Date y m d) = show y <> "-" <> padd m <> "-" <> padd d
+        where
+            padd x
+                | x < 10    = "0" <> GHC.Show.show x
+                | otherwise = GHC.Show.show x
 
 
 toTime :: LocalTime -> Time

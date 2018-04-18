@@ -16,8 +16,9 @@ classList e ct
     | otherwise           = []
 
 
-entryList :: [Entry] -> Time -> HtmlT Identity ()
-entryList es ct =
+entryList :: [Entry] -> Date -> Time -> HtmlT Identity ()
+entryList es date ct = do
+    h2_ $ toHtml (show date :: Text)
     ul_ $ forM_ es $ \e ->
         let cs = classList e ct
         in li_ cs $ toHtml (show e :: Text)
