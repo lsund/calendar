@@ -9,35 +9,31 @@ import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
 import           Components
+import           Day
 import           Parser
 import           Time
-import           Day
 
 
 type Server a = SpockM () () ServerState a
 newtype ServerState = ServerState { entries :: IORef ([Entry], [Entry]) }
 
-todayFile :: FilePath
-todayFile = "data/2018/04/18.txt"
-
-tomorrowFile :: FilePath
-tomorrowFile = "data/2018/04/19.txt"
-
-
 rootGET :: Server ()
 rootGET =
     get root $ do
+        (ZonedTime lt _) <- liftIO getZonedTime
+        let time = toTime lt
+            date = toDate lt
+            todayFile = dateToPath date
+            tomorrowFile = dateToPath (succDate date)
         Right (Day _ today) <- liftIO $ parseFile todayFile
         Right (Day _ tomorrow) <- liftIO $ parseFile tomorrowFile
         entriesRef <- entries <$> getState
         liftIO $ atomicModifyIORef' entriesRef $ const ((today, tomorrow), ())
-        (ZonedTime lt _) <- liftIO getZonedTime
-        let ct = toTime lt
         lucid $ do
             link_ [rel_ "stylesheet", href_ "styles.css"]
-            h1_ $ toHtml (show ct :: Text)
-            entryList today ct
-            entryList tomorrow ct
+            h1_ $ toHtml (show time :: Text)
+            entryList today time
+            entryList tomorrow time
             entryForm
 
 
