@@ -2,9 +2,7 @@
 
 module Main where
 
-import           Day
 import           Handler
-import           Parser
 
 import           Data.IORef
 import           Network.Wai.Middleware.Static
@@ -17,9 +15,6 @@ import           Web.Spock.Config
 -- newtype ServerState = ServerState { notes :: IORef [Note] }
 
 
-todayFile :: FilePath
-todayFile = "data/2018/04/17.txt"
-
 app :: Server ()
 app = do
     middleware $ staticPolicy $ addBase "static"
@@ -29,7 +24,6 @@ app = do
 
 main :: IO ()
 main = do
-    Right (Day _ ys) <- liftIO $ parseFile todayFile
-    st <- ServerState <$> newIORef ys
+    st <- ServerState <$> newIORef ([], [])
     cfg <- defaultSpockCfg () PCNoDatabase st
     runSpock 8080 (spock cfg app)
