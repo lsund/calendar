@@ -9,6 +9,7 @@ import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
 import           Components
+import           Date
 import           Day
 import           Parser
 import           Time
@@ -34,7 +35,7 @@ rootGET =
             dates = iterate succDate d
             files = take 3 $ map dateToPath dates
 
-        results  <- mapM (liftIO . parseFile) files
+        results  <- mapM (liftIO . parseFile) (zip dates files)
 
         if any isLeft results
             then return ()

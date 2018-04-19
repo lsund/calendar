@@ -1,26 +1,18 @@
 module Parser where
 
 import           Data.Functor.Identity
-import           Data.Text                     (unwords, pack)
+import           Data.Text                     (pack, unwords)
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
+import           Date
 import           Day
 import           Time
 
 type DayParser u = ParsecT String u Identity
 
-filePath :: FilePath
-filePath = "data/data.txt"
-
-run :: IO ()
-run = do
-    x <- parseFile filePath
-    case x of
-        Left e     -> print e
-        Right cont -> print cont
 
 date :: DayParser () Date
 date = do
@@ -65,5 +57,5 @@ content = do
     es <- entry `endBy` newline <* eof
     return $ Day d es
 
-parseFile :: String -> IO (Either ParseError Day)
-parseFile = parseFromFile content
+parseFile :: (Date, FilePath) -> IO (Either ParseError Day)
+parseFile (d, s) = parseFromFile content s
