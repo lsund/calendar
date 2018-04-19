@@ -7,6 +7,7 @@
 [x] Function for changing state in some way
 [x] Make sure file is read for every get request, not just on start server
 [x] Read in todays file based on the actual date today
+[ ] Fix the explicit Right pattern match
 [ ] Create new today file (and directory structure) if it does not exist
 [ ] Write entries to file again
 [ ] Add Route for that

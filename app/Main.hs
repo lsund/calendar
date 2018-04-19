@@ -24,6 +24,6 @@ app = do
 
 main :: IO ()
 main = do
-    st <- ServerState <$> newIORef ([], [])
+    st <- ServerState <$> newIORef []
     cfg <- defaultSpockCfg () PCNoDatabase st
     runSpock 8080 (spock cfg app)
