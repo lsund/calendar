@@ -1,9 +1,10 @@
 module Parser where
 
 import           Data.Functor.Identity
-import           Data.Text                     (pack, unwords)
+import           Data.Text                     (pack, unwords, append)
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
+import           System.Directory
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
@@ -58,4 +59,13 @@ content = do
     return $ Day d es
 
 parseFile :: (Date, FilePath) -> IO (Either ParseError Day)
-parseFile (d, s) = parseFromFile content s
+parseFile (date@(Date y m d), s) = do
+        let path = dateToPath date
+
+        createDirectoryIfMissing True (yearMonthPath y m)
+        exist <- doesFileExist path
+        when (not exist) $ writeFile path (show date `append` "\n\nT 0100 TODO\n")
+
+        parseFromFile content s
+
+

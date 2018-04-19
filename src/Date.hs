@@ -6,6 +6,9 @@ import           Protolude           hiding (show)
 import           Data.Time.LocalTime
 import           Data.Time.Calendar
 
+padd x
+    | x < 10    = "0" <> GHC.Show.show x
+    | otherwise = GHC.Show.show x
 
 data Date = Date
     { _year  :: Integer
@@ -16,23 +19,18 @@ data Date = Date
 
 instance Show Date where
     show (Date y m d) = show y <> "-" <> padd m <> "-" <> padd d
-        where
-            padd x
-                | x < 10    = "0" <> GHC.Show.show x
-                | otherwise = GHC.Show.show x
 
 
 toDate :: LocalTime -> Date
 toDate (LocalTime day _) = let (y, m, d) = toGregorian day in Date y m d
 
 
+yearMonthPath :: Integer -> Int -> FilePath
+yearMonthPath y m = concat ["data/", show y, "/", padd m]
+
 dateToPath :: Date -> FilePath
 dateToPath (Date y m d) =
-    concat ["data/", show y, "/", padd m, "/", padd d, ".txt"]
-    where
-        padd x
-            | x < 10    = "0" ++ show x
-            | otherwise = show x
+    concat [yearMonthPath y m, "/", padd d, ".txt"]
 
 
 -- Cannot implement enum for dates, since `_year` is Integer, not Int

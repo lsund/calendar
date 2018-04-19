@@ -37,8 +37,9 @@ rootGET =
 
         results  <- mapM (liftIO . parseFile) (zip dates files)
 
+
         if any isLeft results
-            then return ()
+            then print "fuck"
             else do
                 let days = rights results
                 entriesRef <- entries <$> getState

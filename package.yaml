@@ -29,6 +29,7 @@ dependencies:
 - Spock-lucid
 - protolude
 - wai-middleware-static
+- directory
 
 library:
   source-dirs:
