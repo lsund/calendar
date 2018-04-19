@@ -15,34 +15,39 @@ import           Time
 
 
 type Server a = SpockM () () ServerState a
+
 newtype ServerState = ServerState { entries :: IORef [Day] }
+
+
+nfiles = 3 :: Int
+
 
 rootGET :: Server ()
 rootGET =
     get root $ do
+
         (ZonedTime lt _) <- liftIO getZonedTime
-        let time = toTime lt
-            date = toDate lt
 
-            todayFile = dateToPath date
-            tomorrowFile = dateToPath (succDate date)
-            threedayFile = dateToPath (succDate (succDate date))
+        let t = toTime lt
+            d = toDate lt
 
-            files = [todayFile, tomorrowFile, threedayFile]
+            dates = iterate succDate d
+            files = take 3 $ map dateToPath dates
+
         results  <- mapM (liftIO . parseFile) files
+
         if any isLeft results
             then return ()
-            else
-                do
-                    let days = rights results
-                    entriesRef <- entries <$> getState
-                    liftIO $ atomicModifyIORef' entriesRef $ const (days, ())
-                    lucid $ do
-                        link_ [rel_ "stylesheet", href_ "styles.css"]
-                        h1_ $ toHtml (show time :: Text)
-                        forM_ days $ \(Day _ entries) ->
-                            entryList entries date time
-                        entryForm
+            else do
+                let days = rights results
+                entriesRef <- entries <$> getState
+                liftIO $ atomicModifyIORef' entriesRef $ const (days, ())
+                lucid $ do
+                    link_ [rel_ "stylesheet", href_ "styles.css"]
+                    h1_ $ toHtml (show t :: Text)
+                    forM_ days $ \d ->
+                        day d t
+                    entryForm
 
 
 rootPOST :: Server ()
