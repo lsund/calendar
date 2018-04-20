@@ -8,7 +8,10 @@
 [x] Make sure file is read for every get request, not just on start server
 [x] Read in todays file based on the actual date today
 [x] Fix the explicit Right pattern match
-[ ] Create new today file (and directory structure) if it does not exist
+[x] Create new today file (and directory structure) if it does not exist
+[ ] Add entry to today with postRoot
 [ ] Write entries to file again
 [ ] Add Route for that
+[ ] Click on a line to toggle done
+[ ] Click on the time to change the time
 [ ] Add weather information through external API

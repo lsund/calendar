@@ -8,7 +8,7 @@ import           Protolude              hiding (get)
 import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
-import           Components
+import qualified Components as C
 import           Date
 import           Day
 import           Parser
@@ -20,8 +20,8 @@ type Server a = SpockM () () ServerState a
 newtype ServerState = ServerState { entries :: IORef [Day] }
 
 
-nfiles = 3 :: Int
-
+nfiles :: Int
+nfiles = 3
 
 rootGET :: Server ()
 rootGET =
@@ -32,14 +32,14 @@ rootGET =
         let t = toTime lt
             d = toDate lt
 
-            dates = iterate succDate d
-            files = take 3 $ map dateToPath dates
+            ds = iterate succDate d
+            fs = take nfiles $ map dateToPath ds
 
-        results  <- mapM (liftIO . parseFile) (zip dates files)
+        results  <- mapM (liftIO . parseFile) (zip ds fs)
 
 
         if any isLeft results
-            then print "fuck"
+            then print ("Could not parse a file" :: Text)
             else do
                 let days = rights results
                 entriesRef <- entries <$> getState
@@ -47,9 +47,9 @@ rootGET =
                 lucid $ do
                     link_ [rel_ "stylesheet", href_ "styles.css"]
                     h1_ $ toHtml (show t :: Text)
-                    forM_ days $ \d ->
-                        day d t
-                    entryForm
+                    forM_ days $ \day ->
+                        C.day day t
+                    C.entryForm
 
 
 rootPOST :: Server ()
