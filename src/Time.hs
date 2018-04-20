@@ -2,7 +2,7 @@ module Time where
 
 import           Data.Time.LocalTime
 import           GHC.Show            (Show, show)
-import           Protolude           hiding (show)
+import           Protolude
 
 
 data Time = Time
@@ -12,7 +12,7 @@ data Time = Time
 
 
 instance Show Time where
-    show (Time h m) = show h <> ":" <> showi m
+    show (Time h m) = showi h <> ":" <> showi m
         where showi i
                 | i < 10    = "0" <> GHC.Show.show i
                 | otherwise = GHC.Show.show i

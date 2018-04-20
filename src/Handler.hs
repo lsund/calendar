@@ -17,7 +17,7 @@ import           Time
 
 type Server a = SpockM () () ServerState a
 
-newtype ServerState = ServerState { entries :: IORef [Day] }
+newtype ServerState = ServerState { _days :: IORef [Day] }
 
 
 nfiles :: Int
@@ -37,29 +37,32 @@ rootGET =
 
         results  <- mapM (liftIO . parseFile) (zip ds fs)
 
-
         if any isLeft results
             then print ("Could not parse a file" :: Text)
             else do
-                let days = rights results
-                entriesRef <- entries <$> getState
-                liftIO $ atomicModifyIORef' entriesRef $ const (days, ())
+
+                let parsedDays = rights results
+
                 lucid $ do
                     link_ [rel_ "stylesheet", href_ "styles.css"]
                     h1_ $ toHtml (show t :: Text)
-                    forM_ days $ \day ->
+                    forM_ parsedDays $ \day ->
                         C.day day t
                     C.entryForm
 
+line :: Date -> Int -> Int -> Text -> Text
+line d h m desc = "T " <> show (Time h m) <> " " <> desc <> "\n"
 
 rootPOST :: Server ()
 rootPOST =
     post root $
-        -- do
-        -- h <- param' "hour"
-        -- m <- param' "minute"
-        -- desc <- param' "desc"
-        -- entriesRef <- entries <$> getState
-        -- liftIO $ atomicModifyIORef' entriesRef $ \(es, es') ->
-        --     ((es <> [Entry (Time h m) desc False], es'), ())
+        do
+        h <- param' "hour"
+        m <- param' "minute"
+        desc <- param' "desc"
+        (ZonedTime lt _) <- liftIO getZonedTime
+
+        let t = toTime lt
+            d = toDate lt
+        liftIO $ appendFile (dateToPath d) (line d h m desc)
         redirect "/"

@@ -28,6 +28,7 @@ date = do
 time :: DayParser () Time
 time = do
     h <- count 2 digit
+    _ <- char ':'
     m <- count 2 digit
     return $ Time (read h) (read m)
 
