@@ -20,6 +20,7 @@ app = do
     middleware $ staticPolicy $ addBase "static"
     rootGET
     rootPOST
+    donePOST
 
 
 main :: IO ()

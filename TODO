@@ -9,9 +9,14 @@
 [x] Read in todays file based on the actual date today
 [x] Fix the explicit Right pattern match
 [x] Create new today file (and directory structure) if it does not exist
-[ ] Add entry to today with postRoot
-[ ] Write entries to file again
-[ ] Add Route for that
-[ ] Click on a line to toggle done
+[x] Add entry to today with postRoot
+[x] Write entries to file again
+[x] Add Route for that
+[ ] Click button to toggle done
+[ ] Add a Wake up/ Sleep for evry new day created
+[ ] Change in interface how many days are displayed (through serverstate)
+[ ] Insert entry in specific order depending on time
+[ ] Choose which day to add a line to through interface
 [ ] Click on the time to change the time
 [ ] Add weather information through external API
+[ ] Change files to database

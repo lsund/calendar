@@ -66,3 +66,12 @@ rootPOST =
             d = toDate lt
         liftIO $ appendFile (dateToPath d) (line d h m desc)
         redirect "/"
+
+
+donePOST :: Server ()
+donePOST =
+    post "done" $
+        do
+        i <- param' "id"
+        print (i :: Text)
+        redirect "/"

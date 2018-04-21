@@ -21,7 +21,11 @@ day (Day date es)  ct = do
     h2_ $ toHtml (show date :: Text)
     ul_ $ forM_ es $ \e ->
         let cs = classList e ct
-        in li_ cs $ toHtml (show e :: Text)
+        in li_ cs $
+            form_ [method_ "post", action_ "done?id=1"] $
+                label_ $ do
+                    toHtml (show e <> " " :: Text)
+                    input_ [type_ "submit", value_ "done"]
 
 
 entryForm :: HtmlT Identity ()
