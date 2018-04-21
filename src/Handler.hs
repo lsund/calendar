@@ -1,27 +1,37 @@
 module Handler where
 
 import           Control.Monad.IO.Class (liftIO)
-import           Data.IORef
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude              hiding (get)
 import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
-import qualified Components as C
+import qualified Components             as C
 import           Date
+import           DateTime
 import           Day
 import           Parser
 import           Time
+import qualified Writer                 as W
 
 
-type Server a = SpockM () () ServerState a
-
-newtype ServerState = ServerState { _days :: IORef [Day] }
-
+type Server a = SpockM () () () a
 
 nfiles :: Int
 nfiles = 3
+
+
+renderIndex :: (MonadIO m) => Time -> [Day] -> ActionCtxT cxt m b
+renderIndex t days =
+    lucid $ do
+        link_ [rel_ "stylesheet", href_ "styles.css"]
+
+        h1_ $ toHtml (show t :: Text)
+        forM_ days $ \day ->
+            C.day day t
+        C.newEntry
+
 
 rootGET :: Server ()
 rootGET =
@@ -29,42 +39,29 @@ rootGET =
 
         (ZonedTime lt _) <- liftIO getZonedTime
 
-        let t = toTime lt
-            d = toDate lt
-
-            ds = iterate succDate d
-            fs = take nfiles $ map dateToPath ds
+        let (DateTime d t) = toDateTime lt
+            ds             = iterate succDate d
+            fs             = take nfiles $ map dateToPath ds
 
         results  <- mapM (liftIO . parseFile) (zip ds fs)
 
         if any isLeft results
             then print ("Could not parse a file" :: Text)
-            else do
+            else renderIndex t (rights results)
 
-                let parsedDays = rights results
-
-                lucid $ do
-                    link_ [rel_ "stylesheet", href_ "styles.css"]
-                    h1_ $ toHtml (show t :: Text)
-                    forM_ parsedDays $ \day ->
-                        C.day day t
-                    C.entryForm
-
-line :: Date -> Int -> Int -> Text -> Text
-line d h m desc = "T " <> show (Time h m) <> " " <> desc <> "\n"
 
 rootPOST :: Server ()
 rootPOST =
-    post root $
-        do
-        h <- param' "hour"
-        m <- param' "minute"
-        desc <- param' "desc"
+    post root $ do
+        h                <- param' "hour"
+        m                <- param' "minute"
+        desc             <- param' "desc"
         (ZonedTime lt _) <- liftIO getZonedTime
 
-        let t = toTime lt
-            d = toDate lt
-        liftIO $ appendFile (dateToPath d) (line d h m desc)
+        -- This is always writing to todays file, since lt is today. Should
+        -- change in the future
+        liftIO $ W.writeToFile (toDate lt) h m desc
+
         redirect "/"
 
 

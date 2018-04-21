@@ -16,20 +16,22 @@ classList e ct
     | otherwise           = []
 
 
+entry :: Entry -> HtmlT Identity ()
+entry e =
+    form_ [method_ "post", action_ "done?id=1"] $
+        label_ $ do
+            toHtml (show e <> " " :: Text)
+            input_ [type_ "submit", value_ "done"]
+
+
 day :: Day -> Time -> HtmlT Identity ()
-day (Day date es)  ct = do
+day (Day date es) ct = do
     h2_ $ toHtml (show date :: Text)
-    ul_ $ forM_ es $ \e ->
-        let cs = classList e ct
-        in li_ cs $
-            form_ [method_ "post", action_ "done?id=1"] $
-                label_ $ do
-                    toHtml (show e <> " " :: Text)
-                    input_ [type_ "submit", value_ "done"]
+    ul_ $ forM_ es (\e -> li_ (classList e ct) $ entry e)
 
 
-entryForm :: HtmlT Identity ()
-entryForm = do
+newEntry :: HtmlT Identity ()
+newEntry = do
     h2_ "New Entry"
     form_ [method_ "post"] $ do
         label_ $ do

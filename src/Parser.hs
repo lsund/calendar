@@ -25,6 +25,7 @@ date = do
     _ <- newline
     return $ Date (read y) (read m) (read d)
 
+
 time :: DayParser () Time
 time = do
     h <- count 2 digit
@@ -40,15 +41,15 @@ word = many1 (noneOf "\n")
 done :: DayParser () Bool
 done = do
     c <- char 'D' <|> char 'T'
-    space
+    _ <- space
     return $ c == 'D'
 
 
 entry :: DayParser () Entry
 entry = do
-    d <- done
-    t <- time
-    _ <- space
+    d  <- done
+    t  <- time
+    _  <- space
     ss <- word `sepBy` char ' '
     return $ Entry t (unwords (map pack ss)) d
 
@@ -59,14 +60,13 @@ content = do
     es <- entry `endBy` newline <* eof
     return $ Day d es
 
+
 parseFile :: (Date, FilePath) -> IO (Either ParseError Day)
-parseFile (date@(Date y m d), s) = do
-        let path = dateToPath date
+parseFile (d@(Date y m _), s) = do
+        let path = dateToPath d
 
         createDirectoryIfMissing True (yearMonthPath y m)
         exist <- doesFileExist path
-        when (not exist) $ writeFile path (show date `append` "\n\nT 0100 TODO\n")
+        when (not exist) $ writeFile path (show d `append` "\n\nT 0100 TODO\n")
 
         parseFromFile content s
-
-

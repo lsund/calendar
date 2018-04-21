@@ -16,6 +16,7 @@
 [ ] Add a Wake up/ Sleep for evry new day created
 [ ] Change in interface how many days are displayed (through serverstate)
 [ ] Insert entry in specific order depending on time
+[ ] Add Mui Css
 [ ] Choose which day to add a line to through interface
 [ ] Click on the time to change the time
 [ ] Add weather information through external API
