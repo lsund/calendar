@@ -3,12 +3,18 @@ module Writer where
 
 import Protolude
 
+import qualified Data.Text as T
+
+import Day
 import Date
-import Time
 
 
-line :: Date -> Int -> Int -> Text -> Text
-line _ h m desc = "T " <> show (Time h m) <> " " <> desc <> "\n"
+dayToString :: Day -> Text
+dayToString (Day d es) = show d <> "\n\n" <> T.intercalate "\n"
+                            (map (\e ->
+                                    if _done e
+                                        then "D " <> show e
+                                        else "T " <> show e) es)
 
-writeToFile :: Date -> Int -> Int -> Text -> IO ()
-writeToFile d h m desc = appendFile (dateToPath d) (line d h m desc)
+serialize :: Day -> Entry -> IO ()
+serialize (Day d es) e = writeFile (dateToPath d) (dayToString (Day d (e : es)))

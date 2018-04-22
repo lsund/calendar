@@ -8,7 +8,6 @@ import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
 import qualified Components             as C
-import           Date
 import           DateTime
 import           Day
 import           Parser
@@ -26,6 +25,7 @@ renderIndex :: (MonadIO m) => Time -> [Day] -> ActionCtxT cxt m b
 renderIndex t days =
     lucid $ do
         link_ [rel_ "stylesheet", href_ "styles.css"]
+        link_ [rel_ "stylesheet", href_ "mui.css"]
 
         h1_ $ toHtml (show t :: Text)
         forM_ days $ \day ->
@@ -38,29 +38,33 @@ rootGET =
     get root $ do
 
         (ZonedTime lt _) <- liftIO getZonedTime
-
         let (DateTime d t) = toDateTime lt
-            ds             = iterate succDate d
-            fs             = take nfiles $ map dateToPath ds
 
-        results  <- mapM (liftIO . parseFile) (zip ds fs)
+        days <- liftIO $ readDays d nfiles
 
-        if any isLeft results
+        if any isLeft days
             then print ("Could not parse a file" :: Text)
-            else renderIndex t (rights results)
+            else renderIndex t (rights days)
 
 
 rootPOST :: Server ()
 rootPOST =
     post root $ do
-        h                <- param' "hour"
-        m                <- param' "minute"
-        desc             <- param' "desc"
+        -- h                <- param' "hour"
+        -- m                <- param' "minute"
+        -- desc             <- param' "desc"
         (ZonedTime lt _) <- liftIO getZonedTime
+
+        let (DateTime d t) = toDateTime lt
+        days <- liftIO $ readDays d 1
 
         -- This is always writing to todays file, since lt is today. Should
         -- change in the future
-        liftIO $ W.writeToFile (toDate lt) h m desc
+        if any isLeft days
+            then return ()
+            else
+                let (x : _) = rights days
+                in liftIO $ W.serialize x (Entry t "Blah" False)
 
         redirect "/"
 

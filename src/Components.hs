@@ -21,7 +21,7 @@ entry e =
     form_ [method_ "post", action_ "done?id=1"] $
         label_ $ do
             toHtml (show e <> " " :: Text)
-            input_ [type_ "submit", value_ "done"]
+            input_ [type_ "submit", value_ "done", class_ "mui-btn mui-btn--small"]
 
 
 day :: Day -> Time -> HtmlT Identity ()

@@ -1,7 +1,7 @@
 module Parser where
 
 import           Data.Functor.Identity
-import           Data.Text                     (pack, unwords, append)
+import           Data.Text                     (append, pack, unwords)
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
 import           System.Directory
@@ -70,3 +70,10 @@ parseFile (d@(Date y m _), s) = do
         when (not exist) $ writeFile path (show d `append` "\n\nT 0100 TODO\n")
 
         parseFromFile content s
+
+
+readDays :: Date -> Int -> IO [Either ParseError Day]
+readDays d n = do
+    let ds = iterate succDate d
+        fs = take n $ map dateToPath ds
+    mapM (liftIO . parseFile) (zip ds fs)
