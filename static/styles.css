@@ -8,5 +8,14 @@
 }
 
 ul {
+    margin-left: -50px;
     list-style-type: none;
+}
+
+.mui-textfield {
+    width: 800px;
+}
+
+form > div {
+    margin-left: 50px;
 }

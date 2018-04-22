@@ -12,8 +12,9 @@
 [x] Add entry to today with postRoot
 [x] Write entries to file again
 [x] Add Route for that
-[ ] Write entire day to file
-[ ] Click button to toggle done
+[x] Write entire day to file
+[x] Click button to toggle done
+[ ] Add Postgre, remove files
 [ ] Add a Wake up/ Sleep for evry new day created
 [ ] Change in interface how many days are displayed (through serverstate)
 [ ] Insert entry in specific order depending on time

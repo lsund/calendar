@@ -23,14 +23,15 @@ nfiles = 3
 
 renderIndex :: (MonadIO m) => Time -> [Day] -> ActionCtxT cxt m b
 renderIndex t days =
-    lucid $ do
-        link_ [rel_ "stylesheet", href_ "styles.css"]
-        link_ [rel_ "stylesheet", href_ "mui.css"]
+    lucid $
+        div_ [class_ "mui-container"] $ do
+            link_ [rel_ "stylesheet", href_ "styles.css"]
+            link_ [rel_ "stylesheet", href_ "mui.css"]
 
-        h1_ $ toHtml (show t :: Text)
-        forM_ days $ \day ->
-            C.day day t
-        C.newEntry
+            h1_ $ toHtml (show t :: Text)
+            forM_ days $ \day ->
+                C.day day t
+            C.newEntry
 
 
 rootGET :: Server ()

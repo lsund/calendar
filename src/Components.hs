@@ -18,10 +18,10 @@ classList e ct
 
 entry :: Entry -> HtmlT Identity ()
 entry e =
-    form_ [method_ "post", action_ "done?id=1"] $
-        label_ $ do
-            toHtml (show e <> " " :: Text)
-            input_ [type_ "submit", value_ "done", class_ "mui-btn mui-btn--small"]
+    form_ [method_ "post", action_ "done?id=1", class_ "mui-form--inline"] $ do
+        input_ [type_ "submit", value_ "done", class_ "mui-btn mui-btn--small"]
+        div_ [class_ "mui-textfield"] $
+            input_ [type_ "text", value_ (show e :: Text)]
 
 
 day :: Day -> Time -> HtmlT Identity ()
