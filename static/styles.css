@@ -4,12 +4,15 @@
 }
 
 .done {
-    color: green;
+    color       : grey;
+    margin-left : 120px;
+    font-size   : 18px;
+    width       : 800px;
 }
 
 ul {
-    margin-left: -50px;
-    list-style-type: none;
+    margin-left     : -50px;
+    list-style-type : none;
 }
 
 .mui-textfield {
