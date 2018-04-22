@@ -8,28 +8,39 @@ import           Protolude
 import           Day
 import           Time
 
+-------------------------------------------------------------------------------
+-- Classes
 
-classList :: Entry -> Time -> [Attribute]
-classList e ct
-    | _done e             = [class_ "done"]
-    | ct `isPast` _time e = [class_ "past"]
-    | otherwise           = []
+entryClasses :: Entry -> Time -> [Attribute]
+entryClasses e ct
+    | _done e             = [class_ "done mui--divider-bottom"]
+    -- | ct `isPast` _time e = [class_ "past"]
+    | otherwise           = [class_ "mui-form--inline"]
 
+
+textClasses :: [Attribute]
+textClasses = [class_ "mui-textfield"]
+
+buttonClasses :: [Attribute]
+buttonClasses = [class_ "mui-btn mui-btn--small"]
+
+
+-------------------------------------------------------------------------------
+-- Public API
 
 entry :: Entry -> HtmlT Identity ()
 entry e
-    | _done e = div_ [class_ "mui--divider-bottom"] (toHtml (show e :: Text))
+    | _done e = div_ (toHtml (show e :: Text))
     | otherwise =
-        form_ [method_ "post", action_ "done?id=1", class_ "mui-form--inline"] $ do
-            input_ [type_ "submit", value_ "done", class_ "mui-btn mui-btn--small"]
-            div_ [class_ "mui-textfield"] $
-                input_ [type_ "text", value_ (show e :: Text)]
+        form_ [method_ "post", action_ "done?id=1"] $ do
+            input_ $ [type_ "submit", value_ "done"] <> buttonClasses
+            div_ textClasses $ input_ [type_ "text", value_ (show e :: Text)]
 
 
 day :: Day -> Time -> HtmlT Identity ()
 day (Day date es) ct = do
     h2_ $ toHtml (show date :: Text)
-    ul_ $ forM_ es (\e -> li_ (classList e ct) $ entry e)
+    ul_ $ forM_ es (\e -> li_ (entryClasses e ct) $ entry e)
 
 
 newEntry :: HtmlT Identity ()
