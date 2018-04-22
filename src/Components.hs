@@ -33,8 +33,9 @@ entry e
     | _done e = div_ (toHtml (show e :: Text))
     | otherwise =
         form_ [method_ "post", action_ "done?id=1"] $ do
-            input_ $ [type_ "submit", value_ "done"] <> buttonClasses
-            div_ textClasses $ input_ [type_ "text", value_ (show e :: Text)]
+            input_ $ buttonClasses <> [type_ "submit", value_ "done"]
+            div_ textClasses $
+                input_ [type_ "text", value_ (show e :: Text)]
 
 
 day :: Day -> Time -> HtmlT Identity ()
@@ -60,4 +61,3 @@ newEntry = do
         br_ []
         input_
             [type_ "submit", value_ "Add Entry"]
-
