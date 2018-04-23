@@ -21,5 +21,4 @@
 [ ] Add Mui Css
 [ ] Choose which day to add a line to through interface
 [ ] Click on the time to change the time
-[ ] Add weather information through external API
-[ ] Change files to database
+[ ] Weather API (http://opendata.smhi.se/apidocs/metobs/index.html)

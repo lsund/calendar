@@ -1,18 +1,22 @@
+h1 {
+    padding-left : 500px;
+}
+
+h2 {
+    padding-left : 235px;
+}
 
 .past {
     color: grey;
 }
 
-.done {
-    color       : grey;
-    margin-left : 120px;
-    font-size   : 18px;
-    height      : 32px;
-    width       : 800px;
+.day {
+    background-color: #f2f2f2;
+    border: 2px solid black;
+    margin-top: 50px;
 }
 
 ul {
-    margin-left     : -50px;
     list-style-type : none;
 }
 
@@ -23,3 +27,16 @@ ul {
 form > div {
     margin-left: 50px;
 }
+
+.entry {
+    margin-left: 70px;
+}
+
+.done {
+    color       : grey;
+    margin-left : 195px;
+    font-size   : 16px;
+    height      : 32px;
+    width       : 800px;
+}
+

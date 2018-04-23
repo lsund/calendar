@@ -67,7 +67,7 @@ parseFile (d@(Date y m _), s) = do
 
         createDirectoryIfMissing True (yearMonthPath y m)
         exist <- doesFileExist path
-        when (not exist) $ writeFile path (show d `append` "\n\nT 0100 TODO\n")
+        when (not exist) $ writeFile path (show d `append` "\n\nT 01:00 TODO\n")
 
         parseFromFile content s
 

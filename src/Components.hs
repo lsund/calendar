@@ -13,9 +13,9 @@ import           Time
 
 entryClasses :: Entry -> Time -> [Attribute]
 entryClasses e ct
-    | _done e             = [class_ "done mui--divider-bottom"]
+    | _done e             = [class_ "done mui--divider-bottom entry"]
     -- | ct `isPast` _time e = [class_ "past"]
-    | otherwise           = [class_ "mui-form--inline"]
+    | otherwise           = [class_ "mui-form--inline entry"]
 
 
 textClasses :: [Attribute]
@@ -39,9 +39,10 @@ entry e
 
 
 day :: Day -> Time -> HtmlT Identity ()
-day (Day date es) ct = do
-    h2_ $ toHtml (show date :: Text)
-    ul_ $ forM_ es (\e -> li_ (entryClasses e ct) $ entry e)
+day (Day date es) ct =
+    div_ [class_ "day"] $ do
+        h2_ $ toHtml (show date :: Text)
+        ul_ $ forM_ es (\e -> li_ (entryClasses e ct) $ entry e)
 
 
 newEntry :: HtmlT Identity ()

@@ -18,7 +18,7 @@ import qualified Writer                 as W
 type Server a = SpockM () () () a
 
 nfiles :: Int
-nfiles = 3
+nfiles = 7
 
 
 renderIndex :: (MonadIO m) => Time -> [Day] -> ActionCtxT cxt m b
