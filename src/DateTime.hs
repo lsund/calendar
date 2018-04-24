@@ -1,10 +1,10 @@
 module DateTime where
 
+import           Data.Time.Calendar
 import           Data.Time.LocalTime
-import           Date
 
 
-data DateTime = DateTime { _date :: Date, _time :: TimeOfDay }
+data DateTime = DateTime { _date :: Day, _time :: TimeOfDay }
 
 toDateTime :: LocalTime -> DateTime
-toDateTime lt = DateTime (toDate lt) (localTimeOfDay lt)
+toDateTime lt = DateTime (localDay lt) (localTimeOfDay lt)

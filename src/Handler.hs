@@ -9,7 +9,7 @@ import           Web.Spock.Lucid        (lucid)
 
 import qualified Components             as C
 import           DateTime
-import           Day
+import           CalendarDay
 import           Parser
 import qualified Writer                 as W
 
@@ -20,7 +20,7 @@ nfiles :: Int
 nfiles = 7
 
 
-renderIndex :: (MonadIO m) => TimeOfDay -> [Day] -> ActionCtxT cxt m b
+renderIndex :: (MonadIO m) => TimeOfDay -> [CalendarDay] -> ActionCtxT cxt m b
 renderIndex t days =
     lucid $
         div_ [class_ "mui-container"] $ do

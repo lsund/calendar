@@ -2,6 +2,7 @@ module Parser where
 
 import           Data.Functor.Identity
 import           Data.Text                     (append, pack, unwords)
+import           Data.Time.Calendar
 import           Data.Time.LocalTime
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
@@ -10,12 +11,12 @@ import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
 import           Date
-import           Day
+import           CalendarDay
 
 type DayParser u = ParsecT String u Identity
 
 
-date :: DayParser () Date
+date :: DayParser () Day
 date = do
     y <- count 4 digit
     _ <- char '-'
@@ -23,7 +24,7 @@ date = do
     _ <- char '-'
     d <- count 2 digit
     _ <- newline
-    return $ Date (read y) (read m) (read d)
+    return $ fromGregorian (read y) (read m) (read d)
 
 
 time :: DayParser () TimeOfDay
@@ -53,17 +54,18 @@ entry = do
     ss <- word `sepBy` char ' '
     return $ Entry t (unwords (map pack ss)) d
 
-content :: DayParser () Day
+content :: DayParser () CalendarDay
 content = do
     d <- date
     _ <- newline
     es <- entry `endBy` newline <* eof
-    return $ Day d es
+    return $ CalendarDay d es
 
 
-parseFile :: (Date, FilePath) -> IO (Either ParseError Day)
-parseFile (d@(Date y m _), s) = do
-        let path = dateToPath d
+parseFile :: (Day, FilePath) -> IO (Either ParseError CalendarDay)
+parseFile (day, s) = do
+        let (y, m, d) = toGregorian day
+            path = dateToPath day
 
         createDirectoryIfMissing True (yearMonthPath y m)
         exist <- doesFileExist path
@@ -72,8 +74,8 @@ parseFile (d@(Date y m _), s) = do
         parseFromFile content s
 
 
-readDays :: Date -> Int -> IO [Either ParseError Day]
+readDays :: Day -> Int -> IO [Either ParseError CalendarDay]
 readDays d n = do
-    let ds = iterate succDate d
+    let ds = iterate succ d
         fs = take n $ map dateToPath ds
     mapM (liftIO . parseFile) (zip ds fs)

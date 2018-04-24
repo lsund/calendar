@@ -6,7 +6,7 @@ import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
 
-import           Day
+import           CalendarDay
 
 
 isPast :: TimeOfDay -> TimeOfDay -> Bool
@@ -19,7 +19,7 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
 -- Classes
 
 entryClasses :: Entry -> TimeOfDay -> [Attribute]
-entryClasses e ct
+entryClasses e _
     | _done e             = [class_ "done mui--divider-bottom entry"]
     -- | ct `isPast` _time e = [class_ "past"]
     | otherwise           = [class_ "mui-form--inline entry"]
@@ -45,8 +45,8 @@ entry e
                 input_ [type_ "text", value_ (show e :: Text)]
 
 
-day :: Day -> TimeOfDay -> HtmlT Identity ()
-day (Day date es) ct =
+day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
+day (CalendarDay date es) ct =
     div_ [class_ "day"] $ do
         h2_ $ toHtml (show date :: Text)
         ul_ $ forM_ es (\e -> li_ (entryClasses e ct) $ entry e)

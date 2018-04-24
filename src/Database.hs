@@ -4,7 +4,9 @@ import           Database.PostgreSQL.Simple
 -- import           Database.PostgreSQL.Simple.Time
 import           Data.Time.LocalTime
 
-import           Day
+import           CalendarDay
+import           DateTime
+import           Parser
 import           Protolude
 
 type EntryRow = (Int, Int, TimeOfDay, Text, Bool)
@@ -15,13 +17,24 @@ makeConnection = connect defaultConnectInfo { connectDatabase = "calendar" }
 rowToEntry :: EntryRow -> Entry
 rowToEntry (_, _, tod, desc, isdone) = Entry tod desc isdone
 
--- insertEntries :: Connection -> Int -> [Entry] -> IO Int64
--- insertEntries conn dayid es =
---     executeMany conn q values
+
+insertEntries :: Connection -> Int -> [Entry] -> IO Int64
+insertEntries conn dayid es =
+    executeMany conn q values
+    where
+        q = "insert into entry (dayid, ts, description, done) values (?,?,?,?)"
+        entryToTuple (Entry t desc isdone) = (dayid, t, desc, isdone)
+        values = map entryToTuple es
+
+
+-- insertDay :: Connection -> Day -> IO Int64
+-- insertDay conn (Day d es) =
+--     execute conn q d
 --     where
---         q = "insert into entry (dayid, ts, description, done) values (?,?,?,?,?)"
---         entryToTuple (Entry t desc done) = (dayid, t, desc, done)
---         values = map entryToTuple es
+--         q = "insert into day (gregorian) values (?)"
+
+
+
 
 respond :: IO ()
 respond = do
@@ -29,4 +42,15 @@ respond = do
     let entryQ = "select * from entry where dayid=1"
         params = ()
     entries <- query conn entryQ params :: IO [EntryRow]
+
+    (ZonedTime lt _) <- liftIO getZonedTime
+    let (DateTime d t) = toDateTime lt
+    days@(Right (CalendarDay d es) : xs) <- liftIO $ readDays d 5
+
+    if any isLeft days
+        then print ("Could not parse a file" :: Text)
+        else do
+            x <- insertEntries conn 1 es
+            print x
+
     print (map rowToEntry entries)
