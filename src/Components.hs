@@ -1,17 +1,24 @@
 
 module Components where
 
-import           Control.Monad (forM_)
+import           Control.Monad       (forM_)
+import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
 
 import           Day
-import           Time
+
+
+isPast :: TimeOfDay -> TimeOfDay -> Bool
+isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
+    | h' < h            = True
+    | h' == h && m' < m = True
+    | otherwise         = False
 
 -------------------------------------------------------------------------------
 -- Classes
 
-entryClasses :: Entry -> Time -> [Attribute]
+entryClasses :: Entry -> TimeOfDay -> [Attribute]
 entryClasses e ct
     | _done e             = [class_ "done mui--divider-bottom entry"]
     -- | ct `isPast` _time e = [class_ "past"]
@@ -38,7 +45,7 @@ entry e
                 input_ [type_ "text", value_ (show e :: Text)]
 
 
-day :: Day -> Time -> HtmlT Identity ()
+day :: Day -> TimeOfDay -> HtmlT Identity ()
 day (Day date es) ct =
     div_ [class_ "day"] $ do
         h2_ $ toHtml (show date :: Text)

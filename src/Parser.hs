@@ -2,6 +2,7 @@ module Parser where
 
 import           Data.Functor.Identity
 import           Data.Text                     (append, pack, unwords)
+import           Data.Time.LocalTime
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
 import           System.Directory
@@ -10,7 +11,6 @@ import           Text.ParserCombinators.Parsec
 
 import           Date
 import           Day
-import           Time
 
 type DayParser u = ParsecT String u Identity
 
@@ -26,12 +26,12 @@ date = do
     return $ Date (read y) (read m) (read d)
 
 
-time :: DayParser () Time
+time :: DayParser () TimeOfDay
 time = do
     h <- count 2 digit
     _ <- char ':'
     m <- count 2 digit
-    return $ Time (read h) (read m)
+    return $ TimeOfDay (read h) (read m) 0
 
 
 word :: DayParser () String
