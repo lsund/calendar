@@ -2,6 +2,7 @@ module Database where
 
 import           Database.PostgreSQL.Simple
 -- import           Database.PostgreSQL.Simple.Time
+import           Data.Time.Calendar
 import           Data.Time.LocalTime
 
 import           CalendarDay
@@ -27,13 +28,10 @@ insertEntries conn dayid es =
         values = map entryToTuple es
 
 
--- insertDay :: Connection -> Day -> IO Int64
--- insertDay conn (Day d es) =
---     execute conn q d
---     where
---         q = "insert into day (gregorian) values (?)"
-
-
+insertDay :: Connection -> Only Day -> IO Int64
+insertDay conn = execute conn q
+    where
+        q = "insert into day (gregorian) values (?)"
 
 
 respond :: IO ()
@@ -50,6 +48,7 @@ respond = do
     if any isLeft days
         then print ("Could not parse a file" :: Text)
         else do
+            _ <- insertDay conn (Only (ModifiedJulianDay 1))
             x <- insertEntries conn 1 es
             print x
 
