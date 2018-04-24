@@ -14,6 +14,7 @@
 [x] Add Route for that
 [x] Write entire day to file
 [x] Click button to toggle done
+[ ] Add weekdays next to date
 [ ] Add Postgre, remove files
 [ ] Add a Wake up/ Sleep for evry new day created
 [ ] Change in interface how many days are displayed (through serverstate)

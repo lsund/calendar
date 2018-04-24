@@ -30,6 +30,7 @@ dependencies:
 - protolude
 - wai-middleware-static
 - directory
+- postgresql-simple
 
 library:
   source-dirs:
