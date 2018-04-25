@@ -10,9 +10,6 @@ import           Web.Spock.Lucid        (lucid)
 import           CalendarDay
 import qualified Components             as C
 import           Database
-import           DateTime
-import           Parser
-import qualified Writer                 as W
 
 
 type Server a = SpockM () () () a
@@ -39,40 +36,33 @@ rootGET =
     get root $ do
 
         (ZonedTime lt _) <- liftIO getZonedTime
-        let (DateTime d t) = toDateTime lt
 
-        let ds = take 10 $ iterate succ d
+        let dates = take 10 $ iterate succ (localDay lt)
+        days <- liftIO $ mapM getDay dates
 
-        days <- liftIO $ mapM getDay ds
-
-        renderIndex t days
-
-        -- days <- liftIO $ readDays d nfiles
-
-        -- if any isLeft days
-        --     then print $  filter isLeft days
-        --     else renderIndex t (rights days)
+        renderIndex (localTimeOfDay lt) days
 
 
 rootPOST :: Server ()
 rootPOST =
-    post root $ do
+    post root $
         -- h                <- param' "hour"
         -- m                <- param' "minute"
         -- desc             <- param' "desc"
-        (ZonedTime lt _) <- liftIO getZonedTime
+        -- (ZonedTime lt _) <- liftIO getZonedTime
+        -- let (DateTime d t) = toDateTime lt
 
-        let (DateTime d t) = toDateTime lt
-        days <- liftIO $ readDays d 1
+        -- let ds = take 10 $ iterate succ d
 
+        -- days <- liftIO $ mapM getDay ds
 
         -- This is always writing to todays file, since lt is today. Should
         -- change in the future
-        if any isLeft days
-            then return ()
-            else
-                let (x : _) = rights days
-                in liftIO $ W.serialize x (Entry t "Blah" False)
+        -- if any isLeft days
+        --     then return ()
+        --     else
+        --         let (x : _) = rights days
+        --         in liftIO $ W.serialize x (Entry t "Blah" False)
 
         redirect "/"
 

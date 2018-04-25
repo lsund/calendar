@@ -57,5 +57,5 @@ getDay d = do
     return $ CalendarDay d $ map makeEntry res
     where
         idQ = "select id from day where gregorian=?"
-        makeEntry (id, dayid, tod, desc, isdone) = Entry tod desc isdone
+        makeEntry (_, _, tod, desc, isdone) = Entry tod desc isdone
 
