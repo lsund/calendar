@@ -34,6 +34,14 @@ insertDay conn = execute conn q
         q = "insert into day (gregorian) values (?)"
 
 
+insertCDay :: Connection -> CalendarDay -> IO Int64
+insertCDay conn (CalendarDay d es) = do
+    x <- insertDay conn (Only d)
+    let q = "select id from day where gregorian=?"
+        params = Only d :: Only Day
+    (Only dayid : _) <- query conn q params :: IO [Only Int]
+    insertEntries conn dayid es
+
 respond :: IO ()
 respond = do
     conn <- makeConnection
@@ -42,14 +50,11 @@ respond = do
     entries <- query conn entryQ params :: IO [EntryRow]
 
     (ZonedTime lt _) <- liftIO getZonedTime
-    let (DateTime d t) = toDateTime lt
-    days@(Right (CalendarDay d es) : xs) <- liftIO $ readDays d 5
+    let (DateTime d _) = toDateTime lt
+    days@(Right (CalendarDay _ es) : _) <- liftIO $ readDays (fromGregorian 2018 04 14) 55
 
     if any isLeft days
         then print ("Could not parse a file" :: Text)
         else do
-            _ <- insertDay conn (Only (ModifiedJulianDay 1))
-            x <- insertEntries conn 1 es
+            x <- insertCDay conn (CalendarDay d es)
             print x
-
-    print (map rowToEntry entries)
