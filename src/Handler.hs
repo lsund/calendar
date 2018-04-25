@@ -7,9 +7,10 @@ import           Protolude              hiding (get)
 import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
-import qualified Components             as C
-import           DateTime
 import           CalendarDay
+import qualified Components             as C
+import           Database
+import           DateTime
 import           Parser
 import qualified Writer                 as W
 
@@ -40,11 +41,17 @@ rootGET =
         (ZonedTime lt _) <- liftIO getZonedTime
         let (DateTime d t) = toDateTime lt
 
-        days <- liftIO $ readDays d nfiles
+        let ds = take 10 $ iterate succ d
 
-        if any isLeft days
-            then print $  filter isLeft days
-            else renderIndex t (rights days)
+        days <- liftIO $ mapM getDay ds
+
+        renderIndex t days
+
+        -- days <- liftIO $ readDays d nfiles
+
+        -- if any isLeft days
+        --     then print $  filter isLeft days
+        --     else renderIndex t (rights days)
 
 
 rootPOST :: Server ()
@@ -57,6 +64,7 @@ rootPOST =
 
         let (DateTime d t) = toDateTime lt
         days <- liftIO $ readDays d 1
+
 
         -- This is always writing to todays file, since lt is today. Should
         -- change in the future
