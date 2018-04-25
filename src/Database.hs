@@ -6,7 +6,6 @@ import           Data.Time.Calendar
 import           Data.Time.LocalTime
 
 import           CalendarDay
-import           DateTime
 import           Parser
 import           Protolude
 
@@ -28,33 +27,35 @@ insertEntries conn dayid es =
         values = map entryToTuple es
 
 
-insertDay :: Connection -> Only Day -> IO Int64
-insertDay conn = execute conn q
-    where
-        q = "insert into day (gregorian) values (?)"
-
-
-insertCDay :: Connection -> CalendarDay -> IO Int64
-insertCDay conn (CalendarDay d es) = do
-    x <- insertDay conn (Only d)
-    let q = "select id from day where gregorian=?"
-        params = Only d :: Only Day
-    (Only dayid : _) <- query conn q params :: IO [Only Int]
+insertDay :: Connection -> CalendarDay -> IO Int64
+insertDay conn (CalendarDay d es) = do
+    _                <- execute conn insertQ (Only d)
+    (Only dayid : _) <- query conn idQ (Only d)
     insertEntries conn dayid es
+    where
+        insertQ = "insert into day (gregorian) values (?)"
+        idQ = "select id from day where gregorian=?"
 
-respond :: IO ()
-respond = do
+-- start at 14th april, 55 days
+insertDays :: Day -> Int -> IO ()
+insertDays start n = do
     conn <- makeConnection
-    let entryQ = "select * from entry where dayid=1"
-        params = ()
-    entries <- query conn entryQ params :: IO [EntryRow]
-
-    (ZonedTime lt _) <- liftIO getZonedTime
-    let (DateTime d _) = toDateTime lt
-    days@(Right (CalendarDay _ es) : _) <- liftIO $ readDays (fromGregorian 2018 04 14) 55
+    days <- liftIO $ readDays start n
 
     if any isLeft days
         then print ("Could not parse a file" :: Text)
         else do
-            x <- insertCDay conn (CalendarDay d es)
+            x <- mapM_ (insertDay conn) (rights days)
             print x
+
+
+getDay :: Day -> IO CalendarDay
+getDay d = do
+    conn <- makeConnection
+    (Only dayid : _) <- query conn idQ (Only d) :: IO [Only Int]
+    res <- query conn "select * from entry where dayid=?" (Only dayid) :: IO [(Int, Int, TimeOfDay, Text, Bool)]
+    return $ CalendarDay d $ map makeEntry res
+    where
+        idQ = "select id from day where gregorian=?"
+        makeEntry (id, dayid, tod, desc, isdone) = Entry tod desc isdone
+
