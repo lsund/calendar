@@ -43,7 +43,7 @@ rootGET =
         days <- liftIO $ readDays d nfiles
 
         if any isLeft days
-            then print ("Could not parse a file" :: Text)
+            then print $  filter isLeft days
             else renderIndex t (rights days)
 
 
