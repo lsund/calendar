@@ -2,6 +2,8 @@
 module Components where
 
 import           Control.Monad       (forM_)
+-- import           Data.Text           (append)
+import           Data.Time.Calendar
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
@@ -35,21 +37,25 @@ buttonClasses = [class_ "mui-btn mui-btn--small"]
 -------------------------------------------------------------------------------
 -- Public API
 
-entry :: Entry -> HtmlT Identity ()
-entry e
+entry :: Day -> Entry -> HtmlT Identity ()
+entry d e
     | _done e = div_ (toHtml (show e :: Text))
     | otherwise =
-        form_ [method_ "post", action_ "done?id=1"] $ do
+        form_ [method_ "post", action_ "done"] $ do
+
+            input_ [type_ "hidden", name_ "time", value_ (show $ _time e)]
+            input_ [type_ "hidden", name_ "day", value_ (show d)]
             input_ $ buttonClasses <> [type_ "submit", value_ "done"]
+
             div_ textClasses $
                 input_ [type_ "text", value_ (show e :: Text)]
 
 
 day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
-day (CalendarDay date es) ct =
+day (CalendarDay d es) ct =
     div_ [class_ "day"] $ do
-        h2_ $ toHtml (show date :: Text)
-        ul_ $ forM_ es (\e -> li_ (entryClasses e ct) $ entry e)
+        h2_ $ toHtml (show d :: Text)
+        ul_ $ forM_ es (\e -> li_ (entryClasses e ct) $ entry d e)
 
 
 newEntry :: HtmlT Identity ()

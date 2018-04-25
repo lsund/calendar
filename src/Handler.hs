@@ -3,6 +3,7 @@ module Handler where
 import           Control.Monad.IO.Class (liftIO)
 import           Data.Time.LocalTime
 import           Lucid
+-- import           Prelude                (read)
 import           Protolude              hiding (get)
 import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
@@ -35,12 +36,13 @@ rootGET :: Server ()
 rootGET =
     get root $ do
 
-        (ZonedTime lt _) <- liftIO getZonedTime
+        d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
-        let dates = take 10 $ iterate succ (localDay lt)
+        let dates = take 10 $ iterate succ d
         days <- liftIO $ mapM getDay dates
 
-        renderIndex (localTimeOfDay lt) days
+        renderIndex tod days
 
 
 rootPOST :: Server ()
@@ -69,8 +71,10 @@ rootPOST =
 
 donePOST :: Server ()
 donePOST =
-    post "done" $
-        do
-        i <- param' "id"
-        print (i :: Text)
+    post "done" $ do
+        t <- param' "time"
+        d <- param' "day"
+
+        _ <- liftIO $ updateDoneEntry d t
+
         redirect "/"
