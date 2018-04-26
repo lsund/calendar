@@ -77,11 +77,17 @@ addEntry dayid (Entry _ ts desc isdone) = do
 getDay :: Day -> IO CalendarDay
 getDay d = do
     conn <- makeConnection
-    (Only dayid : _) <- query conn idQ (Only d) :: IO [Only Int]
-    res <- query conn entryQ  (Only dayid) :: IO [(Int, Int, TimeOfDay, Text, Bool)]
-    return $ CalendarDay dayid d $ map makeEntry res
-    where
-        idQ = "select id from day where gregorian=?"
-        entryQ = "select * from entry where dayid=?"
-        makeEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
+    ids <- query conn idQ (Only d) :: IO [Only Int]
+    if null ids
+        then do
+            _ <- insertDay conn (CalendarDay 0 d [])
+            getDay d
+        else do
+            let (id : _) = ids
+            res <- query conn entryQ  id :: IO [(Int, Int, TimeOfDay, Text, Bool)]
+            return $ CalendarDay (fromOnly id) d $ map makeEntry res
+            where
+                idQ = "select id from day where gregorian=?"
+                entryQ = "select * from entry where dayid=?"
+                makeEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
 

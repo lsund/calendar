@@ -27,7 +27,7 @@ renderIndex t days =
             link_ [rel_ "stylesheet", href_ "styles.css"]
             link_ [rel_ "stylesheet", href_ "mui.css"]
 
-            h1_ $ toHtml (show t :: Text)
+            h1_ $ toHtml (timeFormat t)
             forM_ days $ \day -> C.day day t
 
 
@@ -38,10 +38,10 @@ rootGET =
         d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
-        let dates = take 10 $ iterate succ d
+        let dates = take 4 $ iterate succ d
         days <- liftIO $ mapM getDay dates
-
         renderIndex tod days
+
 
 
 addPOST :: Server ()

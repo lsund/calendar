@@ -24,6 +24,7 @@
 [x] Insert entry in specific order depending on time
 [x] Insert into different days
 [x] Add Mui Css
-[ ] Display day even if there is no entry
-[ ] Add weekdays next to date
+[x] Display day even if there is no entry
+[x] Create new day to database if it does not exist
+[x] Add weekdays next to date
 [ ] Weather API (http://opendata.smhi.se/apidocs/metobs/index.html)

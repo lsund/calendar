@@ -78,6 +78,6 @@ newEntry id = do
 day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
 day (CalendarDay id d es) ct =
     div_ [class_ "day"] $ do
-        h2_ $ toHtml (show d :: Text)
+        h2_ $ toHtml (dayFormat d)
         ul_ $ forM_ (sortEntries es) (\e -> li_ (entryClasses e ct) $ entry d e)
         newEntry id
