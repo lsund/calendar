@@ -14,7 +14,7 @@ app :: Server ()
 app = do
     middleware $ staticPolicy $ addBase "static"
     rootGET
-    rootPOST
+    addPOST
     updatePOST
     donePOST
 

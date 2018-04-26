@@ -25,7 +25,7 @@ ul {
 }
 
 form > div {
-    margin-left: 50px;
+    /* margin-left: 50px; */
 }
 
 .entry {
@@ -34,7 +34,6 @@ form > div {
 
 .done {
     color       : grey;
-    margin-left : 195px;
     font-size   : 16px;
     height      : 32px;
     width       : 800px;

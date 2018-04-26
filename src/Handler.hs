@@ -28,9 +28,7 @@ renderIndex t days =
             link_ [rel_ "stylesheet", href_ "mui.css"]
 
             h1_ $ toHtml (show t :: Text)
-            C.newEntry
-            forM_ days $ \day ->
-                C.day day t
+            forM_ days $ \day -> C.day day t
 
 
 rootGET :: Server ()
@@ -46,18 +44,16 @@ rootGET =
         renderIndex tod days
 
 
-rootPOST :: Server ()
-rootPOST =
-    post root $ do
+addPOST :: Server ()
+addPOST =
+    post "add" $ do
         h                <- param' "hour"
         m                <- param' "minute"
         desc             <- param' "desc"
-        let e = Entry 1 (TimeOfDay h m 0) desc False
-        print e
-        d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        id                <- param' "id"
+        let e = Entry 0 (TimeOfDay h m 0) desc False
 
-        _ <- liftIO $ addEntry d e
-
+        _ <- liftIO $ addEntry id e
         redirect "/"
 
 

@@ -41,43 +41,43 @@ entry :: Day -> Entry -> HtmlT Identity ()
 entry d e
     | _done e = div_ (toHtml (show e :: Text))
     | otherwise = do
-        form_ [method_ "post", action_ "update"] $ do
+        form_ [method_ "post", action_ "update"] $
             div_ $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                 input_ [type_ "hidden", name_ "day", value_ (show d)]
                 input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
                 input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
                 input_ [type_ "text", name_ "time", value_ (show $ _time e)]
+                input_ [type_ "submit", value_ "update"]
 
-            input_ [type_ "submit", value_ "update"]
 
         form_ [method_ "post", action_ "done"] $ do
             input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
             input_ [type_ "submit", value_ "done"]
 
 
-
-day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
-day (CalendarDay _ d es) ct =
-    div_ [class_ "day"] $ do
-        h2_ $ toHtml (show d :: Text)
-        ul_ $ forM_ (sortEntries es) (\e -> li_ (entryClasses e ct) $ entry d e)
-
-
-newEntry :: HtmlT Identity ()
-newEntry = do
+newEntry :: Int -> HtmlT Identity ()
+newEntry id = do
     h2_ "New Entry"
-    form_ [method_ "post"] $ do
+    form_ [method_ "post", action_ "add"] $ do
+        input_ [type_ "hidden", name_ "id", value_ (show id)]
         label_ $ do
             "Hour:"
             input_ [type_ "number", name_ "hour"]
         label_ $ do
             "Minute:"
             input_ [type_ "number", name_ "minute"]
-        br_ []
         label_ $ do
             "Description: "
             textarea_ [name_ "desc"] ""
         br_ []
         input_
             [type_ "submit", value_ "Add Entry"]
+
+
+day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
+day (CalendarDay id d es) ct =
+    div_ [class_ "day"] $ do
+        h2_ $ toHtml (show d :: Text)
+        ul_ $ forM_ (sortEntries es) (\e -> li_ (entryClasses e ct) $ entry d e)
+        newEntry id
