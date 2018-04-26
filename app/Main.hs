@@ -15,6 +15,7 @@ app = do
     middleware $ staticPolicy $ addBase "static"
     rootGET
     rootPOST
+    updatePOST
     donePOST
 
 

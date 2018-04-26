@@ -10,12 +10,12 @@ import           Date
 
 
 dayToString :: CalendarDay -> Text
-dayToString (CalendarDay d es) = show d <> "\n\n" <> T.intercalate "\n"
+dayToString (CalendarDay _ d es) = show d <> "\n\n" <> T.intercalate "\n"
                             (map (\e ->
                                     if _done e
                                         then "D " <> show e
                                         else "T " <> show e) es)
 
 serialize :: CalendarDay -> Entry -> IO ()
-serialize (CalendarDay d es) e =
-    writeFile (dateToPath d) (dayToString (CalendarDay d (e : es)))
+serialize (CalendarDay id d es) e =
+    writeFile (dateToPath d) (dayToString (CalendarDay id d (e : es)))

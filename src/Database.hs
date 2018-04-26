@@ -15,7 +15,7 @@ makeConnection :: IO Connection
 makeConnection = connect defaultConnectInfo { connectDatabase = "calendar" }
 
 rowToEntry :: EntryRow -> Entry
-rowToEntry (_, _, tod, desc, isdone) = Entry tod desc isdone
+rowToEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
 
 
 insertEntries :: Connection -> Int -> [Entry] -> IO Int64
@@ -23,18 +23,16 @@ insertEntries conn dayid es =
     executeMany conn q values
     where
         q = "insert into entry (dayid, ts, description, done) values (?,?,?,?)"
-        entryToTuple (Entry t desc isdone) = (dayid, t, desc, isdone)
+        entryToTuple (Entry id t desc isdone) = (id, dayid, t, desc, isdone)
         values = map entryToTuple es
 
 
 insertDay :: Connection -> CalendarDay -> IO Int64
-insertDay conn (CalendarDay d es) = do
+insertDay conn (CalendarDay id d es) = do
     _                <- execute conn insertQ (Only d)
-    (Only dayid : _) <- query conn idQ (Only d)
-    insertEntries conn dayid es
+    insertEntries conn id es
     where
         insertQ = "insert into day (gregorian) values (?)"
-        idQ = "select id from day where gregorian=?"
 
 -- start at 14th april, 55 days
 insertDays :: Day -> Int -> IO ()
@@ -49,22 +47,18 @@ insertDays start n = do
             print x
 
 
-updateDoneEntry :: Day -> TimeOfDay -> IO Int64
-updateDoneEntry d t = do
+updateEntry :: Int -> TimeOfDay -> Text -> Bool -> IO Int64
+updateEntry id ts desc isdone = do
     conn <- makeConnection
-    (Only dayid : _) <- query conn dayidQ (Only d) :: IO [Only Int]
-    (Only eid : _)   <- query conn eidQ (dayid, t) :: IO [Only Int]
-    _                <- execute conn updateQ (Only eid)
+    _                <- execute conn updateQ (ts, desc, isdone, id)
     return 1
     where
-        dayidQ = "select id from day where gregorian=?"
-        eidQ = "select id from entry where dayid=? and ts=?"
-        updateQ = "update entry set done=true where id=?"
+        updateQ = "update entry set ts=?, description=?, done=? where id=?"
 
 
 
 addEntry :: Day -> Entry -> IO Int64
-addEntry d (Entry ts desc isdone) = do
+addEntry d (Entry _ ts desc isdone) = do
     conn <- makeConnection
     (Only dayid : _) <- query conn dayidQ (Only d) :: IO [Only Int]
     _   <- execute conn insertQ (dayid, ts, desc, isdone)
@@ -78,9 +72,10 @@ getDay :: Day -> IO CalendarDay
 getDay d = do
     conn <- makeConnection
     (Only dayid : _) <- query conn idQ (Only d) :: IO [Only Int]
-    res <- query conn "select * from entry where dayid=?" (Only dayid) :: IO [(Int, Int, TimeOfDay, Text, Bool)]
-    return $ CalendarDay d $ map makeEntry res
+    res <- query conn entryQ  (Only dayid) :: IO [(Int, Int, TimeOfDay, Text, Bool)]
+    return $ CalendarDay dayid d $ map makeEntry res
     where
         idQ = "select id from day where gregorian=?"
-        makeEntry (_, _, tod, desc, isdone) = Entry tod desc isdone
+        entryQ = "select * from entry where dayid=?"
+        makeEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
 

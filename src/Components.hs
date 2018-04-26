@@ -40,19 +40,23 @@ buttonClasses = [class_ "mui-btn mui-btn--small"]
 entry :: Day -> Entry -> HtmlT Identity ()
 entry d e
     | _done e = div_ (toHtml (show e :: Text))
-    | otherwise =
-        form_ [method_ "post", action_ "done"] $ do
+    | otherwise = do
+        form_ [method_ "post", action_ "update"] $ do
 
-            input_ [type_ "hidden", name_ "time", value_ (show $ _time e)]
-            input_ [type_ "hidden", name_ "day", value_ (show d)]
-            input_ $ buttonClasses <> [type_ "submit", value_ "done"]
+                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                input_ [type_ "hidden", name_ "day", value_ (show d)]
+                input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
+                input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
+                input_ [type_ "text", name_ "time", value_ (show $ _time e)]
+                input_ [type_ "submit", value_ "update"]
 
-            div_ textClasses $
-                input_ [type_ "text", value_ (show e :: Text)]
+        form_ [method_ "post", action_ "done"] $
+            input_ [type_ "submit", value_ "done"]
+
 
 
 day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
-day (CalendarDay d es) ct =
+day (CalendarDay _ d es) ct =
     div_ [class_ "day"] $ do
         h2_ $ toHtml (show d :: Text)
         ul_ $ forM_ (sortEntries es) (\e -> li_ (entryClasses e ct) $ entry d e)

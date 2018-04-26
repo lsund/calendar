@@ -52,14 +52,14 @@ entry = do
     t  <- time
     _  <- space
     ss <- word `sepBy` char ' '
-    return $ Entry t (unwords (map pack ss)) d
+    return $ Entry 0 t (unwords (map pack ss)) d
 
 content :: DayParser () CalendarDay
 content = do
     d <- date
     _ <- newline
     es <- entry `endBy` newline <* eof
-    return $ CalendarDay d es
+    return $ CalendarDay 0 d es
 
 
 parseFile :: (Day, FilePath) -> IO (Either ParseError CalendarDay)

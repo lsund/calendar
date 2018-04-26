@@ -17,7 +17,10 @@
 [x] Add Postgre
 [x] Load files into postgre
 [x] Set done with UI
-[ ] Insert new post to today UI
+[x] Insert new post to today UI
+[x] Change the time for an entry from the UI
+[x] Change the description for an entry from the UI
+[ ] Set a entry to done through UI
 [ ] Add weekdays next to date
 [ ] Add a Wake up/ Sleep for evry new day created
 [ ] Change in interface how many days are displayed (through serverstate)

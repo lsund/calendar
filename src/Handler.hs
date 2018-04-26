@@ -2,6 +2,7 @@ module Handler where
 
 import           Control.Monad.IO.Class (liftIO)
 import           Data.Time.LocalTime
+-- import Data.Time.Calendar
 import           Lucid
 -- import           Prelude                (read)
 import           Protolude              hiding (get)
@@ -51,7 +52,7 @@ rootPOST =
         h                <- param' "hour"
         m                <- param' "minute"
         desc             <- param' "desc"
-        let e = Entry (TimeOfDay h m 0) desc False
+        let e = Entry 1 (TimeOfDay h m 0) desc False
         print e
         d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
@@ -60,12 +61,24 @@ rootPOST =
         redirect "/"
 
 
+updatePOST :: Server ()
+updatePOST =
+    post "update" $ do
+        t <- param' "time"
+        -- d <- param' "day"
+        desc <- param' "desc"
+        id <- param' "id"
+        done <- param' "done"
+
+
+        _ <- liftIO $ updateEntry id t desc done
+
+        redirect "/"
+
+
 donePOST :: Server ()
 donePOST =
     post "done" $ do
-        t <- param' "time"
-        d <- param' "day"
-
-        _ <- liftIO $ updateDoneEntry d t
+        print "TODO"
 
         redirect "/"
