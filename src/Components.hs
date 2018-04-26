@@ -42,15 +42,17 @@ entry d e
     | _done e = div_ (toHtml (show e :: Text))
     | otherwise = do
         form_ [method_ "post", action_ "update"] $ do
-
+            div_ $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                 input_ [type_ "hidden", name_ "day", value_ (show d)]
                 input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
                 input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
                 input_ [type_ "text", name_ "time", value_ (show $ _time e)]
-                input_ [type_ "submit", value_ "update"]
 
-        form_ [method_ "post", action_ "done"] $
+            input_ [type_ "submit", value_ "update"]
+
+        form_ [method_ "post", action_ "done"] $ do
+            input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
             input_ [type_ "submit", value_ "done"]
 
 

@@ -79,6 +79,8 @@ updatePOST =
 donePOST :: Server ()
 donePOST =
     post "done" $ do
-        print "TODO"
+        id <- param' "id"
+
+        _ <- liftIO $ entryDone id
 
         redirect "/"

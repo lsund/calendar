@@ -57,6 +57,14 @@ updateEntry id ts desc isdone = do
 
 
 
+entryDone :: Int -> IO Int64
+entryDone id = do
+    conn <- makeConnection
+    _   <- execute conn updateQ (Only id)
+    return 1
+    where
+        updateQ = "update entry set done=true where id=?"
+
 addEntry :: Day -> Entry -> IO Int64
 addEntry d (Entry _ ts desc isdone) = do
     conn <- makeConnection
