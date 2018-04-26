@@ -12,3 +12,6 @@ data CalendarDay = CalendarDay Day [Entry] deriving (Show)
 
 instance Show Entry where
     show (Entry t desc _) = show t <> " " <> unpack desc
+
+sortEntries :: [Entry] -> [Entry]
+sortEntries = sortBy (\x y -> _time x `compare` _time y)

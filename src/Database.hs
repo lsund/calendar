@@ -62,6 +62,18 @@ updateDoneEntry d t = do
         updateQ = "update entry set done=true where id=?"
 
 
+
+addEntry :: Day -> Entry -> IO Int64
+addEntry d (Entry ts desc isdone) = do
+    conn <- makeConnection
+    (Only dayid : _) <- query conn dayidQ (Only d) :: IO [Only Int]
+    _   <- execute conn insertQ (dayid, ts, desc, isdone)
+    return 1
+    where
+        dayidQ = "select id from day where gregorian=?"
+        insertQ = "insert into entry (dayid, ts, description, done) values (?,?,?,?)"
+
+
 getDay :: Day -> IO CalendarDay
 getDay d = do
     conn <- makeConnection

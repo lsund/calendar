@@ -27,9 +27,9 @@ renderIndex t days =
             link_ [rel_ "stylesheet", href_ "mui.css"]
 
             h1_ $ toHtml (show t :: Text)
+            C.newEntry
             forM_ days $ \day ->
                 C.day day t
-            C.newEntry
 
 
 rootGET :: Server ()
@@ -47,24 +47,15 @@ rootGET =
 
 rootPOST :: Server ()
 rootPOST =
-    post root $
-        -- h                <- param' "hour"
-        -- m                <- param' "minute"
-        -- desc             <- param' "desc"
-        -- (ZonedTime lt _) <- liftIO getZonedTime
-        -- let (DateTime d t) = toDateTime lt
+    post root $ do
+        h                <- param' "hour"
+        m                <- param' "minute"
+        desc             <- param' "desc"
+        let e = Entry (TimeOfDay h m 0) desc False
+        print e
+        d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
-        -- let ds = take 10 $ iterate succ d
-
-        -- days <- liftIO $ mapM getDay ds
-
-        -- This is always writing to todays file, since lt is today. Should
-        -- change in the future
-        -- if any isLeft days
-        --     then return ()
-        --     else
-        --         let (x : _) = rights days
-        --         in liftIO $ W.serialize x (Entry t "Blah" False)
+        _ <- liftIO $ addEntry d e
 
         redirect "/"
 
