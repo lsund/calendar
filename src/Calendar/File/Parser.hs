@@ -10,8 +10,9 @@ import           System.Directory
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
-import           Calendar.Date
+import           Calendar.File.Internal
 import           Calendar.Data.Day
+import           Calendar.Data.Entry
 
 type DayParser u = ParsecT String u Identity
 

@@ -6,6 +6,7 @@ import           Lucid
 import           Protolude
 
 import           Calendar.Data.Day
+import           Calendar.Data.Entry
 
 
 isPast :: TimeOfDay -> TimeOfDay -> Bool

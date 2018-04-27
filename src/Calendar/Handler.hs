@@ -7,8 +7,9 @@ import           Protolude                  hiding (get)
 import           Web.Spock
 import           Web.Spock.Lucid            (lucid)
 
-import           Calendar.Database.Internal
 import           Calendar.Data.Day
+import           Calendar.Data.Entry
+import           Calendar.Database.Internal
 import qualified Calendar.ViewComponents    as VC
 
 

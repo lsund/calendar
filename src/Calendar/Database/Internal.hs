@@ -5,6 +5,7 @@ import           Data.Time.LocalTime
 import           Protolude
 
 import           Calendar.Data.Day
+import           Calendar.Data.Entry
 import           Calendar.File.Parser
 
 type EntryRow = (Int, Int, TimeOfDay, Text, Bool)

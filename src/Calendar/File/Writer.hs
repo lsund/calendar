@@ -6,7 +6,8 @@ import           Protolude
 import qualified Data.Text   as T
 
 import           Calendar.Data.Day
-import           Calendar.Date
+import           Calendar.Data.Entry
+import           Calendar.File.Internal
 
 
 dayToString :: Day -> Text
