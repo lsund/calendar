@@ -41,7 +41,7 @@ addPOST =
         let e = Entry 0 (TimeOfDay h m 0) desc False
 
         conn <- liftIO makeConnection
-        _ <- liftIO $ addEntry conn id e
+        _ <- liftIO $ insertEntry conn id e
         redirect "/"
 
 
