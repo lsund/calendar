@@ -1,5 +1,4 @@
-
-module Components where
+module Calendar.Components where
 
 import           Control.Monad       (forM_)
 -- import           Data.Text           (append)
@@ -8,7 +7,7 @@ import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
 
-import           CalendarDay
+import           Calendar.Day
 
 
 isPast :: TimeOfDay -> TimeOfDay -> Bool

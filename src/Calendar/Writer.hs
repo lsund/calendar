@@ -1,12 +1,12 @@
-module Writer where
+module Calendar.Writer where
 
 
 import           Protolude
 
 import qualified Data.Text   as T
 
-import           CalendarDay
-import           Date
+import           Calendar.Day
+import           Calendar.Date
 
 
 dayToString :: CalendarDay -> Text

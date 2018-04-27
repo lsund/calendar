@@ -1,4 +1,4 @@
-module Parser where
+module Calendar.Parser where
 
 import           Data.Functor.Identity
 import           Data.Text                     (append, pack, unwords)
@@ -10,8 +10,8 @@ import           System.Directory
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
-import           CalendarDay
-import           Date
+import           Calendar.Day
+import           Calendar.Date
 
 type DayParser u = ParsecT String u Identity
 

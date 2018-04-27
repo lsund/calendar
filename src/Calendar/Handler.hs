@@ -1,4 +1,4 @@
-module Handler where
+module Calendar.Handler where
 
 import           Control.Monad.IO.Class (liftIO)
 import           Data.Time.LocalTime
@@ -9,9 +9,9 @@ import           Protolude              hiding (get)
 import           Web.Spock
 import           Web.Spock.Lucid        (lucid)
 
-import           CalendarDay
-import qualified Components             as C
-import           Database
+import           Calendar.Day
+import qualified Calendar.Components    as C
+import           Calendar.Database
 
 
 type Server a = SpockM () () () a

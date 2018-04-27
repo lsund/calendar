@@ -1,4 +1,4 @@
-module CalendarDay where
+module Calendar.Day where
 
 import           Data.Text           (unpack)
 import           Data.Time.Calendar

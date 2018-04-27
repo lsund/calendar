@@ -1,13 +1,13 @@
-module Database where
+module Calendar.Database where
 
 import           Database.PostgreSQL.Simple
 -- import           Database.PostgreSQL.Simple.Time
 import           Data.Time.Calendar
 import           Data.Time.LocalTime
-
-import           CalendarDay
-import           Parser
 import           Protolude
+
+import           Calendar.Day
+import           Calendar.Parser
 
 type EntryRow = (Int, Int, TimeOfDay, Text, Bool)
 

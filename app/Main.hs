@@ -2,7 +2,7 @@
 
 module Main where
 
-import           Handler
+import           Calendar.Handler
 
 import           Network.Wai.Middleware.Static
 import           Protolude
