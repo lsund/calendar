@@ -25,7 +25,7 @@ rootGET _ =
         d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
-        let dates = take 4 $ iterate succ d
+        let dates = take 14 $ iterate succ d
         days <- liftIO $ mapM getDay dates
         R.index tod days
 

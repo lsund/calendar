@@ -1,3 +1,19 @@
+.date {
+    margin-left: 15%;
+}
+
+.left div {
+    float: left;
+    clear: none;
+}
+
+.time {
+    width: 150px;
+}
+
+.desc {
+    width: 500px;
+}
 h1 {
     padding-left : 500px;
 }

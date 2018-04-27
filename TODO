@@ -32,7 +32,10 @@
 [x] Rename this to calendar
 [x] Separate module for query
 [x] Get connection once in main, then pass it to handler
+[ ] Delete from UI
 [ ] Low level refactoring.
 [ ] Styling
+[ ] Add goals. Each goal has a name and a time to be reached
+[ ] Support Tagging: tag a entry for the given goal, reduce time for that goal
 [ ] Add templates: Current day button -> Up comes preconf set of times
 [ ] Weather API (http://opendata.smhi.se/apidocs/metobs/index.html)
