@@ -5,7 +5,7 @@ import           Protolude
 
 import qualified Data.Text   as T
 
-import           Calendar.Day
+import           Calendar.Data.Day
 import           Calendar.Date
 
 

@@ -28,6 +28,7 @@
 [x] Create new day to database if it does not exist
 [x] Add weekdays next to date
 [ ] Refactoring
+[ ] Seperate module for renderer
 [ ] Styling
 [ ] Add templates: Current day button -> Up comes preconf set of times
 [ ] Weather API (http://opendata.smhi.se/apidocs/metobs/index.html)

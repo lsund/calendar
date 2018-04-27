@@ -11,7 +11,7 @@ import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
 import           Calendar.Date
-import           Calendar.Day
+import           Calendar.Data.Day
 
 type DayParser u = ParsecT String u Identity
 

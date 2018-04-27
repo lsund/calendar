@@ -1,17 +1,15 @@
 module Calendar.Handler where
 
-import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad.IO.Class     (liftIO)
 import           Data.Time.LocalTime
--- import Data.Time.Calendar
 import           Lucid
--- import           Prelude                (read)
-import           Protolude              hiding (get)
+import           Protolude                  hiding (get)
 import           Web.Spock
-import           Web.Spock.Lucid        (lucid)
+import           Web.Spock.Lucid            (lucid)
 
-import           Calendar.Day
-import qualified Calendar.Components    as C
 import           Calendar.Database.Internal
+import           Calendar.Data.Day
+import qualified Calendar.ViewComponents    as VC
 
 
 type Server a = SpockM () () () a
@@ -28,7 +26,7 @@ renderIndex t days =
             link_ [rel_ "stylesheet", href_ "mui.css"]
 
             h1_ $ toHtml (timeFormat t)
-            forM_ days $ \day -> C.day day t
+            forM_ days $ \day -> VC.day day t
 
 
 rootGET :: Server ()

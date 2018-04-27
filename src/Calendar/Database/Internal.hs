@@ -4,7 +4,7 @@ import           Database.PostgreSQL.Simple
 import           Data.Time.LocalTime
 import           Protolude
 
-import           Calendar.Day
+import           Calendar.Data.Day
 import           Calendar.File.Parser
 
 type EntryRow = (Int, Int, TimeOfDay, Text, Bool)

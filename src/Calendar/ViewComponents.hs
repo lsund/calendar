@@ -1,11 +1,11 @@
-module Calendar.Components where
+module Calendar.ViewComponents where
 
 import           Control.Monad       (forM_)
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
 
-import           Calendar.Day
+import           Calendar.Data.Day
 
 
 isPast :: TimeOfDay -> TimeOfDay -> Bool
