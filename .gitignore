@@ -3,3 +3,4 @@ planner.cabal
 data
 mui.css
 resources/sql
+*.cabal

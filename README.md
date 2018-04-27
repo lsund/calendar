@@ -1,4 +1,4 @@
 # Calendar
 
-This is a stupid application that I am developing to practice the haskell spock
-framework.
+This is a small webapp I made to get to know the Haskell Spock framework. Its
+purpose is limited.

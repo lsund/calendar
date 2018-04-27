@@ -29,6 +29,8 @@
 [x] Add weekdays next to date
 [x] Refactoring modules
 [x] Seperate module for renderer
+[ ] Rename this to calendar
+[ ] Separate module for query
 [ ] Get connection once in main, then pass it to handler
 [ ] Low level refactoring.
 [ ] Styling

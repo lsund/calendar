@@ -1,6 +1,6 @@
-name:                planner
+name:                calendar
 version:             0.1.0.0
-github:              "lsund/planner"
+github:              "lsund/calendar"
 license:             BSD3
 author:              "Ludvig Sundström"
 maintainer:          "lud.sund@gmail.com"
@@ -37,21 +37,21 @@ library:
     - src
 
 executables:
-  planner-exe:
+  calendar-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - planner
+    - calendar
 
 # tests:
-#   planner-test:
+#   calendar-test:
 #     main:                Spec.hs
 #     source-dirs:         test
 #     ghc-options:
 #     - -rtsopts
 #     - -with-rtsopts=-N
 #     dependencies:
-#     - planner
+#     - calendar
