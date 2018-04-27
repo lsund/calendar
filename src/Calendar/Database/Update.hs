@@ -6,12 +6,9 @@ import           Protolude
 
 import           Calendar.Data.Day
 import           Calendar.Data.Entry
-import           Calendar.Database.Internal
 
-
-updateEntry :: Int -> TimeOfDay -> Text -> Bool -> IO Int64
-updateEntry id ts desc isdone = do
-    conn <- makeConnection
+updateEntry :: Connection -> Int -> TimeOfDay -> Text -> Bool -> IO Int64
+updateEntry conn id ts desc isdone = do
     _                <- execute conn updateQ (ts, desc, isdone, id)
     return 1
     where
@@ -34,18 +31,16 @@ insertDay conn (Day id d es) = do
         insertQ = "insert into day (gregorian) values (?)"
 
 
-entryDone :: Int -> IO Int64
-entryDone id = do
-    conn <- makeConnection
+entryDone :: Connection -> Int -> IO Int64
+entryDone conn id = do
     _   <- execute conn updateQ (Only id)
     return 1
     where
         updateQ = "update entry set done=true where id=?"
 
 
-addEntry :: Int -> Entry -> IO Int64
-addEntry dayid (Entry _ ts desc isdone) = do
-    conn <- makeConnection
+addEntry :: Connection -> Int -> Entry -> IO Int64
+addEntry conn dayid (Entry _ ts desc isdone) =
     execute conn insertQ (dayid, ts, desc, isdone)
     where
         insertQ = "insert into entry (dayid, ts, description, done) values (?,?,?,?)"

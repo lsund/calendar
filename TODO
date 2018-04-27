@@ -27,8 +27,10 @@
 [x] Display day even if there is no entry
 [x] Create new day to database if it does not exist
 [x] Add weekdays next to date
-[ ] Refactoring
-[ ] Seperate module for renderer
+[x] Refactoring modules
+[x] Seperate module for renderer
+[ ] Get connection once in main, then pass it to handler
+[ ] Low level refactoring.
 [ ] Styling
 [ ] Add templates: Current day button -> Up comes preconf set of times
 [ ] Weather API (http://opendata.smhi.se/apidocs/metobs/index.html)
