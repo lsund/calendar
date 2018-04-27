@@ -30,8 +30,8 @@
 [x] Refactoring modules
 [x] Seperate module for renderer
 [x] Rename this to calendar
-[ ] Separate module for query
-[ ] Get connection once in main, then pass it to handler
+[x] Separate module for query
+[x] Get connection once in main, then pass it to handler
 [ ] Low level refactoring.
 [ ] Styling
 [ ] Add templates: Current day button -> Up comes preconf set of times

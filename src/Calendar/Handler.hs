@@ -4,9 +4,9 @@ import           Control.Monad.IO.Class     (liftIO)
 import           Data.Time.LocalTime
 import           Protolude                  hiding (get)
 import           Web.Spock
+import           Database.PostgreSQL.Simple
 
 import           Calendar.Data.Entry
-import           Calendar.Database.Internal
 import           Calendar.Database.Query
 import           Calendar.Database.Update
 import qualified Calendar.Renderer          as R
@@ -18,8 +18,8 @@ nfiles :: Int
 nfiles = 7
 
 
-rootGET :: Server ()
-rootGET =
+rootGET :: Connection -> Server ()
+rootGET _ =
     get root $ do
 
         d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
@@ -31,8 +31,8 @@ rootGET =
 
 
 
-addPOST :: Server ()
-addPOST =
+addPOST :: Connection -> Server ()
+addPOST conn =
     post "add" $ do
         h                <- param' "hour"
         m                <- param' "minute"
@@ -40,13 +40,12 @@ addPOST =
         id                <- param' "id"
         let e = Entry 0 (TimeOfDay h m 0) desc False
 
-        conn <- liftIO makeConnection
         _ <- liftIO $ insertEntry conn id e
         redirect "/"
 
 
-updatePOST :: Server ()
-updatePOST =
+updatePOST :: Connection -> Server ()
+updatePOST conn =
     post "update" $ do
         t <- param' "time"
         -- d <- param' "day"
@@ -54,18 +53,16 @@ updatePOST =
         id <- param' "id"
         done <- param' "done"
 
-        conn <- liftIO makeConnection
         _ <- liftIO $ updateEntry conn id t desc done
 
         redirect "/"
 
 
-donePOST :: Server ()
-donePOST =
+donePOST :: Connection -> Server ()
+donePOST conn =
     post "done" $ do
         id <- param' "id"
 
-        conn <- liftIO makeConnection
         _ <- liftIO $ entryDone conn id
 
         redirect "/"

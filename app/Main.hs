@@ -2,21 +2,23 @@
 
 module Main where
 
-import           Calendar.Handler
-
 import           Network.Wai.Middleware.Static
 import           Protolude
 import           Web.Spock
 import           Web.Spock.Config
 
+import           Calendar.Handler
+import           Calendar.Database.Internal
+
 
 app :: Server ()
 app = do
     middleware $ staticPolicy $ addBase "static"
-    rootGET
-    addPOST
-    updatePOST
-    donePOST
+    conn <- liftIO makeConnection
+    rootGET conn
+    addPOST conn
+    updatePOST conn
+    donePOST conn
 
 
 main :: IO ()
