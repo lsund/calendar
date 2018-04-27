@@ -1,33 +1,20 @@
 module Calendar.Handler where
 
-import           Control.Monad.IO.Class     (liftIO)
+import           Control.Monad.IO.Class   (liftIO)
 import           Data.Time.LocalTime
-import           Lucid
-import           Protolude                  hiding (get)
+import           Protolude                hiding (get)
 import           Web.Spock
-import           Web.Spock.Lucid            (lucid)
 
-import           Calendar.Data.Day
 import           Calendar.Data.Entry
-import           Calendar.Database.Internal
-import qualified Calendar.ViewComponents    as VC
+import           Calendar.Database.Query
+import           Calendar.Database.Update
+import qualified Calendar.Renderer        as R
 
 
 type Server a = SpockM () () () a
 
 nfiles :: Int
 nfiles = 7
-
-
-renderIndex :: (MonadIO m) => TimeOfDay -> [Day] -> ActionCtxT cxt m b
-renderIndex t days =
-    lucid $
-        div_ [class_ "mui-container"] $ do
-            link_ [rel_ "stylesheet", href_ "styles.css"]
-            link_ [rel_ "stylesheet", href_ "mui.css"]
-
-            h1_ $ toHtml (timeFormat t)
-            forM_ days $ \day -> VC.day day t
 
 
 rootGET :: Server ()
@@ -39,7 +26,7 @@ rootGET =
 
         let dates = take 4 $ iterate succ d
         days <- liftIO $ mapM getDay dates
-        renderIndex tod days
+        R.index tod days
 
 
 
