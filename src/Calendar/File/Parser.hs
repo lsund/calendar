@@ -1,4 +1,4 @@
-module Calendar.Parser where
+module Calendar.File.Parser where
 
 import           Data.Functor.Identity
 import           Data.Text                     (append, pack, unwords)

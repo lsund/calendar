@@ -11,7 +11,7 @@ import           Web.Spock.Lucid        (lucid)
 
 import           Calendar.Day
 import qualified Calendar.Components    as C
-import           Calendar.Database
+import           Calendar.Database.Internal
 
 
 type Server a = SpockM () () () a

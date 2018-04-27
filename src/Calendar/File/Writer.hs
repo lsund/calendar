@@ -1,4 +1,4 @@
-module Calendar.Writer where
+module Calendar.File.Writer where
 
 
 import           Protolude
