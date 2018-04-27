@@ -1,8 +1,6 @@
 module Calendar.Components where
 
 import           Control.Monad       (forM_)
--- import           Data.Text           (append)
-import           Data.Time.Calendar
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
@@ -36,7 +34,7 @@ buttonClasses = [class_ "mui-btn mui-btn--small"]
 -------------------------------------------------------------------------------
 -- Public API
 
-entry :: Day -> Entry -> HtmlT Identity ()
+entry :: Date -> Entry -> HtmlT Identity ()
 entry d e
     | _done e = div_ (toHtml (show e :: Text))
     | otherwise = do
@@ -74,8 +72,8 @@ newEntry id = do
             [type_ "submit", value_ "Add Entry"]
 
 
-day :: CalendarDay -> TimeOfDay -> HtmlT Identity ()
-day (CalendarDay id d es) ct =
+day :: Day -> TimeOfDay -> HtmlT Identity ()
+day (Day id d es) ct =
     div_ [class_ "day"] $ do
         h2_ $ toHtml (dayFormat d)
         ul_ $ forM_ (sortEntries es) (\e -> li_ (entryClasses e ct) $ entry d e)

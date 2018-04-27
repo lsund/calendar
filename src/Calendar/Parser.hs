@@ -2,7 +2,7 @@ module Calendar.Parser where
 
 import           Data.Functor.Identity
 import           Data.Text                     (append, pack, unwords)
-import           Data.Time.Calendar
+import           Data.Time.Calendar            (fromGregorian, toGregorian)
 import           Data.Time.LocalTime
 import           Prelude                       (String, read)
 import           Protolude                     hiding ((<|>))
@@ -10,13 +10,13 @@ import           System.Directory
 import           Text.Parsec
 import           Text.ParserCombinators.Parsec
 
-import           Calendar.Day
 import           Calendar.Date
+import           Calendar.Day
 
 type DayParser u = ParsecT String u Identity
 
 
-date :: DayParser () Day
+date :: DayParser () Date
 date = do
     y <- count 4 digit
     _ <- char '-'
@@ -54,15 +54,15 @@ entry = do
     ss <- word `sepBy` char ' '
     return $ Entry 0 t (unwords (map pack ss)) d
 
-content :: DayParser () CalendarDay
+content :: DayParser () Day
 content = do
     d <- date
     _ <- newline
     es <- entry `endBy` newline <* eof
-    return $ CalendarDay 0 d es
+    return $ Day 0 d es
 
 
-parseFile :: (Day, FilePath) -> IO (Either ParseError CalendarDay)
+parseFile :: (Date, FilePath) -> IO (Either ParseError Day)
 parseFile (day, s) = do
         let (y, m, d) = toGregorian day
             path = dateToPath day
@@ -74,7 +74,7 @@ parseFile (day, s) = do
         parseFromFile content s
 
 
-readDays :: Day -> Int -> IO [Either ParseError CalendarDay]
+readDays :: Date -> Int -> IO [Either ParseError Day]
 readDays d n = do
     let ds = iterate succ d
         fs = take n $ map dateToPath ds

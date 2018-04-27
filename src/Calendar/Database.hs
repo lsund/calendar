@@ -1,8 +1,6 @@
 module Calendar.Database where
 
 import           Database.PostgreSQL.Simple
--- import           Database.PostgreSQL.Simple.Time
-import           Data.Time.Calendar
 import           Data.Time.LocalTime
 import           Protolude
 
@@ -27,15 +25,15 @@ insertEntries conn dayid es =
         values = map entryToTuple es
 
 
-insertDay :: Connection -> CalendarDay -> IO Int64
-insertDay conn (CalendarDay id d es) = do
+insertDay :: Connection -> Day -> IO Int64
+insertDay conn (Day id d es) = do
     _                <- execute conn insertQ (Only d)
     insertEntries conn id es
     where
         insertQ = "insert into day (gregorian) values (?)"
 
 -- start at 14th april, 55 days
-insertDays :: Day -> Int -> IO ()
+insertDays :: Date -> Int -> IO ()
 insertDays start n = do
     conn <- makeConnection
     days <- liftIO $ readDays start n
@@ -74,18 +72,18 @@ addEntry dayid (Entry _ ts desc isdone) = do
         insertQ = "insert into entry (dayid, ts, description, done) values (?,?,?,?)"
 
 
-getDay :: Day -> IO CalendarDay
+getDay :: Date -> IO Day
 getDay d = do
     conn <- makeConnection
     ids <- query conn idQ (Only d) :: IO [Only Int]
     if null ids
         then do
-            _ <- insertDay conn (CalendarDay 0 d [])
+            _ <- insertDay conn (Day 0 d [])
             getDay d
         else do
             let (id : _) = ids
             res <- query conn entryQ  id :: IO [(Int, Int, TimeOfDay, Text, Bool)]
-            return $ CalendarDay (fromOnly id) d $ map makeEntry res
+            return $ Day (fromOnly id) d $ map makeEntry res
             where
                 idQ = "select id from day where gregorian=?"
                 entryQ = "select * from entry where dayid=?"
