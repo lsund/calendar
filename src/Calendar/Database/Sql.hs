@@ -16,3 +16,7 @@ insertEntry = "insert into entry (dayid, ts, description, done) values (?,?,?,?)
 
 insertDay :: Query
 insertDay = "insert into day (gregorian) values (?)"
+
+
+deleteEntry :: Query
+deleteEntry = "delete from entry where id=?"

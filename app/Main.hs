@@ -19,6 +19,7 @@ app = do
     addPOST conn
     updatePOST conn
     donePOST conn
+    deletePOST conn
 
 
 main :: IO ()

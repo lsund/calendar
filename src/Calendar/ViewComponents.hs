@@ -50,10 +50,15 @@ entry d e
                         input_ [class_ "desc", type_ "text", name_ "desc", value_ (_desc e :: Text)]
                         input_ [type_ "submit", value_ "update"]
 
-            div_ $
+            div_ [class_ "left"] $
                 form_ [method_ "post", action_ "done"] $ do
                     input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                     input_ [type_ "submit", value_ "done"]
+
+            div_  $
+                form_ [method_ "post", action_ "delete"] $ do
+                    input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                    input_ [type_ "submit", value_ "delete"]
 
 
 newEntry :: Int -> HtmlT Identity ()

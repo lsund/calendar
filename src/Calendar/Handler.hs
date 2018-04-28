@@ -15,7 +15,7 @@ import qualified Calendar.Renderer          as R
 type Server a = SpockM () () () a
 
 nfiles :: Int
-nfiles = 7
+nfiles = 45
 
 
 rootGET :: Connection -> Server ()
@@ -25,7 +25,7 @@ rootGET _ =
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
-        let dates = take 14 $ iterate succ d
+        let dates = take nfiles $ iterate succ d
         days <- liftIO $ mapM getDay dates
         R.index tod days
 
@@ -61,5 +61,14 @@ donePOST conn =
     post "done" $ do
         id <- param' "id"
         _ <- liftIO $ entryDone conn id
+
+        redirect "/"
+
+
+deletePOST :: Connection -> Server ()
+deletePOST conn =
+    post "delete" $ do
+        id <- param' "id"
+        _ <- liftIO $ deleteEntry conn id
 
         redirect "/"

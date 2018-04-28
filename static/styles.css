@@ -2,17 +2,12 @@
     margin-left: 15%;
 }
 
-.left div {
+.left {
     float: left;
     clear: none;
 }
-
 .time {
     width: 150px;
-}
-
-.desc {
-    width: 500px;
 }
 
 h1 {
@@ -57,15 +52,9 @@ ul {
     margin-left: -40;
 }
 
-.mui-textfield {
-    width: 800px;
-}
-
-form > div {
-    /* margin-left: 50px; */
-}
-
 .done {
+    margin-top: 10px;
+    margin-bottom: 10px;
     color       : grey;
     font-size   : 16px;
     height      : 32px;

@@ -32,7 +32,8 @@
 [x] Rename this to calendar
 [x] Separate module for query
 [x] Get connection once in main, then pass it to handler
-[ ] Delete from UI
+[x] Delete from UI
+[ ] Change POST to PUT, DELETE etc
 [ ] Low level refactoring.
 [ ] Styling
 [ ] Add goals. Each goal has a name and a time to be reached
