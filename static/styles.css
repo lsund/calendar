@@ -14,6 +14,7 @@
 .desc {
     width: 500px;
 }
+
 h1 {
     padding-left : 500px;
 }
@@ -32,8 +33,28 @@ h2 {
     margin-top: 50px;
 }
 
+.newentry {
+    margin-top: 50px;
+    margin-left: 12%;
+}
+
+.entries {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    margin-left: 12%;
+}
+
+form input {
+    margin-right: 10px;
+}
+
+form textarea {
+    margin-right: 10px;
+}
+
 ul {
     list-style-type : none;
+    margin-left: -40;
 }
 
 .mui-textfield {
@@ -42,10 +63,6 @@ ul {
 
 form > div {
     /* margin-left: 50px; */
-}
-
-.entry {
-    margin-left: 70px;
 }
 
 .done {

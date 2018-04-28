@@ -20,9 +20,9 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
 
 entryClasses :: Entry -> TimeOfDay -> [Attribute]
 entryClasses e _
-    | _done e             = [class_ "done mui--divider-bottom entry"]
+    | _done e             = [class_ "done mui--divider-bottom"]
     -- | ct `isPast` _time e = [class_ "past"]
-    | otherwise           = [class_ "mui-form--inline entry"]
+    | otherwise           = [class_ "mui-form--inline"]
 
 
 textClasses :: [Attribute]
@@ -57,20 +57,11 @@ entry d e
 
 
 newEntry :: Int -> HtmlT Identity ()
-newEntry id = do
-    h2_ "New Entry"
+newEntry id =
     form_ [method_ "post", action_ "add"] $ do
         input_ [type_ "hidden", name_ "id", value_ (show id)]
-        label_ $ do
-            "Hour:"
-            input_ [type_ "number", name_ "hour"]
-        label_ $ do
-            "Minute:"
-            input_ [type_ "number", name_ "minute"]
-        label_ $ do
-            "Description: "
-            textarea_ [name_ "desc"] ""
-        br_ []
+        input_ [class_ "time", type_ "text", name_ "time", value_ "00:00"]
+        textarea_ [name_ "desc"] ""
         input_
             [type_ "submit", value_ "Add Entry"]
 
@@ -79,7 +70,10 @@ day :: Day -> TimeOfDay -> HtmlT Identity ()
 day (Day id d es) ct =
     div_ [class_ "day"] $ do
         h2_ [class_ "date"] $ toHtml (dayFormat d)
-        div_ $
+        div_ [class_ "entries"] $
             ul_ $ forM_ (sortEntries es) (\e -> li_ (entryClasses e ct) $ entry d e)
-        div_ $
+
+        div_ [class_ "mui-divider"] ""
+
+        div_  [class_ "newentry"] $
             newEntry id

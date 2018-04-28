@@ -22,7 +22,7 @@ rootGET :: Connection -> Server ()
 rootGET _ =
     get root $ do
 
-        d <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
         let dates = take 14 $ iterate succ d
@@ -34,11 +34,10 @@ rootGET _ =
 addPOST :: Connection -> Server ()
 addPOST conn =
     post "add" $ do
-        h                <- param' "hour"
-        m                <- param' "minute"
-        desc             <- param' "desc"
-        id                <- param' "id"
-        let e = Entry 0 (TimeOfDay h m 0) desc False
+        time <- param' "time"
+        desc <- param' "desc"
+        id   <- param' "id"
+        let e = Entry 0 time desc False
 
         _ <- liftIO $ insertEntry conn id e
         redirect "/"
@@ -47,10 +46,9 @@ addPOST conn =
 updatePOST :: Connection -> Server ()
 updatePOST conn =
     post "update" $ do
-        t <- param' "time"
-        -- d <- param' "day"
+        t    <- param' "time"
         desc <- param' "desc"
-        id <- param' "id"
+        id   <- param' "id"
         done <- param' "done"
 
         _ <- liftIO $ updateEntry conn id t desc done
@@ -62,7 +60,6 @@ donePOST :: Connection -> Server ()
 donePOST conn =
     post "done" $ do
         id <- param' "id"
-
         _ <- liftIO $ entryDone conn id
 
         redirect "/"
