@@ -1,3 +1,9 @@
+.day {
+    background-color: #f2f2f2;
+    border: 2px solid black;
+    margin-top: 50px;
+}
+
 .date {
     width: 150px;
     float: left;
@@ -9,7 +15,13 @@
 .new {
     margin-top: 50px;
     display: inline-block;
-    width: 600px;
+    width: 800px;
+}
+
+.entries {
+    margin-left: 150px;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .time {
@@ -20,8 +32,17 @@
     width: 400px;
 }
 
-.newform {
-    width: 800px;
+.done {
+    margin-top    : 10px;
+    margin-bottom : 10px;
+    color         : grey;
+    font-size     : 16px;
+    height        : 32px;
+    width         : 470px;
+}
+
+input.submit {
+    margin-left: 10px;
 }
 
 form {
@@ -32,37 +53,8 @@ h1 {
     padding-left : 500px;
 }
 
-.day {
-    background-color: #f2f2f2;
-    border: 2px solid black;
-    margin-top: 50px;
-}
-
-.header {
-    display: inline-block;
-}
-
-.entries {
-    margin-left: 150px;
-    margin-top: 50px;
-    margin-bottom: 50px;
-}
-
-form input {
-    margin-right: 10px;
-}
-
 ul {
     list-style-type : none;
     margin-left: -40;
-}
-
-.done {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    color       : grey;
-    font-size   : 16px;
-    height      : 32px;
-    width       : 800px;
 }
 
