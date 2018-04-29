@@ -1,25 +1,35 @@
 .date {
-    margin-left: 15%;
+    width: 150px;
+    float: left;
+    display: inline-block;
+    height: 100px;
+    text-align: center;
 }
 
-.left {
-    float: left;
-    clear: none;
+.new {
+    margin-top: 50px;
+    display: inline-block;
+    width: 600px;
 }
+
 .time {
-    width: 150px;
+    width: 100px;
+}
+
+.desc {
+    width: 400px;
+}
+
+.newform {
+    width: 800px;
+}
+
+form {
+    display: inline-block;
 }
 
 h1 {
     padding-left : 500px;
-}
-
-h2 {
-    padding-left : 235px;
-}
-
-.past {
-    color: grey;
 }
 
 .day {
@@ -28,22 +38,17 @@ h2 {
     margin-top: 50px;
 }
 
-.newentry {
-    margin-top: 50px;
-    margin-left: 12%;
+.header {
+    display: inline-block;
 }
 
 .entries {
+    margin-left: 150px;
     margin-top: 50px;
     margin-bottom: 50px;
-    margin-left: 12%;
 }
 
 form input {
-    margin-right: 10px;
-}
-
-form textarea {
     margin-right: 10px;
 }
 
