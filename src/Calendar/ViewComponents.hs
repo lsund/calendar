@@ -1,6 +1,7 @@
 module Calendar.ViewComponents where
 
 import           Control.Monad       (forM_)
+import           Data.Text           as T
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
@@ -45,7 +46,7 @@ entry d e
                 input_ [type_ "hidden", name_ "day", value_ (show d)]
                 input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
                 div_ [class_ "time mui-textfield"] $
-                    input_ [type_ "text", name_ "time", value_ (show $ _time e)]
+                    input_ [type_ "text", name_ "time", value_ $ T.take 5 (show $ _time e)]
                 div_ [class_ "desc mui-textfield"] $
                     input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
                 input_ [class_ "mui-btn mui-btn--primary", type_ "submit", value_ "update"]
