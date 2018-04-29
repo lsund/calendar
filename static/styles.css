@@ -5,6 +5,7 @@
 }
 
 .date {
+    margin-left: 10px;
     width: 150px;
     float: left;
     display: inline-block;
@@ -14,12 +15,13 @@
 
 .new {
     margin-top: 50px;
+    margin-left: 50px;
     display: inline-block;
     width: 800px;
 }
 
 .entries {
-    margin-left: 150px;
+    margin-left: 200px;
     margin-top: 50px;
     margin-bottom: 50px;
 }
@@ -29,7 +31,11 @@
 }
 
 .desc {
-    width: 400px;
+    width: 350px;
+}
+
+.sep {
+    margin-top: 50px;
 }
 
 .done {
@@ -38,7 +44,7 @@
     color         : grey;
     font-size     : 16px;
     height        : 32px;
-    width         : 470px;
+    width         : 420px;
 }
 
 input.submit {

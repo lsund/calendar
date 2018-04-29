@@ -44,7 +44,7 @@ entry d e
         span_ $
             form_ [class_ C.form, method_ "post", action_ "delete"] $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
-                input_ [class_ C.button, type_ "submit", value_ "delete"]
+                input_ [class_ C.button, type_ "submit", value_ "del"]
 
 
 newEntry :: Int -> HtmlT Identity ()
@@ -64,5 +64,6 @@ day (Day id d es) ct =
     div_ [class_ "day"] $ do
         div_ [class_ "date"] $ h2_ $ toHtml (dayFormat d)
         div_ [class_ "new"] $ newEntry id
+        div_ [class_ "sep mui-divider"] ""
         div_ [class_ "entries"] $
             ul_ $ forM_ (sortEntries es) (\e -> li_ [class_ $ C.entry e ct] $ entry d e)
