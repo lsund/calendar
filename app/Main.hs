@@ -4,25 +4,25 @@ module Main where
 
 import           Network.Wai.Middleware.Static
 import           Protolude
-import           Web.Spock
+import qualified Web.Spock                     as S
 import           Web.Spock.Config
 
-import           Calendar.Handler
 import           Calendar.Database.Internal
+import           Calendar.Handler
 
 
 app :: Server ()
 app = do
-    middleware $ staticPolicy $ addBase "static"
+    S.middleware $ staticPolicy $ addBase "static"
     conn <- liftIO makeConnection
-    rootGET conn
-    addPOST conn
-    updatePOST conn
-    donePOST conn
-    deletePOST conn
+    getRoot conn
+    add conn
+    update conn
+    done conn
+    delete conn
 
 
 main :: IO ()
 main = do
     cfg <- defaultSpockCfg () PCNoDatabase ()
-    runSpock 8080 (spock cfg app)
+    S.runSpock 8080 (S.spock cfg app)

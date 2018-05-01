@@ -33,9 +33,9 @@
 [x] Separate module for query
 [x] Get connection once in main, then pass it to handler
 [x] Delete from UI
-[ ] Change POST to PUT, DELETE etc
+[x] Change POST to PUT, DELETE etc
+[x] Styling
 [ ] Low level refactoring.
-[ ] Styling
 [ ] Add goals. Each goal has a name and a time to be reached
 [ ] Support Tagging: tag a entry for the given goal, reduce time for that goal
 [ ] Add templates: Current day button -> Up comes preconf set of times

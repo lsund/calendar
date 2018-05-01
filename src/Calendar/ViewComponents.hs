@@ -23,7 +23,10 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
 
 entry :: Date -> Entry -> HtmlT Identity ()
 entry d e
-    | _done e = div_ (toHtml (show e :: Text))
+    | _done e = do
+        span_ (toHtml (T.take 5 $ show $ _time e :: Text))
+        span_ [class_ "sep-x"] (toHtml ("" :: Text))
+        span_ (toHtml (_desc e :: Text))
     | otherwise = do
         span_ $
             form_ [class_ C.form, method_ "post", action_ "update"] $ do
@@ -64,6 +67,6 @@ day (Day id d es) ct =
     div_ [class_ "day"] $ do
         div_ [class_ "date"] $ h2_ $ toHtml (dayFormat d)
         div_ [class_ "new"] $ newEntry id
-        div_ [class_ "sep mui-divider"] ""
+        div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
             ul_ $ forM_ (sortEntries es) (\e -> li_ [class_ $ C.entry e ct] $ entry d e)

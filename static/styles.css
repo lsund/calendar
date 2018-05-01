@@ -27,14 +27,19 @@
 }
 
 .time {
-    width: 70px;
+    width: 55px;
 }
 
 .desc {
+    margin-left: 10px;
     width: 350px;
 }
 
-.sep {
+.sep-x {
+    margin-left: 20px;
+}
+
+.sep-y {
     margin-top: 50px;
 }
 
