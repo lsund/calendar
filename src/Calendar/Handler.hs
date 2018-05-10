@@ -1,13 +1,16 @@
 module Calendar.Handler where
 
-import Data.Text.Lazy (pack)
-import Data.Text.Lazy.Encoding (encodeUtf8)
+import Prelude (String)
 import           Control.Monad.IO.Class     (liftIO)
 import           Data.Aeson
+import qualified           Data.HashMap.Strict as M
+import Data.HashMap.Strict (HashMap)
+import           Data.Text.Lazy             (pack)
+import           Data.Text.Lazy.Encoding    (encodeUtf8)
 import           Data.Time.LocalTime
 import           Database.PostgreSQL.Simple
 import           Network.Curl
-import           Protolude hiding (encodeUtf8)
+import           Protolude                  hiding (encodeUtf8)
 import qualified Web.Spock                  as S
 
 import           Calendar.Data.Entry
@@ -21,13 +24,25 @@ type Server a = S.SpockM () () () a
 nfiles :: Int
 nfiles = 45
 
+readJSON :: String -> Maybe (HashMap Text Value)
+readJSON = decode . encodeUtf8 . pack
+
+-- lookupValue :: Text -> HashMap Text Value -> Maybe Value
+-- lookupValue k m = lookup k m
+-- lookupValue k _ = Nothing
+--
+toObject :: Value -> Object
+toObject (Object o) = o
+toObject _ = M.empty
 
 getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
 
-        (stat, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/weather?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
-        print ((decode $ encodeUtf8 $ pack resp) :: Maybe Char)
+        (_, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/weather?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
+        let val = readJSON resp >>= M.lookup "main" >>= M.lookup "temp" . toObject
+        -- print (lookupValue "main" val)
+        print val
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime

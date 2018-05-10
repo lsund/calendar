@@ -33,6 +33,7 @@ dependencies:
 - postgresql-simple
 - curl
 - aeson
+- unordered-containers
 
 library:
   source-dirs:
