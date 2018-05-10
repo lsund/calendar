@@ -1,10 +1,13 @@
 module Calendar.Handler where
 
+import Data.Text.Lazy (pack)
+import Data.Text.Lazy.Encoding (encodeUtf8)
 import           Control.Monad.IO.Class     (liftIO)
+import           Data.Aeson
 import           Data.Time.LocalTime
 import           Database.PostgreSQL.Simple
 import           Network.Curl
-import           Protolude
+import           Protolude hiding (encodeUtf8)
 import qualified Web.Spock                  as S
 
 import           Calendar.Data.Entry
@@ -24,7 +27,7 @@ getRoot _ =
     S.get S.root $ do
 
         (stat, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/weather?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
-        print stat
+        print ((decode $ encodeUtf8 $ pack resp) :: Maybe Char)
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
