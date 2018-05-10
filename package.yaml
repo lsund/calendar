@@ -32,6 +32,7 @@ dependencies:
 - directory
 - postgresql-simple
 - curl
+- aeson
 
 library:
   source-dirs:

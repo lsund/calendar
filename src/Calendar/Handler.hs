@@ -3,6 +3,7 @@ module Calendar.Handler where
 import           Control.Monad.IO.Class     (liftIO)
 import           Data.Time.LocalTime
 import           Database.PostgreSQL.Simple
+import           Network.Curl
 import           Protolude
 import qualified Web.Spock                  as S
 
@@ -21,6 +22,9 @@ nfiles = 45
 getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
+
+        (stat, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/weather?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
+        print stat
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
