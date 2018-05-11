@@ -1,15 +1,17 @@
 module Calendar.Handler where
 
-import Prelude (String)
 import           Control.Monad.IO.Class     (liftIO)
 import           Data.Aeson
-import qualified           Data.HashMap.Strict as M
-import Data.HashMap.Strict (HashMap)
+import           Data.HashMap.Strict        (HashMap)
+import qualified Data.HashMap.Strict        as M
 import           Data.Text.Lazy             (pack)
 import           Data.Text.Lazy.Encoding    (encodeUtf8)
 import           Data.Time.LocalTime
+import           Data.Vector ((!), Vector(..))
+import qualified Data.Vector as V
 import           Database.PostgreSQL.Simple
 import           Network.Curl
+import           Prelude                    (String)
 import           Protolude                  hiding (encodeUtf8)
 import qualified Web.Spock                  as S
 
@@ -29,22 +31,48 @@ readJSON = decode . encodeUtf8 . pack
 
 toObject :: Value -> Object
 toObject (Object o) = o
-toObject _ = M.empty
+toObject _          = M.empty
+
+toVector :: Value -> Vector Value
+toVector (Array v) = v
+toVector _          = V.empty
+
+getTemp :: Object -> Maybe Value
+getTemp o = M.lookup "main" o >>= M.lookup "temp" . toObject
+
+getDesc :: Object -> Maybe Value
+getDesc o =
+    let weather = (! 0) <$> toVector <$> M.lookup "weather" o
+    in weather >>= M.lookup "main" . toObject
+
+getTime :: Object -> Maybe Value
+getTime = M.lookup "dt_txt"
+
+apply3 :: (a -> b) -> (a -> c) -> (a -> d) -> [a] -> [(b, c, d)]
+apply3 _ _ _  [] = []
+apply3 f g h (x : xs) = (f x, g x, h x) : apply3 f g h xs
 
 getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
 
-        (_, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/weather?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
-        let (Just (Number x)) = readJSON resp >>= M.lookup "main" >>= M.lookup "temp" . toObject
-            temp =  x - 273.15
+        (_, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/forecast?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
+        -- let (Just (Number x)) = readJSON resp >>= M.lookup "list" >>= M.lookup "0" . toObject >>= M.lookup "main" .toObject
+        let (Just (Array days)) = readJSON resp >>= M.lookup "list"
+            objs = map toObject days
+        -- print  $ map getTemp objs
+        -- print  $ map getDesc objs
+        -- print $ map getTime objs
+            -- temp =  x - 273.15
+
+        print $ apply3 getTemp getDesc getTime (V.toList objs)
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
         let dates = take nfiles $ iterate succ d
         days <- liftIO $ mapM getDay dates
-        R.index temp tod days
+        R.index 0 tod days
 
 
 add :: Connection -> Server ()

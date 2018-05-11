@@ -35,9 +35,10 @@
 [x] Delete from UI
 [x] Change POST to PUT, DELETE etc
 [x] Styling
+[x] Weather API api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=0225725c608003e41c3e7936f6e6700b
+[ ] Group weather data for day / extract just at 12:00
 [ ] Put each day in seperate url like GET /2018/01/05
 [ ] Low level refactoring.
 [ ] Add goals. Each goal has a name and a time to be reached
 [ ] Support Tagging: tag a entry for the given goal, reduce time for that goal
 [ ] Add templates: Current day button -> Up comes preconf set of times
-[ ] Weather API api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=0225725c608003e41c3e7936f6e6700b
