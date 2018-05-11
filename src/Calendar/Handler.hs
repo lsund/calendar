@@ -27,10 +27,6 @@ nfiles = 45
 readJSON :: String -> Maybe (HashMap Text Value)
 readJSON = decode . encodeUtf8 . pack
 
--- lookupValue :: Text -> HashMap Text Value -> Maybe Value
--- lookupValue k m = lookup k m
--- lookupValue k _ = Nothing
---
 toObject :: Value -> Object
 toObject (Object o) = o
 toObject _ = M.empty
@@ -40,17 +36,15 @@ getRoot _ =
     S.get S.root $ do
 
         (_, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/weather?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
-        let val = readJSON resp >>= M.lookup "main" >>= M.lookup "temp" . toObject
-        -- print (lookupValue "main" val)
-        print val
+        let (Just (Number x)) = readJSON resp >>= M.lookup "main" >>= M.lookup "temp" . toObject
+            temp =  x - 273.15
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
         let dates = take nfiles $ iterate succ d
         days <- liftIO $ mapM getDay dates
-        R.index tod days
-
+        R.index temp tod days
 
 
 add :: Connection -> Server ()
