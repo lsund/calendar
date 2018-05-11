@@ -7,8 +7,8 @@ import qualified Data.HashMap.Strict        as M
 import           Data.Text.Lazy             (pack)
 import           Data.Text.Lazy.Encoding    (encodeUtf8)
 import           Data.Time.LocalTime
-import           Data.Vector ((!), Vector(..))
-import qualified Data.Vector as V
+import           Data.Vector                (Vector (..), (!))
+import qualified Data.Vector                as V
 import           Database.PostgreSQL.Simple
 import           Network.Curl
 import           Prelude                    (String)
@@ -19,6 +19,7 @@ import           Calendar.Data.Entry
 import           Calendar.Database.Query
 import           Calendar.Database.Update
 import qualified Calendar.Renderer          as R
+import           Calendar.Util
 
 
 type Server a = S.SpockM () () () a
@@ -35,7 +36,7 @@ toObject _          = M.empty
 
 toVector :: Value -> Vector Value
 toVector (Array v) = v
-toVector _          = V.empty
+toVector _         = V.empty
 
 getTemp :: Object -> Maybe Value
 getTemp o = M.lookup "main" o >>= M.lookup "temp" . toObject
@@ -48,21 +49,13 @@ getDesc o =
 getTime :: Object -> Maybe Value
 getTime = M.lookup "dt_txt"
 
-apply3 :: (a -> b) -> (a -> c) -> (a -> d) -> [a] -> [(b, c, d)]
-apply3 _ _ _  [] = []
-apply3 f g h (x : xs) = (f x, g x, h x) : apply3 f g h xs
-
 getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
 
         (_, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/forecast?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
-        -- let (Just (Number x)) = readJSON resp >>= M.lookup "list" >>= M.lookup "0" . toObject >>= M.lookup "main" .toObject
         let (Just (Array days)) = readJSON resp >>= M.lookup "list"
             objs = map toObject days
-        -- print  $ map getTemp objs
-        -- print  $ map getDesc objs
-        -- print $ map getTime objs
             -- temp =  x - 273.15
 
         print $ apply3 getTemp getDesc getTime (V.toList objs)
