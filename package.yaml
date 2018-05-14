@@ -35,6 +35,7 @@ dependencies:
 - aeson
 - unordered-containers
 - vector
+- scientific
 
 library:
   source-dirs:

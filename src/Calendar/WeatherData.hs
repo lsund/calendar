@@ -12,6 +12,13 @@ import           Network.Curl
 import           Prelude                 (String)
 import           Protolude               hiding (encodeUtf8)
 
+-- type WeatherData = WeatherData Int Text
+type WeatherData = (Value, Value, Value)
+
+queryString = "http://api.openweathermap.org/data/2.5/forecast?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b"
+
+-- toWeatherData :: (Value, Value, Value) -> WeatherData
+
 readJSON :: String -> Maybe (HashMap Text Value)
 readJSON = decode . encodeUtf8 . pack
 
@@ -34,10 +41,9 @@ getDesc o =
 getTime :: Object -> Maybe Value
 getTime = M.lookup "dt_txt"
 
-getForecast :: IO [(Maybe Value, Maybe Value, Maybe Value)]
+getForecast :: IO [Maybe WeatherData]
 getForecast = do
-        (_, resp) <- liftIO $ curlGetString "http://api.openweathermap.org/data/2.5/forecast?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b" []
+        (_, resp) <- liftIO $ curlGetString queryString []
         let (Just (Array days)) = readJSON resp >>= M.lookup "list"
             objs = map toObject days
-            -- temp =  x - 273.15
-        return $ apply3 getTemp getDesc getTime (V.toList objs)
+        return $ map sequence3 $ apply3 getTemp getDesc getTime (V.toList objs)
