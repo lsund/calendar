@@ -59,12 +59,12 @@ toVector (Array v) = v
 toVector _         = V.empty
 
 
-closestToNoon :: [Maybe WeatherData] -> Maybe WeatherData
-closestToNoon =
-    fromMaybe Nothing . find compMidday
+closestToMidday :: [Maybe WeatherData] -> Maybe WeatherData
+closestToMidday =
+    fromMaybe Nothing . find atLeastMidday
     where
-        compMidday (Just x) = (localTimeOfDay . _time) x >= midday
-        compMidday Nothing  = False
+        atLeastMidday (Just x) = (localTimeOfDay . _time) x >= midday
+        atLeastMidday Nothing  = False
 
 
 sameDay :: Maybe WeatherData -> Maybe WeatherData -> Bool
@@ -82,10 +82,12 @@ getValues = map sequence3 . apply3 getTemp getDesc getTime
             in weather >>= M.lookup "main" . toObject
 
 
-getForecast :: IO [Maybe WeatherData]
+getForecast :: IO (Maybe [WeatherData])
 getForecast = do
         (_, resp) <- liftIO $ curlGetString queryString []
+
         let (Just (Array days)) = readJSON resp >>= M.lookup "list"
             values = getValues $ V.toList $ map toObject days
             datas  = groupBy sameDay $ map toWeatherData values
-        return $ map closestToNoon datas
+
+        return $ mapM closestToMidday datas

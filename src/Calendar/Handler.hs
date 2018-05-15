@@ -23,7 +23,7 @@ getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
 
-        fc <- liftIO getForecast
+        (Just fc) <- liftIO getForecast
         print fc
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
