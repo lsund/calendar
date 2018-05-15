@@ -37,9 +37,12 @@ queryString :: String
 queryString = apiEntry ++ url
 
 
+zeroKelvin :: Double
+zeroKelvin = 273.15
+
 toWeatherData :: Maybe (Value, Value, Value) -> Maybe WeatherData
 toWeatherData (Just (Number x, String desc, String timeString)) =
-    let temp = toRealFloat x
+    let temp = toRealFloat x - zeroKelvin
         time = parseTimeOrError True defaultTimeLocale "%F %X" (unpack timeString)
     in Just (WeatherData temp desc time)
 toWeatherData _ = Nothing
