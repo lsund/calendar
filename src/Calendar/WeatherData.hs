@@ -18,20 +18,24 @@ import           Network.Curl
 import           Prelude                 (String)
 import           Protolude               hiding (encodeUtf8)
 
-data WeatherData =
-    WeatherData { _temp :: Double
-                , _desc :: Text
-                , _time :: LocalTime
-                } deriving (Show)
+data WeatherData = WeatherData
+        { _temp :: Double
+        , _desc :: Text
+        , _time :: LocalTime
+        } deriving (Show)
+
 
 apiEntry :: String
 apiEntry = "http://api.openweathermap.org"
 
+
 url :: String
 url = "/data/2.5/forecast?q=Dusseldorf,de&APPID=0225725c608003e41c3e7936f6e6700b"
 
+
 queryString :: String
 queryString = apiEntry ++ url
+
 
 toWeatherData :: Maybe (Value, Value, Value) -> Maybe WeatherData
 toWeatherData (Just (Number x, String desc, String timeString)) =
@@ -40,27 +44,19 @@ toWeatherData (Just (Number x, String desc, String timeString)) =
     in Just (WeatherData temp desc time)
 toWeatherData _ = Nothing
 
+
 readJSON :: String -> Maybe (HashMap Text Value)
 readJSON = decode . encodeUtf8 . pack
+
 
 toObject :: Value -> Object
 toObject (Object o) = o
 toObject _          = M.empty
 
+
 toVector :: Value -> Vector Value
 toVector (Array v) = v
 toVector _         = V.empty
-
-getTemp :: Object -> Maybe Value
-getTemp o = M.lookup "main" o >>= M.lookup "temp" . toObject
-
-getDesc :: Object -> Maybe Value
-getDesc o =
-    let weather = (! 0) . toVector <$> M.lookup "weather" o
-    in weather >>= M.lookup "main" . toObject
-
-getTime :: Object -> Maybe Value
-getTime = M.lookup "dt_txt"
 
 
 closestToNoon :: [Maybe WeatherData] -> Maybe WeatherData
@@ -71,16 +67,25 @@ closestToNoon =
         compMidday Nothing  = False
 
 
+sameDay :: Maybe WeatherData -> Maybe WeatherData -> Bool
+sameDay (Just d1) (Just d2) = (localDay . _time) d1 == (localDay . _time) d2
+sameDay _ _ = False
+
+
+getValues :: [Object] -> [Maybe (Value, Value, Value)]
+getValues = map sequence3 . apply3 getTemp getDesc getTime
+    where
+        getTemp o = M.lookup "main" o >>= M.lookup "temp" . toObject
+        getTime = M.lookup "dt_txt"
+        getDesc o =
+            let weather = (! 0) . toVector <$> M.lookup "weather" o
+            in weather >>= M.lookup "main" . toObject
+
+
 getForecast :: IO [Maybe WeatherData]
 getForecast = do
         (_, resp) <- liftIO $ curlGetString queryString []
         let (Just (Array days)) = readJSON resp >>= M.lookup "list"
-            objs    = map toObject days
-            triples = map sequence3 $ apply3 getTemp getDesc getTime (V.toList objs)
-            datas   = map toWeatherData triples
-            groups =  groupBy sameDay datas
-        return $ map closestToNoon groups
-        where
-            sameDay (Just (WeatherData _ _ d1)) (Just (WeatherData _ _ d2)) =
-                localDay d1 == localDay d2
-            sameDay _ _ = False
+            values = getValues $ V.toList $ map toObject days
+            datas  = groupBy sameDay $ map toWeatherData values
+        return $ map closestToNoon datas

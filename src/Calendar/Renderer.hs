@@ -12,7 +12,11 @@ import qualified Calendar.ViewComponents    as VC
 
 -- type Temperature = Double
 
-index :: (Show a, Num a, MonadIO m) => a -> TimeOfDay -> [Day] -> ActionCtxT cxt m b
+index :: (Show a, Num a, MonadIO m)
+          => a
+          -> TimeOfDay
+          -> [Day]
+          -> ActionCtxT cxt m b
 index temp t days =
     lucid $
         div_ [class_ "mui-container"] $ do
@@ -21,5 +25,3 @@ index temp t days =
 
             h1_ $ toHtml $ timeFormat t <> ", Temp: " <> (show temp :: String)
             forM_ days $ \day -> VC.day day t
-
-
