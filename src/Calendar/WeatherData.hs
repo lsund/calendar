@@ -18,6 +18,7 @@ import           Network.Curl
 import           Prelude                 (String)
 import           Protolude               hiding (encodeUtf8)
 
+
 data WeatherData = WeatherData
         { _temp :: Double
         , _desc :: Text
@@ -39,6 +40,7 @@ queryString = apiEntry ++ url
 
 zeroKelvin :: Double
 zeroKelvin = 273.15
+
 
 toWeatherData :: Maybe (Value, Value, Value) -> Maybe WeatherData
 toWeatherData (Just (Number x, String desc, String timeString)) =
@@ -63,10 +65,10 @@ toVector _         = V.empty
 
 
 closestToMidday :: [Maybe WeatherData] -> Maybe WeatherData
-closestToMidday =
-    fromMaybe Nothing . find atLeastMidday
+closestToMidday []       = Nothing
+closestToMidday (x : xs) = (fromMaybe x . find atLeastMidday) xs
     where
-        atLeastMidday (Just x) = (localTimeOfDay . _time) x >= midday
+        atLeastMidday (Just x') = (localTimeOfDay . _time) x' >= midday
         atLeastMidday Nothing  = False
 
 
