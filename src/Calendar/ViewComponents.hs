@@ -9,6 +9,8 @@ import           Protolude
 import qualified Calendar.CssClasses as C
 import           Calendar.Data.Day
 import           Calendar.Data.Entry
+import           Calendar.Forecast (Weather)
+import qualified Calendar.Forecast as FC
 
 
 isPast :: TimeOfDay -> TimeOfDay -> Bool
@@ -62,9 +64,14 @@ newEntry id =
             [class_ C.button, type_ "submit", value_ "Add Entry"]
 
 
-day :: Day -> TimeOfDay -> HtmlT Identity ()
-day (Day id d es) ct =
+day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
+day (Day id d es) wd ct =
     div_ [class_ "day"] $ do
+        div_ [class_ "weather"] $
+            if isJust wd then
+                let Just (FC.Weather temp desc t) = wd
+                in toHtml (show (round temp) <> " degrees " <> desc <> " at time: " <> show t)
+            else "No data"
         div_ [class_ "date"] $ h2_ $ toHtml (dayFormat d)
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
