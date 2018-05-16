@@ -10,7 +10,7 @@ import           Calendar.Data.Entry
 import           Calendar.Database.Query
 import           Calendar.Database.Update
 import qualified Calendar.Renderer          as R
-import           Calendar.WeatherData
+import           Calendar.Forecast
 
 
 type Server a = S.SpockM () () () a
@@ -23,7 +23,8 @@ getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
 
-        fc <- liftIO getForecast
+        (Just fc) <- liftIO getForecast
+
         print fc
 
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
@@ -31,7 +32,7 @@ getRoot _ =
 
         let dates = take nfiles $ iterate succ d
         days <- liftIO $ mapM getDay dates
-        R.index 0 tod days
+        R.index 0 tod days fc
 
 
 add :: Connection -> Server ()

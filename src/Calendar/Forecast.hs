@@ -1,4 +1,4 @@
-module Calendar.WeatherData where
+module Calendar.Forecast where
 
 import           Calendar.Util
 import           Data.Aeson
@@ -19,7 +19,7 @@ import           Prelude                 (String)
 import           Protolude               hiding (encodeUtf8)
 
 
-data WeatherData = WeatherData
+data Weather = Weather
         { _temp :: Double
         , _desc :: Text
         , _time :: LocalTime
@@ -42,12 +42,12 @@ zeroKelvin :: Double
 zeroKelvin = 273.15
 
 
-toWeatherData :: Maybe (Value, Value, Value) -> Maybe WeatherData
-toWeatherData (Just (Number x, String desc, String timeString)) =
+toWeather :: Maybe (Value, Value, Value) -> Maybe Weather
+toWeather (Just (Number x, String desc, String timeString)) =
     let temp = toRealFloat x - zeroKelvin
         time = parseTimeOrError True defaultTimeLocale "%F %X" (unpack timeString)
-    in Just (WeatherData temp desc time)
-toWeatherData _ = Nothing
+    in Just (Weather temp desc time)
+toWeather _ = Nothing
 
 
 readJSON :: String -> Maybe (HashMap Text Value)
@@ -64,7 +64,7 @@ toVector (Array v) = v
 toVector _         = V.empty
 
 
-closestToMidday :: [Maybe WeatherData] -> Maybe WeatherData
+closestToMidday :: [Maybe Weather] -> Maybe Weather
 closestToMidday []       = Nothing
 closestToMidday (x : xs) = (fromMaybe x . find atLeastMidday) xs
     where
@@ -72,7 +72,7 @@ closestToMidday (x : xs) = (fromMaybe x . find atLeastMidday) xs
         atLeastMidday Nothing  = False
 
 
-sameDay :: Maybe WeatherData -> Maybe WeatherData -> Bool
+sameDay :: Maybe Weather -> Maybe Weather -> Bool
 sameDay (Just d1) (Just d2) = (localDay . _time) d1 == (localDay . _time) d2
 sameDay _ _ = False
 
@@ -87,12 +87,12 @@ getValues = map sequence3 . apply3 getTemp getDesc getTime
             in weather >>= M.lookup "main" . toObject
 
 
-getForecast :: IO (Maybe [WeatherData])
+getForecast :: IO (Maybe [Weather])
 getForecast = do
         (_, resp) <- liftIO $ curlGetString queryString []
 
         let (Just (Array days)) = readJSON resp >>= M.lookup "list"
             values = getValues $ V.toList $ map toObject days
-            datas  = groupBy sameDay $ map toWeatherData values
+            datas  = groupBy sameDay $ map toWeather values
 
         return $ mapM closestToMidday datas

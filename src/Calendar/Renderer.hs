@@ -1,23 +1,26 @@
 module Calendar.Renderer where
 
-import           Protolude
 import           Data.Time.LocalTime
-import           Web.Spock
-import           Web.Spock.Lucid            (lucid)
 import           Lucid
-import Prelude (String)
+import           Prelude                 (String)
+import           Protolude
+import           Web.Spock
+import           Web.Spock.Lucid         (lucid)
 
 import           Calendar.Data.Day
-import qualified Calendar.ViewComponents    as VC
+import qualified Calendar.ViewComponents as VC
+import           Calendar.Forecast
 
--- type Temperature = Double
+-- pairForecast :: [Day] -> [WeatherData] -> [(Day, Maybe WeatherData)]
+-- pairForecast days fc =
 
 index :: (Show a, Num a, MonadIO m)
           => a
           -> TimeOfDay
           -> [Day]
+          -> [Weather]
           -> ActionCtxT cxt m b
-index temp t days =
+index temp t days fc =
     lucid $
         div_ [class_ "mui-container"] $ do
             link_ [rel_ "stylesheet", href_ "styles.css"]
