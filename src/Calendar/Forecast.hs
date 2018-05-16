@@ -41,6 +41,11 @@ queryString = apiEntry ++ url
 zeroKelvin :: Double
 zeroKelvin = 273.15
 
+weatherFormat :: Maybe Weather -> Text
+weatherFormat (Just (Weather temp desc t)) =
+    show (round temp) <> " degrees " <> desc <> " at time: " <> show t
+weatherFormat Nothing = "No data"
+
 
 toWeather :: Maybe (Value, Value, Value) -> Maybe Weather
 toWeather (Just (Number x, String desc, String timeString)) =

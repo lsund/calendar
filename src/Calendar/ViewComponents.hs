@@ -67,11 +67,7 @@ newEntry id =
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
 day (Day id d es) wd ct =
     div_ [class_ "day"] $ do
-        div_ [class_ "weather"] $
-            if isJust wd then
-                let Just (FC.Weather temp desc t) = wd
-                in toHtml (show (round temp) <> " degrees " <> desc <> " at time: " <> show t)
-            else "No data"
+        div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
         div_ [class_ "date"] $ h2_ $ toHtml (dayFormat d)
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
