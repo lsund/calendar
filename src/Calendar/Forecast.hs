@@ -1,6 +1,5 @@
 module Calendar.Forecast where
 
-import           Calendar.Util
 import           Data.Aeson
 import           Data.HashMap.Strict     (HashMap)
 import qualified Data.HashMap.Strict     as M
@@ -18,6 +17,8 @@ import           Network.Curl
 import           Prelude                 (String)
 import           Protolude               hiding (encodeUtf8)
 
+import           Calendar.Data.Day
+import           Calendar.Util
 
 data Weather = Weather
         { _temp :: Double
@@ -42,8 +43,8 @@ zeroKelvin :: Double
 zeroKelvin = 273.15
 
 weatherFormat :: Maybe Weather -> Text
-weatherFormat (Just (Weather temp desc t)) =
-    show (round temp) <> " degrees " <> desc <> " at time: " <> show t
+weatherFormat (Just (Weather temp desc (LocalTime _ t))) =
+    "Weather at " <> timeFormat t <> ": " <> show (round temp) <> " degrees " <> desc
 weatherFormat Nothing = "No data"
 
 
@@ -74,12 +75,12 @@ closestToMidday []       = Nothing
 closestToMidday (x : xs) = (fromMaybe x . find atLeastMidday) xs
     where
         atLeastMidday (Just x') = (localTimeOfDay . _time) x' >= midday
-        atLeastMidday Nothing  = False
+        atLeastMidday Nothing   = False
 
 
 sameDay :: Maybe Weather -> Maybe Weather -> Bool
 sameDay (Just d1) (Just d2) = (localDay . _time) d1 == (localDay . _time) d2
-sameDay _ _ = False
+sameDay _ _                 = False
 
 
 getValues :: [Object] -> [Maybe (Value, Value, Value)]
