@@ -30,7 +30,7 @@ getRoot _ =
 
         let dates = take nfiles $ iterate succ d
         days <- liftIO $ mapM getDay dates
-        R.index 0 tod days fc
+        R.index tod days fc
 
 
 add :: Connection -> Server ()
