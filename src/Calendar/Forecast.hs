@@ -96,9 +96,11 @@ getValues = map sequence3 . apply3 getTemp getDesc getTime
 getForecast :: IO (Maybe [Weather])
 getForecast = do
         (_, resp) <- liftIO $ curlGetString queryString []
-
-        let (Just (Array days)) = readJSON resp >>= M.lookup "list"
-            values = getValues $ V.toList $ map toObject days
-            datas  = groupBy sameDay $ map toWeather values
-
-        return $ mapM closestToMidday datas
+        let dat = readJSON resp >>= M.lookup "list"
+        if isJust dat then do
+                let Just (Array days) = dat
+                    values = getValues $ V.toList $ map toObject days
+                    datas  = groupBy sameDay $ map toWeather values
+                return $ mapM closestToMidday datas
+        else
+            return Nothing

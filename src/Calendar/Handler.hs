@@ -25,6 +25,8 @@ getRoot _ =
 
         (Just fc) <- liftIO getForecast
 
+        print fc
+
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
 
