@@ -5,4 +5,3 @@ import           Protolude
 
 makeConnection :: IO Connection
 makeConnection = connect defaultConnectInfo { connectDatabase = "calendar" }
-

@@ -24,6 +24,7 @@ index t days fc =
         div_ [class_ "mui-container"] $ do
             link_ [rel_ "stylesheet", href_ "styles.css"]
             link_ [rel_ "stylesheet", href_ "mui.css"]
+            title_ "Calendar"
 
             h1_ $ toHtml $ timeFormat t
             forM_ (pairForecast days fc) $

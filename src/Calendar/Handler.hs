@@ -18,21 +18,30 @@ type Server a = S.SpockM () () () a
 nfiles :: Int
 nfiles = 45
 
+daysAndTime = do
+    d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+    tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+    let dates = take nfiles $ iterate succ d
+    days <- liftIO $ mapM getDay dates
+    return (days, tod)
+
+getRootWeather :: Connection -> Server ()
+getRootWeather _ =
+    S.get "weather" $ do
+
+        (Just fc) <- liftIO getForecast
+
+        (days, tod) <- daysAndTime
+
+        R.index tod days fc
 
 getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
 
-        (Just fc) <- liftIO getForecast
+        (days, tod) <- daysAndTime
 
-        print fc
-
-        d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-
-        let dates = take nfiles $ iterate succ d
-        days <- liftIO $ mapM getDay dates
-        R.index tod days fc
+        R.index tod days []
 
 
 add :: Connection -> Server ()
