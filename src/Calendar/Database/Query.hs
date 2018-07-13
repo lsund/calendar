@@ -20,7 +20,7 @@ getDay d = do
             getDay d
         else do
             let (id : _) = ids
-            res <- query conn entryQ  id :: IO [(Int, Int, TimeOfDay, Text, Bool)]
+            res <- query conn entryQ  id :: IO [(Int, Int, Maybe TimeOfDay, Text, Bool)]
             return $ Day (fromOnly id) d $ map makeEntry res
             where
                 idQ = "select id from day where gregorian=?"

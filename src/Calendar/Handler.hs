@@ -47,10 +47,9 @@ getRoot _ =
 add :: Connection -> Server ()
 add conn =
     S.post "add" $ do
-        time <- S.param' "time"
         desc <- S.param' "desc"
         id   <- S.param' "id"
-        let e = Entry 0 time desc False
+        let e = Entry 0 Nothing desc False
 
         _ <- liftIO $ insertEntry conn id e
         S.redirect "/"

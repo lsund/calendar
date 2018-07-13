@@ -53,7 +53,7 @@ entry = do
     t  <- time
     _  <- space
     ss <- word `sepBy` char ' '
-    return $ Entry 0 t (unwords (map pack ss)) d
+    return $ Entry 0 (Just t) (unwords (map pack ss)) d
 
 content :: DayParser () Day
 content = do

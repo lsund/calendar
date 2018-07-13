@@ -56,8 +56,9 @@ newEntry :: Int -> HtmlT Identity ()
 newEntry id =
     form_ [class_ C.form, method_ "post", action_ "add"] $ do
         input_ [type_ "hidden", name_ "id", value_ (show id)]
+        -- TODO remove this and add with default time
         div_ [class_ C.time] $
-            input_ [type_ "text", name_ "time", placeholder_ "hh:mm"]
+            input_ [type_ "text", name_ "time", value_ "00:00"]
         div_ [class_ C.desc] $
             input_ [type_ "text", name_ "desc", placeholder_ "Description"]
         input_

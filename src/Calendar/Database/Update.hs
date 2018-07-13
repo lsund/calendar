@@ -17,7 +17,7 @@ type DayID   = Int
 -- Update
 
 
-updateEntry :: Connection -> EntryID -> TimeOfDay -> Text -> Bool -> IO Int64
+updateEntry :: Connection -> EntryID -> Maybe TimeOfDay -> Text -> Bool -> IO Int64
 updateEntry conn id ts desc isdone =
     execute conn SQL.updateEntry (ts, desc, isdone, id)
 
