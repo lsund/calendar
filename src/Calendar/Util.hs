@@ -1,6 +1,8 @@
 module Calendar.Util where
 
 import Protolude
+import qualified Data.Text                  as T
+import Data.Time
 
 apply3 :: (a -> b) -> (a -> c) -> (a -> d) -> [a] -> [(b, c, d)]
 apply3 _ _ _  [] = []
@@ -11,4 +13,7 @@ sequence3 :: Monad m => (m a, m b, m c) -> m (a, b, c)
 sequence3 (ma, mb, mc) = (,,) <$> ma <*> mb <*> mc
 
 
-
+parseMaybeTime :: Text -> Maybe TimeOfDay
+parseMaybeTime x =
+    let parsed = parseTimeM True defaultTimeLocale "%H:%M" (T.unpack x)
+    in parsed

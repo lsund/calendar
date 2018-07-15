@@ -1,7 +1,8 @@
 module Calendar.Handler where
 
 import           Control.Monad.IO.Class     (liftIO)
-import           Data.Time.LocalTime
+import           Data.Time
+-- import           Data.Time.LocalTime
 import           Database.PostgreSQL.Simple
 import           Protolude
 import qualified Web.Spock                  as S
@@ -9,8 +10,9 @@ import qualified Web.Spock                  as S
 import           Calendar.Data.Entry
 import           Calendar.Database.Query
 import           Calendar.Database.Update
-import qualified Calendar.Renderer          as R
 import           Calendar.Forecast
+import qualified Calendar.Renderer          as R
+import           Calendar.Util
 
 
 type Server a = S.SpockM () () () a
@@ -63,7 +65,9 @@ update conn =
         id   <- S.param' "id"
         isdone <- S.param' "done"
 
-        _ <- liftIO $ updateEntry conn id t desc isdone
+        let mt = parseMaybeTime t
+
+        _ <- liftIO $ updateEntry conn id mt desc isdone
 
         S.redirect "/"
 
