@@ -7,6 +7,8 @@ import           Database.PostgreSQL.Simple
 import           Protolude
 import qualified Web.Spock                  as S
 
+import           Calendar.Config
+import           Calendar.Data.Day          as D
 import           Calendar.Data.Entry
 import           Calendar.Database.Query
 import           Calendar.Database.Update
@@ -14,12 +16,12 @@ import           Calendar.Forecast
 import qualified Calendar.Renderer          as R
 import           Calendar.Util
 
-
 type Server a = S.SpockM () () () a
+type SpockState = S.WebStateM () () ()
+type SpockContext a = S.ActionCtxT () SpockState a
 
-nfiles :: Int
-nfiles = 45
 
+daysAndTime :: SpockContext ([D.Day], TimeOfDay)
 daysAndTime = do
     d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime

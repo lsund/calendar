@@ -27,7 +27,7 @@
 }
 
 .time {
-    width: 50px;
+    width: 60px;
 }
 
 .desc {
@@ -35,8 +35,12 @@
     width: 350px;
 }
 
-.sep-x {
+.sep-x-20 {
     margin-left: 20px;
+}
+
+.sep-x-75 {
+    margin-left: 75px;
 }
 
 .sep-y {
@@ -44,12 +48,12 @@
 }
 
 .done {
-    margin-top    : 10px;
-    margin-bottom : 10px;
+    /* margin-top    : 10px; */
+    /* margin-bottom : 10px; */
     color         : grey;
     font-size     : 16px;
-    height        : 32px;
-    width         : 420px;
+    /* height        : 32px; */
+    /* width         : 300px; */
 }
 
 input.submit {

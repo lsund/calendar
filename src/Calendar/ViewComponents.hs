@@ -31,8 +31,9 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
 entry :: Date -> Entry -> HtmlT Identity ()
 entry d e
     | _done e = do
-        span_ $ (toHtml . showTime . _time) e
-        span_ [class_ "sep-x"] (toHtml ("" :: Text))
+        let xd = if isNothing (_time e) then "sep-x-75" else "sep-x-20"
+        span_ [class_ "time"] $ (toHtml . showTime . _time) e
+        span_ [class_ xd] (toHtml ("" :: Text))
         span_ (toHtml (_desc e :: Text))
     | otherwise = do
         span_ $
