@@ -29,3 +29,7 @@ index t days fc =
             h1_ $ toHtml $ timeFormat t
             forM_ (pairForecast days fc) $
                 \(day, wd) -> VC.day day wd t
+
+
+todo :: MonadIO m => ActionCtxT cxt m b
+todo = lucid VC.todoEntry

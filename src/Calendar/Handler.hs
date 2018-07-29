@@ -29,15 +29,6 @@ daysAndTime = do
     days <- liftIO $ mapM getDay dates
     return (days, tod)
 
-getRootWeather :: Connection -> Server ()
-getRootWeather _ =
-    S.get "weather" $ do
-
-        (Just fc) <- liftIO getForecast
-
-        (days, tod) <- daysAndTime
-
-        R.index tod days fc
 
 getRoot :: Connection -> Server ()
 getRoot _ =
@@ -46,6 +37,20 @@ getRoot _ =
         (days, tod) <- daysAndTime
 
         R.index tod days []
+
+
+getWeather :: Connection -> Server ()
+getWeather _ =
+    S.get "weather" $ do
+        (Just fc) <- liftIO getForecast
+        (days, tod) <- daysAndTime
+        R.index tod days fc
+
+
+getTodo :: Connection -> Server  ()
+getTodo _ =
+    S.get "todo" $ do
+        R.todo
 
 
 add :: Connection -> Server ()
