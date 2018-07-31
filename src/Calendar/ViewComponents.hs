@@ -8,9 +8,12 @@ import           Protolude
 
 import qualified Calendar.CssClasses as C
 import           Calendar.Data.Day
+import qualified Calendar.Data.Todo as TODO
 import           Calendar.Data.Entry
 import           Calendar.Forecast (Weather)
 import qualified Calendar.Forecast as FC
+
+type TODO = TODO.TODO
 
 
 showTime :: Maybe TimeOfDay -> Text
@@ -82,7 +85,8 @@ day (Day id d es) wd ct =
                         (\e -> li_ [class_ $ C.entry e ct] $ entry d e)
 
 
-todo :: HtmlT Identity ()
-todo =
-    div_ [class_ "todo"] $
+todo :: [TODO] -> HtmlT Identity ()
+todo es =
+    div_ [class_ "todo"] $ do
         h3_ "TODO"
+        div_ $ ul_ $ forM_ es $ li_ . toHtml . TODO._desc

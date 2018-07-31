@@ -10,7 +10,7 @@ import qualified Web.Spock                  as S
 import           Calendar.Config
 import           Calendar.Data.Day          as D
 import           Calendar.Data.Entry
-import           Calendar.Database.Query
+import           Calendar.Database.Query    (getDay, getTodos)
 import           Calendar.Database.Update
 import           Calendar.Forecast
 import qualified Calendar.Renderer          as R
@@ -35,8 +35,8 @@ getRoot _ =
     S.get S.root $ do
 
         (days, tod) <- daysAndTime
-
-        R.index tod days []
+        todos <- liftIO getTodos
+        R.index tod days [] todos
 
 
 getWeather :: Connection -> Server ()
@@ -44,7 +44,8 @@ getWeather _ =
     S.get "weather" $ do
         (Just fc) <- liftIO getForecast
         (days, tod) <- daysAndTime
-        R.index tod days fc
+        todos <- liftIO getTodos
+        R.index tod days fc todos
 
 
 add :: Connection -> Server ()

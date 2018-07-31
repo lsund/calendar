@@ -4,8 +4,9 @@ import           Data.Time.LocalTime
 import           Database.PostgreSQL.Simple
 import           Protolude
 
-import           Calendar.Data.Entry
 import           Calendar.Data.Day
+import           Calendar.Data.Entry
+import           Calendar.Data.Todo
 import           Calendar.Database.Internal
 import           Calendar.Database.Update
 
@@ -26,3 +27,14 @@ getDay d = do
                 idQ = "select id from day where gregorian=?"
                 entryQ = "select * from entry where dayid=?"
                 makeEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
+
+
+
+getTodos :: IO [TODO]
+getTodos = do
+    conn <- makeConnection
+    todos <- query_ conn todoQ :: IO [(Int, Text, Bool)]
+    return $ map makeTodo todos
+    where
+        todoQ = "select * from TodoEntry where done=false"
+        makeTodo (id, desc, isdone) = TODO id desc isdone
