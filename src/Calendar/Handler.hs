@@ -47,12 +47,6 @@ getWeather _ =
         R.index tod days fc
 
 
-getTodo :: Connection -> Server  ()
-getTodo _ =
-    S.get "todo" $ do
-        R.todo
-
-
 add :: Connection -> Server ()
 add conn =
     S.post "add" $ do

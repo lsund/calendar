@@ -78,9 +78,11 @@ day (Day id d es) wd ct =
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
-            ul_ $ forM_ (sortEntries es) (\e -> li_ [class_ $ C.entry e ct] $ entry d e)
+            ul_ $ forM_ (sortEntries es)
+                        (\e -> li_ [class_ $ C.entry e ct] $ entry d e)
 
 
-todoEntry :: HtmlT Identity ()
-todoEntry =
-    div_ [class_ "todo"] $ toHtml ("test" :: Text)
+todo :: HtmlT Identity ()
+todo =
+    div_ [class_ "todo"] $
+        h3_ "TODO"
