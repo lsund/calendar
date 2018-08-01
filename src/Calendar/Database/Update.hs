@@ -56,3 +56,12 @@ insertEntries conn did es = executeMany conn SQL.insertEntry values
 
 deleteEntry :: Connection -> EntryID -> IO Int64
 deleteEntry conn id = execute conn SQL.deleteEntry (Only id)
+
+
+-------------------------------------------------------------------------------
+-- Todo
+
+insertTodo :: Connection -> Text -> IO Int64
+insertTodo conn t =
+     execute conn SQL.insertTodo (t, False)
+

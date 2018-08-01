@@ -90,3 +90,11 @@ delete conn =
         _ <- liftIO $ deleteEntry conn id
 
         S.redirect "/"
+
+
+addTodo :: Connection -> Server ()
+addTodo conn =
+    S.post "add-todo" $ do
+        t <- S.param' "desc"
+        _ <- liftIO $ insertTodo conn t
+        S.redirect "/"

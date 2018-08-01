@@ -20,3 +20,7 @@ insertDay = "insert into day (gregorian) values (?)"
 
 deleteEntry :: Query
 deleteEntry = "delete from entry where id=?"
+
+
+insertTodo :: Query
+insertTodo = "insert into todoentry (description, done) values (?, ?)"

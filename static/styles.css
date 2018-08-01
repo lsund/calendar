@@ -1,3 +1,7 @@
+.todo-footer {
+    /* position: relative; */
+    bottom: 0;
+}
 
 .todo {
     width: 500px;
