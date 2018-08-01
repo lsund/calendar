@@ -65,3 +65,8 @@ insertTodo :: Connection -> Text -> IO Int64
 insertTodo conn t =
      execute conn SQL.insertTodo (t, False)
 
+
+removeTodo :: Connection -> Int -> IO Int64
+removeTodo conn id =
+     execute conn SQL.removeTodo (Only id)
+

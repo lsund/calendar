@@ -24,3 +24,7 @@ deleteEntry = "delete from entry where id=?"
 
 insertTodo :: Query
 insertTodo = "insert into todoentry (description, done) values (?, ?)"
+
+
+removeTodo :: Query
+removeTodo = "delete from todoentry where id=?"

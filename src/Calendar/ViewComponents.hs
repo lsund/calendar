@@ -90,7 +90,10 @@ todo es =
     div_ [class_ "todo"] $ do
         h3_ "TODO"
         div_ $ ul_ $ forM_ es $ li_ . toHtml . TODO._desc
-        div_ [class_ "todo-footer"] $
+        div_ [class_ "todo-footer"] $ do
             form_ [class_ C.form, method_ "post", action_ "add-todo"] $ do
                 input_ [type_ "text", name_ "desc", placeholder_ "Description"]
                 input_ [class_ C.button, type_ "submit", value_ "Add"]
+            form_ [class_ C.form, method_ "post", action_ "remove-todo"] $ do
+                input_ [type_ "hidden", name_ "id", value_ "4"]
+                input_ [class_ C.button, type_ "submit", value_ "Remove"]

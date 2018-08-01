@@ -22,6 +22,7 @@ app = do
     done conn
     delete conn
     addTodo conn
+    removeTodo conn
 
 
 main :: IO ()

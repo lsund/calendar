@@ -11,7 +11,7 @@ import           Calendar.Config
 import           Calendar.Data.Day          as D
 import           Calendar.Data.Entry
 import           Calendar.Database.Query    (getDay, getTodos)
-import           Calendar.Database.Update
+import qualified Calendar.Database.Update  as DBU
 import           Calendar.Forecast
 import qualified Calendar.Renderer          as R
 import           Calendar.Util
@@ -55,7 +55,7 @@ add conn =
         id   <- S.param' "id"
         let e = Entry 0 Nothing desc False
 
-        _ <- liftIO $ insertEntry conn id e
+        _ <- liftIO $ DBU.insertEntry conn id e
         S.redirect "/"
 
 
@@ -69,7 +69,7 @@ update conn =
 
         let mt = parseMaybeTime t
 
-        _ <- liftIO $ updateEntry conn id mt desc isdone
+        _ <- liftIO $ DBU.updateEntry conn id mt desc isdone
 
         S.redirect "/"
 
@@ -78,7 +78,7 @@ done :: Connection -> Server ()
 done conn =
     S.post "done" $ do
         id <- S.param' "id"
-        _ <- liftIO $ entryDone conn id
+        _ <- liftIO $ DBU.entryDone conn id
 
         S.redirect "/"
 
@@ -87,7 +87,7 @@ delete :: Connection -> Server ()
 delete conn =
     S.post "delete" $ do
         id <- S.param' "id"
-        _ <- liftIO $ deleteEntry conn id
+        _ <- liftIO $ DBU.deleteEntry conn id
 
         S.redirect "/"
 
@@ -96,5 +96,13 @@ addTodo :: Connection -> Server ()
 addTodo conn =
     S.post "add-todo" $ do
         t <- S.param' "desc"
-        _ <- liftIO $ insertTodo conn t
+        _ <- liftIO $ DBU.insertTodo conn t
+        S.redirect "/"
+
+
+removeTodo :: Connection -> Server ()
+removeTodo conn =
+    S.post "remove-todo" $ do
+        id <- S.param' "id"
+        _ <- liftIO $ DBU.removeTodo conn id
         S.redirect "/"
