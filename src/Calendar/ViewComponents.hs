@@ -88,12 +88,22 @@ day (Day id d es) wd ct =
 todo :: [TODO] -> HtmlT Identity ()
 todo es =
     div_ [class_ "todo"] $ do
-        h3_ "TODO"
-        div_ $ ul_ $ forM_ es $ li_ . toHtml . TODO._desc
-        div_ [class_ "todo-footer"] $ do
+        table_ $ do
+            thead_ $
+                tr_ $ do
+                    th_ [class_ "first-todo-column"] "TodoItem"
+                    th_ "Remove"
+            tbody_ $
+                forM_ es $ \e ->
+                    tr_ $ do
+                        td_ $ toHtml  (TODO._desc e)
+                        td_ $
+                            form_ [method_ "post", action_ "remove-todo"] $ do
+                                input_ [ type_ "hidden"
+                                       , name_ "id"
+                                       , value_ (show (TODO._id e))]
+                                input_ [type_ "submit", value_ "x"]
+        div_ [class_ "todo-footer"] $
             form_ [class_ C.form, method_ "post", action_ "add-todo"] $ do
                 input_ [type_ "text", name_ "desc", placeholder_ "Description"]
                 input_ [class_ C.button, type_ "submit", value_ "Add"]
-            form_ [class_ C.form, method_ "post", action_ "remove-todo"] $ do
-                input_ [type_ "hidden", name_ "id", value_ "4"]
-                input_ [class_ C.button, type_ "submit", value_ "Remove"]
