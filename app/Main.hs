@@ -21,6 +21,7 @@ app = do
     update conn
     done conn
     delete conn
+    push conn
     addTodo conn
     removeTodo conn
 

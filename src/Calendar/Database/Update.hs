@@ -28,6 +28,12 @@ entryDone conn id = do
     return 1
 
 
+push :: Connection -> EntryID -> IO Int64
+push conn id = do
+    _ <- execute conn SQL.push (Only id)
+    return 1
+
+
 -------------------------------------------------------------------------------
 -- Insert
 

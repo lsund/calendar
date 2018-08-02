@@ -44,11 +44,22 @@ entry d e
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                 input_ [type_ "hidden", name_ "day", value_ (show d)]
                 input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
+                input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
                 div_ [class_ C.time] $
-                    input_ [type_ "text", name_ "time", value_ $ (showTime . _time) e]
-                div_ [class_ C.desc] $
-                    input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
-                input_ [class_ C.button, type_ "submit", value_ "update"]
+                    input_ [ type_ "text"
+                           , name_ "time"
+                           , value_ $ (showTime . _time) e]
+        span_ $
+            form_ [class_ C.form, method_ "post", action_ "update"] $ do
+                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                input_ [type_ "hidden", name_ "day", value_ (show d)]
+                input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
+                input_ [ type_ "hidden"
+                       , name_ "time"
+                       , value_ (stripJust (show (_time e)))]
+                form_ [class_ C.form, method_ "post", action_ "update"] $
+                    div_ [class_ C.desc] $
+                        input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
 
         span_ $
             form_ [class_ C.form, method_ "post", action_ "done"] $ do
@@ -59,6 +70,12 @@ entry d e
             form_ [class_ C.form, method_ "post", action_ "delete"] $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                 input_ [class_ C.button, type_ "submit", value_ "del"]
+        span_ $
+            form_ [class_ C.form, method_ "post", action_ "push"] $ do
+                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                input_ [class_ C.button, type_ "submit", value_ "push"]
+    where
+        stripJust = T.take 5 . T.drop 5
 
 
 newEntry :: Int -> HtmlT Identity ()

@@ -10,6 +10,11 @@ updateDone :: Query
 updateDone = "update entry set done=true where id=?"
 
 
+-- TODO What should this query be?
+push :: Query
+push = ""
+
+
 insertEntry :: Query
 insertEntry = "insert into entry (dayid, ts, description, done) values (?,?,?,?)"
 

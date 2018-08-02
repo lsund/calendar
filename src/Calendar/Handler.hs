@@ -67,6 +67,8 @@ update conn =
         id   <- S.param' "id"
         isdone <- S.param' "done"
 
+        print t
+
         let mt = parseMaybeTime t
 
         _ <- liftIO $ DBU.updateEntry conn id mt desc isdone
@@ -105,4 +107,12 @@ removeTodo conn =
     S.post "remove-todo" $ do
         id <- S.param' "id"
         _ <- liftIO $ DBU.removeTodo conn id
+        S.redirect "/"
+
+
+push :: Connection -> Server ()
+push conn =
+    S.post "push" $ do
+        id <- S.param' "id"
+        _ <- liftIO $ DBU.push conn id
         S.redirect "/"
