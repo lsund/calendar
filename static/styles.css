@@ -6,9 +6,6 @@ form {
     display: inline-block;
 }
 
-h1 {
-}
-
 ul {
     list-style-type : none;
     margin-left: -40;
@@ -23,8 +20,8 @@ table {
 }
 
 .center-wrapper {
-  height: 100px;
-  line-height: 100px;
+  height: 50px;
+  line-height: 50px;
   text-align: center;
 }
 
@@ -52,7 +49,7 @@ table {
     margin-top: 100px;
     margin-right: 50px;
     border: 1px solid grey;
-    height: 1000px;
+    height: 100%;
 }
 
 .first-todo-column {
@@ -65,11 +62,10 @@ table {
 }
 
 .day {
-    background-color: #f2f2f2;
-    border: 2px solid black;
-    margin-top: 50px;
+    border: 1px solid grey;
     margin-left: 50px;
     width: 1250px;
+    height: 100%;
 }
 
 .date {
@@ -90,6 +86,7 @@ table {
 
 .entries {
     margin-left: 200px;
+    margin-right: 200px;
     margin-top: 50px;
     margin-bottom: 50px;
 }
@@ -116,7 +113,7 @@ table {
 }
 
 .done {
-    /* margin-top    : 10px; */
+    margin-top    : 10px;
     /* margin-bottom : 10px; */
     color         : grey;
     font-size     : 16px;
