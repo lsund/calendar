@@ -7,7 +7,6 @@ form {
 }
 
 h1 {
-    padding-left : 500px;
 }
 
 ul {
@@ -23,13 +22,28 @@ table {
     margin: 25px;
 }
 
-.first-todo-column {
-    width: 400px;
+.center-wrapper {
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
 }
 
-.todo-footer {
-    margin: 25px;
-    bottom: 0;
+.center {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+.navbar {
+    width: 1250px;
+    top: 0px;
+    height: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.next-button {
+    float: right;
 }
 
 .todo {
@@ -39,6 +53,15 @@ table {
     margin-right: 50px;
     border: 1px solid grey;
     height: 1000px;
+}
+
+.first-todo-column {
+    width: 400px;
+}
+
+.todo-footer {
+    margin: 25px;
+    bottom: 0;
 }
 
 .day {

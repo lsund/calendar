@@ -6,6 +6,7 @@ import           Protolude
 import           Web.Spock
 import           Web.Spock.Lucid         (lucid)
 
+import qualified Calendar.CssClasses     as C
 import           Calendar.Data.Day
 import           Calendar.Data.Todo
 import           Calendar.Forecast
@@ -43,5 +44,16 @@ day :: MonadIO m => TimeOfDay -> Day -> Maybe Weather -> [TODO] -> ActionCtxT cx
 day t d w todos =
     layout $ do
         div_ (VC.todo todos)
-        h1_ $ toHtml $ timeFormat t
+        div_ [class_ "center-wrapper"] $
+            span_ [class_ "center"] $
+                h1_ [class_ "time"] $ toHtml $ timeFormat t
+        div_ [class_ "navbar"] $ do
+            input_ [ class_ C.button
+                   , type_ "submit"
+                   , name_ "prev"
+                   , value_ "Previous"]
+            input_ [ class_ $ C.button <> " next-button"
+                   , type_ "submit"
+                   , name_ "next"
+                   , value_ "Next"]
         VC.day d w t
