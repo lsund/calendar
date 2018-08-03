@@ -1,3 +1,11 @@
+table {
+    width: 800px;
+}
+
+td {
+    border-bottom: 1px solid #cccccc;
+}
+
 form {
     display: inline-block;
 }
@@ -92,12 +100,14 @@ input.submit {
 }
 
 .time {
+    top: -25px;
     width: 60px;
 }
 
 .desc {
+    top: -25px;
     margin-left: 10px;
-    width: 800px;
+    /* width: 400px; */
 }
 
 .add-button {
@@ -117,10 +127,10 @@ input.submit {
 }
 
 .done {
-    margin-top: 10px;
-    /* margin-bottom : 10px; */
-    color: grey;
-    font-size: 18px;
-    /* height        : 32px; */
-    /* width         : 300px; */
+    /* width       : 800px; */
+    color       : grey;
+    font-size   : 18px;
+    padding-top : 10px;
+    margin-bottom: 50px;
+    height      : 32px;
 }

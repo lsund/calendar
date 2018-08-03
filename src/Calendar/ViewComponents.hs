@@ -43,52 +43,55 @@ hiddenUpdateData id e d = do
 
 entry :: DayID -> Date -> Entry -> HtmlT Identity ()
 entry id d e
-    | _done e = do
-        let xd = if isNothing (_time e) then "sep-x-75" else "sep-x-20"
-        span_ [class_ "time"] $ (toHtml . showTime . _time) e
-        span_ [class_ xd] (toHtml ("" :: Text))
-        span_ (toHtml (_desc e :: Text))
-    | otherwise = do
-        -- Update time
-        span_ $
-            form_ [class_ C.form, method_ "post", action_ "update"] $ do
-                hiddenUpdateData id e d
-                input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
-                div_ [class_ C.time] $
-                    input_ [ type_ "text"
-                           , name_ "time"
-                           , value_ $ (showTime . _time) e]
-        -- Update description
-        span_ $
-            form_ [class_ C.form, method_ "post", action_ "update"] $ do
-                hiddenUpdateData id e d
-                input_ [ type_ "hidden"
-                       , name_ "time"
-                       , value_ (stripJust (show (_time e)))]
-                div_ [class_ C.desc] $
-                    input_ [ type_ "text"
-                            , name_ "desc"
-                            , value_ (_desc e :: Text)]
-        -- Mark as done
-        span_ $
-            form_ [class_ C.form, method_ "post", action_ "done"] $ do
-                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
-                input_ [class_ C.button, type_ "submit", value_ "done"]
-        -- Delete
-        span_ $
-            form_ [class_ C.form, method_ "post", action_ "delete"] $ do
-                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
-                input_ [class_ C.button, type_ "submit", value_ "del"]
-        -- Push to next day
-        span_ $
-            form_ [class_ C.form, method_ "post", action_ "push"] $ do
-                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
-                input_ [class_ C.button, type_ "submit", value_ "push"]
-    where
-        stripJust = T.take 5 . T.drop 5
+    | _done e =
+        tr_ $ do
+            td_ $ (toHtml . showTime . _time) e
+            td_ $ (toHtml (_desc e :: Text))
+            td_ $ (toHtml ("" :: Text))
+            td_ $ (toHtml ("" :: Text))
+            td_ $ (toHtml ("" :: Text))
+
+    | otherwise =
+        tr_ $ do
+            td_ $
+                form_ [class_ C.form, method_ "post", action_ "update"] $ do
+                    hiddenUpdateData id e d
+                    input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
+                    div_ [class_ C.time] $
+                        input_ [ type_ "text"
+                            , name_ "time"
+                            , value_ $ (showTime . _time) e]
+            -- Update description
+            td_ $
+                form_ [class_ C.form, method_ "post", action_ "update"] $ do
+                    hiddenUpdateData id e d
+                    input_ [ type_ "hidden"
+                        , name_ "time"
+                        , value_ (stripJust (show (_time e)))]
+                    div_ [class_ C.desc] $
+                        input_ [ type_ "text"
+                                , name_ "desc"
+                                , value_ (_desc e :: Text)]
+            -- Mark as done
+            td_ $
+                form_ [class_ C.form, method_ "post", action_ "done"] $ do
+                    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+                    input_ [class_ C.button, type_ "submit", value_ "x"]
+            -- Delete
+            td_ $
+                form_ [class_ C.form, method_ "post", action_ "delete"] $ do
+                    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+                    input_ [class_ C.button, type_ "submit", value_ "x"]
+            -- Push to next day
+            td_ $
+                form_ [class_ C.form, method_ "post", action_ "push"] $ do
+                    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+                    input_ [class_ C.button, type_ "submit", value_ "x"]
+        where
+            stripJust = T.take 5 . T.drop 5
 
 
 newEntry :: Int -> HtmlT Identity ()
@@ -109,8 +112,24 @@ day (Day id d es) wd ct =
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
-            ul_ $ forM_ (sortEntries es)
-                        (\e -> li_ [class_ $ C.entry e ct] $ entry id d e)
+            table_ $ do
+                thead_$
+                    tr_ $ do
+                        th_ "Time"
+                        th_ "Desc"
+                        th_ "Done"
+                        th_ "Delete"
+                        th_ "Push"
+                tbody_ $
+                    ul_ $ forM_ (sortEntries es)
+                        (tr_ . entry id d)
+                    -- tr_ $ do
+                    --     td_ "Test"
+                    --     td_ "Test"
+                    --     td_ "Test"
+                    --     td_ "Test"
+            -- ul_ $ forM_ (sortEntries es)
+                    --     (\e -> li_ [class_ $ C.entry e ct] $ entry id d e)
 
 
 todo :: [TODO] -> HtmlT Identity ()
