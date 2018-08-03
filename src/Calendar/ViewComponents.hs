@@ -130,11 +130,15 @@ todo es =
                                 input_ [ type_ "hidden"
                                        , name_ "id"
                                        , value_ (show (TODO._id e))]
-                                input_ [type_ "submit", value_ "x"]
+                                input_ [class_ C.button
+                                       , type_ "submit"
+                                       , value_ "x"]
         div_ [class_ "todo-footer"] $
             form_ [class_ C.form, method_ "post", action_ "add-todo"] $ do
                 input_ [type_ "text", name_ "desc", placeholder_ "Description"]
-                input_ [class_ C.button, type_ "submit", value_ "Add"]
+                input_ [class_ $ C.button <> " add-button"
+                       , type_ "submit"
+                       , value_ "Add"]
 
 
 navbar :: Int -> HtmlT Identity ()

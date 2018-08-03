@@ -12,7 +12,8 @@ entry e _
 
 
 button :: Text
-button = "submit mui-btn mui-btn--primary"
+-- button = ""
+button = "submit mui-btn"
 
 
 form :: Text
