@@ -17,6 +17,7 @@ app = do
     conn <- liftIO makeConnection
     getWeather conn
     getRoot conn
+    getDay conn
     add conn
     update conn
     done conn

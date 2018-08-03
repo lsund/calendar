@@ -12,17 +12,17 @@ import           Calendar.Database.Update
 
 
 getDay :: Date -> IO Day
-getDay d = do
+getDay date = do
     conn <- makeConnection
-    ids <- query conn idQ (Only d) :: IO [Only Int]
+    ids <- query conn idQ (Only date) :: IO [Only Int]
     if null ids
         then do
-            _ <- insertDay conn (Day 0 d [])
-            getDay d
+            _ <- insertDay conn (Day 0 date [])
+            getDay date
         else do
             let (id : _) = ids
             res <- query conn entryQ  id :: IO [(Int, Int, Maybe TimeOfDay, Text, Bool)]
-            return $ Day (fromOnly id) d $ map makeEntry res
+            return $ Day (fromOnly id) date $ map makeEntry res
             where
                 idQ = "select id from day where gregorian=?"
                 entryQ = "select * from entry where dayid=?"

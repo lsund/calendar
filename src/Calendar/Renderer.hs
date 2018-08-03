@@ -14,21 +14,34 @@ import qualified Calendar.ViewComponents as VC
 pairForecast :: [Day] -> [Weather] -> [(Day, Maybe Weather)]
 pairForecast days fc = map f days
     where
-        f day@(Day _ date _) =
+        f d@(Day _ date _) =
             case find (\w -> localDay (_time w) == date) fc of
-                    Just w  -> (day, Just w)
-                    Nothing -> (day, Nothing)
+                    Just w  -> (d, Just w)
+                    Nothing -> (d, Nothing)
+
+
+layout :: MonadIO m => HtmlT Identity a -> ActionCtxT cxt m b
+layout b =
+    lucid $ do
+        head_ $ do
+            link_ [rel_ "stylesheet", href_ "styles.css"]
+            link_ [rel_ "stylesheet", href_ "mui.css"]
+            title_ "Calendar"
+        body_ $ div_ [class_ "content"] b
+
 
 index :: MonadIO m => TimeOfDay -> [Day] -> [Weather] -> [TODO] -> ActionCtxT cxt m b
 index t days fc todos =
-    lucid $
-        div_ [class_ "content"] $ do
-            div_ (VC.todo todos)
-            div_ $ do
-                link_ [rel_ "stylesheet", href_ "styles.css"]
-                link_ [rel_ "stylesheet", href_ "mui.css"]
-                title_ "Calendar"
+    layout $ do
+        div_ (VC.todo todos)
+        h1_ $ toHtml $ timeFormat t
+        forM_ (pairForecast days fc) $
+            \(d, wd) -> VC.day d wd t
 
-                h1_ $ toHtml $ timeFormat t
-                forM_ (pairForecast days fc) $
-                    \(day, wd) -> VC.day day wd t
+
+day :: MonadIO m => TimeOfDay -> Day -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
+day t d w todos =
+    layout $ do
+        div_ (VC.todo todos)
+        h1_ $ toHtml $ timeFormat t
+        VC.day d w t

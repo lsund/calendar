@@ -10,8 +10,8 @@ import qualified Web.Spock                  as S
 import           Calendar.Config
 import           Calendar.Data.Day          as D
 import           Calendar.Data.Entry
-import           Calendar.Database.Query    (getDay, getTodos)
-import qualified Calendar.Database.Update  as DBU
+import qualified Calendar.Database.Query    as DBQ
+import qualified Calendar.Database.Update   as DBU
 import           Calendar.Forecast
 import qualified Calendar.Renderer          as R
 import           Calendar.Util
@@ -26,16 +26,26 @@ daysAndTime = do
     d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     let dates = take nfiles $ iterate succ d
-    days <- liftIO $ mapM getDay dates
+    days <- liftIO $ mapM DBQ.getDay dates
     return (days, tod)
+
+
+getDay :: Connection -> Server ()
+getDay _ =
+    S.get "day" $ do
+        x <- S.param' "id"
+        d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        day <- liftIO $ DBQ.getDay (addDays x d)
+        todos <- liftIO DBQ.getTodos
+        R.day tod day  Nothing todos
 
 
 getRoot :: Connection -> Server ()
 getRoot _ =
     S.get S.root $ do
-
         (days, tod) <- daysAndTime
-        todos <- liftIO getTodos
+        todos <- liftIO DBQ.getTodos
         R.index tod days [] todos
 
 
@@ -44,7 +54,7 @@ getWeather _ =
     S.get "weather" $ do
         (Just fc) <- liftIO getForecast
         (days, tod) <- daysAndTime
-        todos <- liftIO getTodos
+        todos <- liftIO DBQ.getTodos
         R.index tod days fc todos
 
 
