@@ -132,3 +132,20 @@ todo es =
             form_ [class_ C.form, method_ "post", action_ "add-todo"] $ do
                 input_ [type_ "text", name_ "desc", placeholder_ "Description"]
                 input_ [class_ C.button, type_ "submit", value_ "Add"]
+
+
+navbar :: HtmlT Identity ()
+navbar =
+    div_ [class_ "navbar"] $ do
+        span_ $
+            form_ [method_ "post", action_ "prev-day"] $
+                input_ [ class_ C.button
+                        , type_ "submit"
+                        , name_ "prev"
+                        , value_ "Previous"]
+        span_ [class_ "next"] $
+            form_ [method_ "past", action_ "next-day"] $
+                input_ [ class_ C.button
+                        , type_ "submit"
+                        , name_ "next"
+                        , value_ "Next"]
