@@ -44,7 +44,7 @@ hiddenUpdateData id e d = do
 entry :: DayID -> Date -> Entry -> HtmlT Identity ()
 entry id d e
     | _done e =
-        tr_ $ do
+        tr_ [class_ "done"] $ do
             td_ $ (toHtml . showTime . _time) e
             td_ $ (toHtml (_desc e :: Text))
             td_ $ (toHtml ("" :: Text))
@@ -135,7 +135,7 @@ day (Day id d es) wd ct =
 todo :: [TODO] -> HtmlT Identity ()
 todo es =
     div_ [class_ "todo"] $ do
-        table_ $ do
+        table_ [class_ "todo-table"] $ do
             thead_ $
                 tr_ $ do
                     th_ [class_ "first-todo-column"] "TodoItem"

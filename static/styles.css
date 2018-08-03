@@ -1,5 +1,9 @@
 table {
-    width: 800px;
+    width: 100%;
+}
+
+.todo-table {
+    width: 90%;
 }
 
 td {
