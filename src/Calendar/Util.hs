@@ -17,3 +17,7 @@ parseMaybeTime :: Text -> Maybe TimeOfDay
 parseMaybeTime x =
     let parsed = parseTimeM True defaultTimeLocale "%H:%M" (T.unpack x)
     in parsed
+
+
+makeQueryString :: Text -> (Text, Text) -> Text
+makeQueryString url (param, value) = url <> "?" <> param <> "=" <> value

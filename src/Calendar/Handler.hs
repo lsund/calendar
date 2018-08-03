@@ -62,11 +62,11 @@ add :: Connection -> Server ()
 add conn =
     S.post "add" $ do
         desc <- S.param' "desc"
-        id   <- S.param' "id"
+        dayid   <- S.param' "dayid"
         let e = Entry 0 Nothing desc False
 
-        _ <- liftIO $ DBU.insertEntry conn id e
-        S.redirect "/"
+        _ <- liftIO $ DBU.insertEntry conn dayid e
+        S.redirect $ makeQueryString "/day" ("id", show dayid)
 
 
 update :: Connection -> Server ()
@@ -74,34 +74,40 @@ update conn =
     S.post "update" $ do
         t    <- S.param' "time"
         desc <- S.param' "desc"
-        id   <- S.param' "id"
+        dayid <- S.param' "dayid"
+        entryid <- S.param' "entryid"
         isdone <- S.param' "done"
-
-        print t
-
         let mt = parseMaybeTime t
-
-        _ <- liftIO $ DBU.updateEntry conn id mt desc isdone
-
-        S.redirect "/"
+        print desc
+        _ <- liftIO $ DBU.updateEntry conn entryid mt desc isdone
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
 
 done :: Connection -> Server ()
 done conn =
     S.post "done" $ do
-        id <- S.param' "id"
-        _ <- liftIO $ DBU.entryDone conn id
-
-        S.redirect "/"
+        entryid <- S.param' "entryid"
+        dayid <- S.param' "dayid"
+        _ <- liftIO $ DBU.entryDone conn entryid
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
 
 delete :: Connection -> Server ()
 delete conn =
     S.post "delete" $ do
-        id <- S.param' "id"
-        _ <- liftIO $ DBU.deleteEntry conn id
+        entryid <- S.param' "entryid"
+        dayid <- S.param' "dayid"
+        _ <- liftIO $ DBU.deleteEntry conn entryid
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
-        S.redirect "/"
+
+push :: Connection -> Server ()
+push conn =
+    S.post "push" $ do
+        entryid <- S.param' "entryid"
+        dayid <- S.param' "dayid"
+        _ <- liftIO $ DBU.push conn entryid
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
 
 addTodo :: Connection -> Server ()
@@ -117,12 +123,4 @@ removeTodo conn =
     S.post "remove-todo" $ do
         id <- S.param' "id"
         _ <- liftIO $ DBU.removeTodo conn id
-        S.redirect "/"
-
-
-push :: Connection -> Server ()
-push conn =
-    S.post "push" $ do
-        id <- S.param' "id"
-        _ <- liftIO $ DBU.push conn id
         S.redirect "/"

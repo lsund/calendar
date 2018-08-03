@@ -15,6 +15,7 @@ import qualified Calendar.Forecast as FC
 
 type TODO = TODO.TODO
 
+type DayID = Int
 
 showTime :: Maybe TimeOfDay -> Text
 showTime (Just t) = T.take 5 $ show t
@@ -28,20 +29,20 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
     | otherwise         = False
 
 
-hiddenUpdateData :: Entry -> Date -> HtmlT Identity ()
-hiddenUpdateData e d = do
-    input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+hiddenUpdateData :: DayID -> Entry -> Date -> HtmlT Identity ()
+hiddenUpdateData id e d = do
+    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
     input_ [type_ "hidden", name_ "day", value_ (show d)]
     input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
-    input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
 
 
 -------------------------------------------------------------------------------
 -- Public API
 
 
-entry :: Date -> Entry -> HtmlT Identity ()
-entry d e
+entry :: DayID -> Date -> Entry -> HtmlT Identity ()
+entry id d e
     | _done e = do
         let xd = if isNothing (_time e) then "sep-x-75" else "sep-x-20"
         span_ [class_ "time"] $ (toHtml . showTime . _time) e
@@ -51,7 +52,8 @@ entry d e
         -- Update time
         span_ $
             form_ [class_ C.form, method_ "post", action_ "update"] $ do
-                hiddenUpdateData e d
+                hiddenUpdateData id e d
+                input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
                 div_ [class_ C.time] $
                     input_ [ type_ "text"
                            , name_ "time"
@@ -59,7 +61,7 @@ entry d e
         -- Update description
         span_ $
             form_ [class_ C.form, method_ "post", action_ "update"] $ do
-                hiddenUpdateData e d
+                hiddenUpdateData id e d
                 input_ [ type_ "hidden"
                        , name_ "time"
                        , value_ (stripJust (show (_time e)))]
@@ -70,17 +72,20 @@ entry d e
         -- Mark as done
         span_ $
             form_ [class_ C.form, method_ "post", action_ "done"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
                 input_ [class_ C.button, type_ "submit", value_ "done"]
         -- Delete
         span_ $
             form_ [class_ C.form, method_ "post", action_ "delete"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
                 input_ [class_ C.button, type_ "submit", value_ "del"]
         -- Push to next day
         span_ $
             form_ [class_ C.form, method_ "post", action_ "push"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
                 input_ [class_ C.button, type_ "submit", value_ "push"]
     where
         stripJust = T.take 5 . T.drop 5
@@ -89,9 +94,7 @@ entry d e
 newEntry :: Int -> HtmlT Identity ()
 newEntry id =
     form_ [class_ C.form, method_ "post", action_ "add"] $ do
-        input_ [type_ "hidden", name_ "id", value_ (show id)]
-        -- div_ [class_ C.time] $
-        --     input_ [type_ "text", name_ "time", value_ "00:00"]
+        input_ [type_ "hidden", name_ "dayid", value_ (show id)]
         div_ [class_ C.desc] $
             input_ [type_ "text", name_ "desc", placeholder_ "Description"]
         input_
@@ -107,7 +110,7 @@ day (Day id d es) wd ct =
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
             ul_ $ forM_ (sortEntries es)
-                        (\e -> li_ [class_ $ C.entry e ct] $ entry d e)
+                        (\e -> li_ [class_ $ C.entry e ct] $ entry id d e)
 
 
 todo :: [TODO] -> HtmlT Identity ()
