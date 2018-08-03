@@ -26,7 +26,7 @@ daysAndTime = do
     d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     let dates = take nfiles $ iterate succ d
-    days <- liftIO $ mapM DBQ.getDay dates
+    days <- liftIO $ mapM DBQ.getDayfromDate dates
     return (days, tod)
 
 
@@ -36,9 +36,9 @@ getDay _ =
         x <- S.param' "id"
         d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        day <- liftIO $ DBQ.getDay (addDays x d)
+        day <- liftIO $ DBQ.getDayFromID x
         todos <- liftIO DBQ.getTodos
-        R.day tod day  Nothing todos
+        R.day x tod day  Nothing todos
 
 
 getRoot :: Connection -> Server ()

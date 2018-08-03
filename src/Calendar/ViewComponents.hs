@@ -134,18 +134,20 @@ todo es =
                 input_ [class_ C.button, type_ "submit", value_ "Add"]
 
 
-navbar :: HtmlT Identity ()
-navbar =
+navbar :: Int -> HtmlT Identity ()
+navbar id =
     div_ [class_ "navbar"] $ do
         span_ $
-            form_ [method_ "post", action_ "prev-day"] $
+            form_ [method_ "get", action_ "day"] $ do
+                input_ [type_ "hidden", name_ "id", value_ (show (pred id))]
                 input_ [ class_ C.button
                         , type_ "submit"
                         , name_ "prev"
                         , value_ "Previous"]
         span_ [class_ "next"] $
-            form_ [method_ "past", action_ "next-day"] $
+            form_ [method_ "get", action_ "day"] $ do
+                input_ [type_ "hidden", name_ "id", value_ (show (succ id))]
                 input_ [ class_ C.button
                         , type_ "submit"
-                        , name_ "next"
+                        , name_ "action"
                         , value_ "Next"]

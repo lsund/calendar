@@ -11,14 +11,26 @@ import           Calendar.Database.Internal
 import           Calendar.Database.Update
 
 
-getDay :: Date -> IO Day
-getDay date = do
+getDayFromID :: Int -> IO Day
+getDayFromID id = do
+    conn <- makeConnection
+    (date : _) <- query conn dayQ (Only id) :: IO [Only Date]
+    es <- query conn entryQ (Only id) :: IO [(Int, Int, Maybe TimeOfDay, Text, Bool)]
+    return $ Day id (fromOnly date) $ map makeEntry es
+    where
+        dayQ = "select gregorian from day where id=?"
+        entryQ = "select * from entry where dayid=?"
+        makeEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
+
+
+getDayfromDate :: Date -> IO Day
+getDayfromDate date = do
     conn <- makeConnection
     ids <- query conn idQ (Only date) :: IO [Only Int]
     if null ids
         then do
             _ <- insertDay conn (Day 0 date [])
-            getDay date
+            getDayfromDate date
         else do
             let (id : _) = ids
             res <- query conn entryQ  id :: IO [(Int, Int, Maybe TimeOfDay, Text, Bool)]

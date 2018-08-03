@@ -39,12 +39,12 @@ index t days fc todos =
             \(d, wd) -> VC.day d wd t
 
 
-day :: MonadIO m => TimeOfDay -> Day -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
-day t d w todos =
+day :: MonadIO m => Int -> TimeOfDay -> Day -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
+day i t d w todos =
     layout $ do
         div_ (VC.todo todos)
         div_ [class_ "center-wrapper"] $
             span_ [class_ "center"] $
                 h1_ [class_ "time"] $ toHtml $ timeFormat t
-        VC.navbar
+        VC.navbar i
         VC.day d w t
