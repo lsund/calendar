@@ -98,7 +98,7 @@ newEntry id =
         div_ [class_ C.desc] $
             input_ [type_ "text", name_ "desc", placeholder_ "Description"]
         input_
-            [class_ C.button, type_ "submit", value_ "Add Entry"]
+            [class_ $ C.button <> " add-button", type_ "submit", value_ "Add Entry"]
 
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()

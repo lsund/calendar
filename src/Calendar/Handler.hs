@@ -34,7 +34,7 @@ getDay :: Connection -> Server ()
 getDay _ =
     S.get "day" $ do
         x <- S.param' "id"
-        d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        -- d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         day <- liftIO $ DBQ.getDayFromID x
         todos <- liftIO DBQ.getTodos

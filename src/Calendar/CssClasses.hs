@@ -8,7 +8,7 @@ import           Calendar.Data.Entry
 entry :: Entry -> TimeOfDay -> Text
 entry e _
     | _done e             = "done mui--divider-bottom"
-    | otherwise           = ""
+    | otherwise           = "mui-textfield"
 
 
 button :: Text

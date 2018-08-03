@@ -81,12 +81,12 @@ table {
     margin-top: 50px;
     margin-left: 50px;
     display: inline-block;
-    width: 800px;
+    width: 1000px;
 }
 
 .entries {
-    margin-left: 200px;
-    margin-right: 200px;
+    margin-left: 225px;
+    margin-right: 225px;
     margin-top: 50px;
     margin-bottom: 50px;
 }
@@ -97,7 +97,11 @@ table {
 
 .desc {
     margin-left: 10px;
-    width: 350px;
+    width: 800px;
+}
+
+.add-button {
+    left: 25px;
 }
 
 .sep-x-20 {
@@ -116,7 +120,7 @@ table {
     margin-top    : 10px;
     /* margin-bottom : 10px; */
     color         : grey;
-    font-size     : 16px;
+    font-size     : 18px;
     /* height        : 32px; */
     /* width         : 300px; */
 }
