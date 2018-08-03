@@ -45,11 +45,11 @@ entry :: DayID -> Date -> Entry -> HtmlT Identity ()
 entry id d e
     | _done e =
         tr_ [class_ "done"] $ do
-            td_ $ (toHtml . showTime . _time) e
-            td_ $ (toHtml (_desc e :: Text))
-            td_ $ (toHtml ("" :: Text))
-            td_ $ (toHtml ("" :: Text))
-            td_ $ (toHtml ("" :: Text))
+            td_ [class_ "done"] $ (toHtml . showTime . _time) e
+            td_ [class_ "done"] $ (toHtml (_desc e :: Text))
+            td_ [class_ "done"] $ (toHtml ("" :: Text))
+            td_ [class_ "done"] $ (toHtml ("" :: Text))
+            td_ [class_ "done"] $ (toHtml ("" :: Text))
 
     | otherwise =
         tr_ $ do
@@ -57,8 +57,8 @@ entry id d e
                 form_ [class_ C.form, method_ "post", action_ "update"] $ do
                     hiddenUpdateData id e d
                     input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
-                    div_ [class_ C.time] $
-                        input_ [ type_ "text"
+                    input_ [class_ C.time
+                           , type_ "text"
                             , name_ "time"
                             , value_ $ (showTime . _time) e]
             -- Update description
@@ -68,10 +68,10 @@ entry id d e
                     input_ [ type_ "hidden"
                         , name_ "time"
                         , value_ (stripJust (show (_time e)))]
-                    div_ [class_ C.desc] $
-                        input_ [ type_ "text"
-                                , name_ "desc"
-                                , value_ (_desc e :: Text)]
+                    input_ [class_ C.desc
+                            , type_ "text"
+                            , name_ "desc"
+                            , value_ (_desc e :: Text)]
             -- Mark as done
             td_ $
                 form_ [class_ C.form, method_ "post", action_ "done"] $ do

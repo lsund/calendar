@@ -21,8 +21,8 @@ form = "mui-form--inline"
 
 
 time :: Text
-time = "time mui-textfield"
+time = "time"
 
 
 desc :: Text
-desc = "desc mui-textfield"
+desc = "desc"

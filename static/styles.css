@@ -6,10 +6,6 @@ table {
     width: 90%;
 }
 
-td {
-    border-bottom: 1px solid #cccccc;
-}
-
 form {
     display: inline-block;
 }
@@ -104,14 +100,12 @@ input.submit {
 }
 
 .time {
-    top: -25px;
-    width: 60px;
+    width: 80px;
 }
 
 .desc {
-    top: -25px;
+    width: 300px;
     margin-left: 10px;
-    /* width: 400px; */
 }
 
 .add-button {
@@ -137,4 +131,9 @@ input.submit {
     padding-top : 10px;
     margin-bottom: 50px;
     height      : 32px;
+}
+
+td.done {
+
+    border-bottom: 1px solid #cccccc;
 }
