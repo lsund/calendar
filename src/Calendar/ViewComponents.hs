@@ -28,8 +28,17 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
     | otherwise         = False
 
 
+hiddenUpdateData :: Entry -> Date -> HtmlT Identity ()
+hiddenUpdateData e d = do
+    input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
+    input_ [type_ "hidden", name_ "day", value_ (show d)]
+    input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
+    input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
+
+
 -------------------------------------------------------------------------------
 -- Public API
+
 
 entry :: Date -> Entry -> HtmlT Identity ()
 entry d e
@@ -39,37 +48,36 @@ entry d e
         span_ [class_ xd] (toHtml ("" :: Text))
         span_ (toHtml (_desc e :: Text))
     | otherwise = do
+        -- Update time
         span_ $
             form_ [class_ C.form, method_ "post", action_ "update"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
-                input_ [type_ "hidden", name_ "day", value_ (show d)]
-                input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
-                input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
+                hiddenUpdateData e d
                 div_ [class_ C.time] $
                     input_ [ type_ "text"
                            , name_ "time"
                            , value_ $ (showTime . _time) e]
+        -- Update description
         span_ $
             form_ [class_ C.form, method_ "post", action_ "update"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
-                input_ [type_ "hidden", name_ "day", value_ (show d)]
-                input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
+                hiddenUpdateData e d
                 input_ [ type_ "hidden"
                        , name_ "time"
                        , value_ (stripJust (show (_time e)))]
-                form_ [class_ C.form, method_ "post", action_ "update"] $
-                    div_ [class_ C.desc] $
-                        input_ [type_ "text", name_ "desc", value_ (_desc e :: Text)]
-
+                div_ [class_ C.desc] $
+                    input_ [ type_ "text"
+                            , name_ "desc"
+                            , value_ (_desc e :: Text)]
+        -- Mark as done
         span_ $
             form_ [class_ C.form, method_ "post", action_ "done"] $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                 input_ [class_ C.button, type_ "submit", value_ "done"]
-
+        -- Delete
         span_ $
             form_ [class_ C.form, method_ "post", action_ "delete"] $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
                 input_ [class_ C.button, type_ "submit", value_ "del"]
+        -- Push to next day
         span_ $
             form_ [class_ C.form, method_ "post", action_ "push"] $ do
                 input_ [type_ "hidden", name_ "id", value_ (show (_id e))]
