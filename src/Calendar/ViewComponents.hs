@@ -54,16 +54,22 @@ entry id d e
     | otherwise =
         tr_ $ do
             td_ $
-                form_ [class_ C.form, method_ "post", action_ "update"] $ do
+                form_ [class_ C.form
+                      , method_ "post"
+                      , action_ "update"] $ do
                     hiddenUpdateData id e d
-                    input_ [type_ "hidden", name_ "desc", value_ (_desc e :: Text)]
+                    input_ [type_ "hidden"
+                           , name_ "desc"
+                           , value_ (_desc e :: Text)]
                     input_ [class_ C.time
                            , type_ "text"
                             , name_ "time"
                             , value_ $ (showTime . _time) e]
             -- Update description
             td_ $
-                form_ [class_ C.form, method_ "post", action_ "update"] $ do
+                form_ [class_ C.form
+                      , method_ "post"
+                      , action_ "update"] $ do
                     hiddenUpdateData id e d
                     input_ [ type_ "hidden"
                         , name_ "time"
@@ -74,21 +80,35 @@ entry id d e
                             , value_ (_desc e :: Text)]
             -- Mark as done
             td_ $
-                form_ [class_ C.form, method_ "post", action_ "done"] $ do
-                    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+                form_ [class_ C.form
+                      , method_ "post"
+                      , action_ "done"] $ do
+                    input_ [type_ "hidden"
+                           , name_ "dayid"
+                           , value_ (show id)]
+                    input_ [type_ "hidden"
+                           , name_ "entryid"
+                           , value_ (show (_id e))]
                     input_ [class_ C.button, type_ "submit", value_ "x"]
             -- Delete
             td_ $
                 form_ [class_ C.form, method_ "post", action_ "delete"] $ do
                     input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+                    input_ [type_ "hidden"
+                           , name_ "entryid"
+                           , value_ (show (_id e))]
                     input_ [class_ C.button, type_ "submit", value_ "x"]
             -- Push to next day
             td_ $
-                form_ [class_ C.form, method_ "post", action_ "push"] $ do
-                    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+                form_ [class_ C.form
+                      , method_ "post"
+                      , action_ "push"] $ do
+                    input_ [ type_ "hidden"
+                           , name_ "dayid"
+                           , value_ (show id)]
+                    input_ [ type_ "hidden"
+                           , name_ "entryid"
+                           , value_ (show (_id e))]
                     input_ [class_ C.button, type_ "submit", value_ "x"]
         where
             stripJust = T.take 5 . T.drop 5
@@ -101,7 +121,8 @@ newEntry id =
         div_ [class_ C.desc] $
             input_ [type_ "text", name_ "desc", placeholder_ "Description"]
         input_
-            [class_ $ C.button <> " add-button", type_ "submit", value_ "Add Entry"]
+            [ class_ $ C.button <> " add-button"
+            , type_ "submit", value_ "Add Entry"]
 
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
@@ -138,8 +159,10 @@ todo id es =
                     tr_ $ do
                         td_ $ toHtml  (TODO._desc e)
                         td_ $
-                            form_ [method_ "post", action_ "remove-todo"] $ do
-                                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+                            form_ [method_ "post"
+                                  , action_ "remove-todo"] $ do
+                                input_ [type_ "hidden"
+                                       , name_ "dayid", value_ (show id)]
                                 input_ [ type_ "hidden"
                                        , name_ "todoid"
                                        , value_ (show (TODO._id e))]
