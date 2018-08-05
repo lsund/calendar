@@ -123,17 +123,10 @@ day (Day id d es) wd ct =
                 tbody_ $
                     ul_ $ forM_ (sortEntries es)
                         (tr_ . entry id d)
-                    -- tr_ $ do
-                    --     td_ "Test"
-                    --     td_ "Test"
-                    --     td_ "Test"
-                    --     td_ "Test"
-            -- ul_ $ forM_ (sortEntries es)
-                    --     (\e -> li_ [class_ $ C.entry e ct] $ entry id d e)
 
 
-todo :: [TODO] -> HtmlT Identity ()
-todo es =
+todo :: DayID -> [TODO] -> HtmlT Identity ()
+todo id es =
     div_ [class_ "todo"] $ do
         table_ [class_ "todo-table"] $ do
             thead_ $
@@ -146,14 +139,16 @@ todo es =
                         td_ $ toHtml  (TODO._desc e)
                         td_ $
                             form_ [method_ "post", action_ "remove-todo"] $ do
+                                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
                                 input_ [ type_ "hidden"
-                                       , name_ "id"
+                                       , name_ "todoid"
                                        , value_ (show (TODO._id e))]
                                 input_ [class_ C.button
                                        , type_ "submit"
                                        , value_ "x"]
         div_ [class_ "todo-footer"] $
             form_ [class_ C.form, method_ "post", action_ "add-todo"] $ do
+                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
                 input_ [type_ "text", name_ "desc", placeholder_ "Description"]
                 input_ [class_ $ C.button <> " add-button"
                        , type_ "submit"

@@ -113,14 +113,16 @@ push conn =
 addTodo :: Connection -> Server ()
 addTodo conn =
     S.post "add-todo" $ do
+        dayid <- S.param' "dayid"
         t <- S.param' "desc"
         _ <- liftIO $ DBU.insertTodo conn t
-        S.redirect "/"
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
 
 removeTodo :: Connection -> Server ()
 removeTodo conn =
     S.post "remove-todo" $ do
-        id <- S.param' "id"
+        id <- S.param' "todoid"
+        dayid <- S.param' "dayid"
         _ <- liftIO $ DBU.removeTodo conn id
-        S.redirect "/"
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
