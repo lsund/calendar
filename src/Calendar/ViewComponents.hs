@@ -118,15 +118,15 @@ newEntry :: Int -> HtmlT Identity ()
 newEntry id =
     form_ [class_ C.form, method_ "post", action_ "add"] $ do
         input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-        div_ [class_ C.desc] $
+        div_ [class_ C.desc] $ do
             input_ [type_ "text", name_ "desc", placeholder_ "Description"]
-        input_
-            [ class_ $ C.button <> " add-button"
-            , type_ "submit", value_ "Add Entry"]
+            input_
+                [ class_ $ C.button <> " add-button"
+                , type_ "submit", value_ "Add Entry"]
 
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
-day (Day id d es) wd ct =
+day (Day id d es) wd _ =
     div_ [class_ "day"] $ do
         div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
         div_ [class_ "date"] $ h2_ $ toHtml (dayFormat d)
