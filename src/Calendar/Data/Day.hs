@@ -10,6 +10,7 @@ import           Calendar.Data.Entry
 
 type Date = T.Day
 
+-- Day ID Date Entries
 data Day = Day Int Date [Entry] deriving (Show)
 
 dayFormat :: T.Day -> Text

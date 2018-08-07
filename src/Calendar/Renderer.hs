@@ -48,3 +48,9 @@ day i t d w todos =
                 h1_ [class_ "time"] $ toHtml $ timeFormat t
         VC.navbar i
         VC.day d w t
+
+err :: MonadIO m => Text -> ActionCtxT cxt m b
+err msg = layout $ do
+            h1_ $ toHtml ("Error" :: Text)
+            div_ $ toHtml msg
+

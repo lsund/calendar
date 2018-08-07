@@ -38,7 +38,9 @@ getDay _ =
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
         day <- liftIO $ DBQ.getDayFromID x
         todos <- liftIO DBQ.getTodos
-        R.day x tod day  Nothing todos
+        case day of
+            Just d -> R.day x tod d  Nothing todos
+            Nothing -> R.err "No day with that ID"
 
 
 getRoot :: Connection -> Server ()

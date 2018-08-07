@@ -41,6 +41,8 @@
 [ ] Automatically create new day when not exists
 [ ] TODO items description should be directly editable
 [ ] Put each day in a url like GET /2018/01/05
+[ ] Add Weekly view
+[ ] Add monthly view
 [ ] Refactoring and code review
 [ ] Add sports log
 [ ] Add templates: Current day button -> Up comes preconf set of times
