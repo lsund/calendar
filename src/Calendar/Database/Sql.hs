@@ -10,7 +10,6 @@ updateDone :: Query
 updateDone = "update entry set done=true where id=?"
 
 
--- TODO What should this query be?
 push :: Query
 push = "update entry set dayid=dayid+1 where id=?"
 
