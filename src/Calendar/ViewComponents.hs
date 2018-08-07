@@ -37,6 +37,15 @@ hiddenUpdateData id e d = do
     input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
 
 
+updateForm :: DayID -> Entry -> Text -> HtmlT Identity ()
+updateForm id e action =
+    form_ [class_ C.form , method_ action , action_ "done"] $ do
+        input_ [type_ "hidden" , name_ "dayid" , value_ (show id)]
+        input_ [type_ "hidden" , name_ "entryid" , value_ (show (_id e))]
+        input_ [class_ C.button, type_ "submit", value_ "x"]
+
+
+
 -------------------------------------------------------------------------------
 -- Public API
 
@@ -46,10 +55,10 @@ entry id d e
     | _done e =
         tr_ [class_ "done"] $ do
             td_ [class_ "done"] $ (toHtml . showTime . _time) e
-            td_ [class_ "done"] $ (toHtml (_desc e :: Text))
-            td_ [class_ "done"] $ (toHtml ("" :: Text))
-            td_ [class_ "done"] $ (toHtml ("" :: Text))
-            td_ [class_ "done"] $ (toHtml ("" :: Text))
+            td_ [class_ "done"] (toHtml (_desc e :: Text))
+            td_ [class_ "done"] (toHtml ("" :: Text))
+            td_ [class_ "done"] (toHtml ("" :: Text))
+            td_ [class_ "done"] (toHtml ("" :: Text))
 
     | otherwise =
         tr_ $ do
@@ -79,37 +88,11 @@ entry id d e
                             , name_ "desc"
                             , value_ (_desc e :: Text)]
             -- Mark as done
-            td_ $
-                form_ [class_ C.form
-                      , method_ "post"
-                      , action_ "done"] $ do
-                    input_ [type_ "hidden"
-                           , name_ "dayid"
-                           , value_ (show id)]
-                    input_ [type_ "hidden"
-                           , name_ "entryid"
-                           , value_ (show (_id e))]
-                    input_ [class_ C.button, type_ "submit", value_ "x"]
+            td_ $ updateForm id e "done"
             -- Delete
-            td_ $
-                form_ [class_ C.form, method_ "post", action_ "delete"] $ do
-                    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-                    input_ [type_ "hidden"
-                           , name_ "entryid"
-                           , value_ (show (_id e))]
-                    input_ [class_ C.button, type_ "submit", value_ "x"]
+            td_ $ updateForm id e "delete"
             -- Push to next day
-            td_ $
-                form_ [class_ C.form
-                      , method_ "post"
-                      , action_ "push"] $ do
-                    input_ [ type_ "hidden"
-                           , name_ "dayid"
-                           , value_ (show id)]
-                    input_ [ type_ "hidden"
-                           , name_ "entryid"
-                           , value_ (show (_id e))]
-                    input_ [class_ C.button, type_ "submit", value_ "x"]
+            td_ $ updateForm id e "push"
         where
             stripJust = T.take 5 . T.drop 5
 

@@ -21,6 +21,21 @@ type SpockState = S.WebStateM () () ()
 type SpockContext a = S.ActionCtxT () SpockState a
 
 
+-- TODO find out a url like /2018/06/02 could be parsed
+--
+--
+getDay :: Connection -> Server ()
+getDay _ =
+    S.get "day" $ do
+        x <- S.param' "id"
+        tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
+        day <- liftIO $ DBQ.getDayFromID x
+        todos <- liftIO DBQ.getTodos
+        case day of
+            Just d -> R.day x tod d  Nothing todos
+            Nothing -> R.err "No day with that ID"
+
+
 daysAndTime :: SpockContext ([D.Day], TimeOfDay)
 daysAndTime = do
     d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
@@ -28,19 +43,6 @@ daysAndTime = do
     let dates = take nfiles $ iterate succ d
     days <- liftIO $ mapM DBQ.getDayfromDate dates
     return (days, tod)
-
-
-getDay :: Connection -> Server ()
-getDay _ =
-    S.get "day" $ do
-        x <- S.param' "id"
-        -- d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        day <- liftIO $ DBQ.getDayFromID x
-        todos <- liftIO DBQ.getTodos
-        case day of
-            Just d -> R.day x tod d  Nothing todos
-            Nothing -> R.err "No day with that ID"
 
 
 getRoot :: Connection -> Server ()
