@@ -126,7 +126,18 @@ addTodo conn =
 removeTodo :: Connection -> Server ()
 removeTodo conn =
     S.post "remove-todo" $ do
-        id <- S.param' "todoid"
+        todoid <- S.param' "todoid"
         dayid <- S.param' "dayid"
-        _ <- liftIO $ DBU.removeTodo conn id
+        _ <- liftIO $ DBU.removeTodo conn todoid
         S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+
+
+updateTodo :: Connection -> Server ()
+updateTodo conn =
+    S.post "update-todo" $ do
+        todoid <- S.param' "todoid"
+        dayid <- S.param' "dayid"
+        desc <- S.param' "desc"
+        _ <- liftIO $ DBU.updateTodo conn todoid desc
+        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+

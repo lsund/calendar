@@ -25,6 +25,7 @@ app = do
     push conn
     addTodo conn
     removeTodo conn
+    updateTodo conn
 
 
 main :: IO ()

@@ -39,7 +39,7 @@ hiddenUpdateData id e d = do
 
 updateForm :: DayID -> Entry -> Text -> HtmlT Identity ()
 updateForm id e action =
-    form_ [class_ C.form , method_ action , action_ "done"] $ do
+    form_ [class_ C.form , method_ "post" , action_ action] $ do
         input_ [type_ "hidden" , name_ "dayid" , value_ (show id)]
         input_ [type_ "hidden" , name_ "entryid" , value_ (show (_id e))]
         input_ [class_ C.button, type_ "submit", value_ "x"]
@@ -140,7 +140,18 @@ todo id es =
             tbody_ $
                 forM_ es $ \e ->
                     tr_ $ do
-                        td_ $ toHtml  (TODO._desc e)
+                        td_ $
+                            form_ [class_ C.form
+                                  , method_ "post"
+                                  , action_ "update-todo"] $ do
+                                input_ [type_ "hidden"
+                                       , name_ "dayid", value_ (show id)]
+                                input_ [ type_ "hidden"
+                                       , name_ "todoid"
+                                       , value_ (show (TODO._id e))]
+                                input_ [ type_ "text"
+                                       , name_ "desc"
+                                       , value_ (TODO._desc e)]
                         td_ $
                             form_ [method_ "post"
                                   , action_ "remove-todo"] $ do

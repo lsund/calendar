@@ -32,3 +32,7 @@ insertTodo = "insert into todoentry (description, done) values (?, ?)"
 
 removeTodo :: Query
 removeTodo = "delete from todoentry where id=?"
+
+
+updateTodo :: Query
+updateTodo = "update todoentry set description=? where id=?"

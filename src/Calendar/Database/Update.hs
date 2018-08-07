@@ -68,11 +68,14 @@ deleteEntry conn id = execute conn SQL.deleteEntry (Only id)
 -- Todo
 
 insertTodo :: Connection -> Text -> IO Int64
-insertTodo conn t =
-     execute conn SQL.insertTodo (t, False)
+insertTodo conn t = execute conn SQL.insertTodo (t, False)
 
 
 removeTodo :: Connection -> Int -> IO Int64
-removeTodo conn id =
-     execute conn SQL.removeTodo (Only id)
+removeTodo conn id = execute conn SQL.removeTodo (Only id)
+
+
+updateTodo :: Connection -> Int -> Text -> IO Int64
+updateTodo conn id desc = execute conn SQL.updateTodo (desc, id)
+
 
