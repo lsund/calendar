@@ -137,4 +137,3 @@ updateTodo conn =
         desc <- S.param' "desc"
         _ <- liftIO $ DBU.updateTodo conn todoid desc
         S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
-

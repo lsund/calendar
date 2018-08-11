@@ -7,12 +7,12 @@ import           Lucid
 import           Protolude
 
 import qualified Calendar.CssClasses as C
-import qualified Calendar.Data.Day as Day
-import           Calendar.Data.Day (Day(..))
-import qualified Calendar.Data.Todo as TODO
+import           Calendar.Data.Day   (Day (..))
+import qualified Calendar.Data.Day   as Day
 import qualified Calendar.Data.Entry as Entry
-import           Calendar.Forecast (Weather)
-import qualified Calendar.Forecast as FC
+import qualified Calendar.Data.Todo  as TODO
+import           Calendar.Forecast   (Weather)
+import qualified Calendar.Forecast   as FC
 
 type TODO = TODO.TODO
 type Date = Day.Date
@@ -21,7 +21,7 @@ type Entry = Entry.Entry
 
 showTime :: Maybe TimeOfDay -> Text
 showTime (Just t) = T.take 5 $ show t
-showTime Nothing = ""
+showTime Nothing  = ""
 
 
 isPast :: TimeOfDay -> TimeOfDay -> Bool
@@ -174,20 +174,12 @@ todo id todos =
                        , value_ "Add"]
 
 
-navbar :: Int -> HtmlT Identity ()
-navbar id =
+navbar :: Date -> HtmlT Identity ()
+navbar date =
     div_ [class_ "navbar"] $ do
         span_ $
-            form_ [method_ "get", action_ "day"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (pred id))]
-                input_ [ class_ C.button
-                        , type_ "submit"
-                        , name_ "prev"
-                        , value_ "Previous"]
+            form_ [method_ "get", action_ (Day.dateURL (pred date))] $
+                input_ [ class_ C.button , type_ "submit", value_ "previous"]
         span_ [class_ "next"] $
-            form_ [method_ "get", action_ "day"] $ do
-                input_ [type_ "hidden", name_ "id", value_ (show (succ id))]
-                input_ [ class_ C.button
-                        , type_ "submit"
-                        , name_ "action"
-                        , value_ "Next"]
+            form_ [method_ "get", action_ (Day.dateURL (succ date))] $
+                input_ [ class_ C.button , type_ "submit", value_ "next"]

@@ -49,7 +49,7 @@ day d tod w todos =
         div_ [class_ "center-wrapper"] $
             span_ [class_ "center"] $
                 h1_ [class_ "time"] $ toHtml $ Day.timeFormat tod
-        VC.navbar (Day._id d)
+        VC.navbar (Day._date d)
         VC.day d w tod
 
 err :: MonadIO m => Text -> ActionCtxT cxt m b
