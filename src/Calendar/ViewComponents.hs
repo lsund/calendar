@@ -47,7 +47,6 @@ updateForm id e action =
         input_ [class_ C.button, type_ "submit", value_ "x"]
 
 
-
 -------------------------------------------------------------------------------
 -- Public API
 
@@ -114,7 +113,7 @@ day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
 day (Day id d es) wd _ =
     div_ [class_ "day"] $ do
         div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
-        div_ [class_ "date"] $ h2_ $ toHtml (Day.dayFormat d)
+        div_ [class_ "date"] $ h2_ $ toHtml (Day.dateFormat d)
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $

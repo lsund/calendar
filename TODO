@@ -42,13 +42,12 @@
 [x] Add Push to next day
 [x] TODO items description should be directly editable
 [x] Put each day in a url like GET /2018/01/05
-[ ] Seperate To-buy from TODO
-[ ] Automatically create new day when not exists
+[x] Automatically create new day when not exists
 [ ] Add Weekly view
 [ ] Add monthly view
+[ ] Seperate To-buy from TODO
 [ ] Refactoring and code review
 [ ] Add sports log
 [ ] Add templates: Current day button -> Up comes preconf set of times
-[ ] Weekly view
 [ ] Add goals. Each goal has a name and a time to be reached
 [ ] Support Tagging: tag a entry for the given goal, reduce time for that goal

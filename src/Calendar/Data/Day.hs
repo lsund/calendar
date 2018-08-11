@@ -13,8 +13,8 @@ type Date = DTC.Day
 
 data Day = Day { _id :: Int, _date :: Date, _entries :: [Entry] } deriving (Show)
 
-dayFormat :: Date -> Text
-dayFormat = pack . formatTime defaultTimeLocale "%A %F"
+dateFormat :: Date -> Text
+dateFormat = pack . formatTime defaultTimeLocale "%A %F"
 
 timeFormat :: TimeOfDay -> Text
 timeFormat = pack . formatTime defaultTimeLocale "%R"
