@@ -14,7 +14,7 @@ import           Calendar.Data.Day          as Day
 import           Calendar.Data.Entry
 import qualified Calendar.Database.Query    as DBQ
 import qualified Calendar.Database.Update   as DBU
-import           Calendar.Forecast
+-- import           Calendar.Forecast
 import qualified Calendar.Renderer          as R
 import           Calendar.Util
 
@@ -42,99 +42,90 @@ daysAndTime = do
     return (days, tod)
 
 
-getRoot :: Connection -> Server ()
-getRoot _ =
-    S.get S.root $ do
-        (days, tod) <- daysAndTime
-        todos <- liftIO DBQ.getTodos
-        R.index tod days [] todos
+-- getRoot :: Connection -> Server ()
+-- getRoot _ =
+--     S.get S.root $ do
+--         (days, tod) <- daysAndTime
+--         todos <- liftIO DBQ.getTodos
+--         R.index tod days [] todos
 
 
-getWeather :: Connection -> Server ()
-getWeather _ =
-    S.get "weather" $ do
-        (Just fc) <- liftIO getForecast
-        (days, tod) <- daysAndTime
-        todos <- liftIO DBQ.getTodos
-        R.index tod days fc todos
+-- getWeather :: Connection -> Server ()
+-- getWeather _ =
+--     S.get "weather" $ do
+--         (Just fc) <- liftIO getForecast
+--         (days, tod) <- daysAndTime
+--         todos <- liftIO DBQ.getTodos
+--         R.index tod days fc todos
 
 
 add :: Connection -> Server ()
 add conn =
-    S.post "add" $ do
+    S.post (var <//> var <//> var <//> "entry-add") $ \year month day -> do
         desc <- S.param' "desc"
         dayid   <- S.param' "dayid"
         let e = Entry 0 Nothing desc False
-
         _ <- liftIO $ DBU.insertEntry conn dayid e
-        S.redirect $ makeQueryString "/day" ("id", show dayid)
+        S.redirect $ Day.makeURL year month day
 
 
 update :: Connection -> Server ()
 update conn =
-    S.post "update" $ do
+    S.post (var <//> var <//> var <//> "entry-update") $ \year month day -> do
         t    <- S.param' "time"
         desc <- S.param' "desc"
-        dayid <- S.param' "dayid"
         entryid <- S.param' "entryid"
         isdone <- S.param' "done"
         let mt = parseMaybeTime t
         print desc
         _ <- liftIO $ DBU.updateEntry conn entryid mt desc isdone
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day
 
 
 done :: Connection -> Server ()
 done conn =
-    S.post (var <//> var <//> var <//> "done") $ \year month day -> do
+    S.post (var <//> var <//> var <//> "entry-done") $ \year month day -> do
         entryid <- S.param' "entryid"
-        -- dayid <- S.param' "dayid"
         _ <- liftIO $ DBU.entryDone conn entryid
         S.redirect $ Day.makeURL year month day
-        -- S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
 
 delete :: Connection -> Server ()
 delete conn =
-    S.post "delete" $ do
+    S.post (var <//> var <//> var <//> "entry-delete") $ \year month day -> do
         entryid <- S.param' "entryid"
-        dayid <- S.param' "dayid"
         _ <- liftIO $ DBU.deleteEntry conn entryid
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day
 
 
 push :: Connection -> Server ()
 push conn =
-    S.post "push" $ do
+    S.post (var <//> var <//> var <//> "entry-push") $ \year month day -> do
         entryid <- S.param' "entryid"
-        dayid <- S.param' "dayid"
         _ <- liftIO $ DBU.push conn entryid
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day
 
 
 addTodo :: Connection -> Server ()
 addTodo conn =
-    S.post "add-todo" $ do
-        dayid <- S.param' "dayid"
+    S.post (var <//> var <//> var <//> "todo-add") $ \year month day -> do
         t <- S.param' "desc"
         _ <- liftIO $ DBU.insertTodo conn t
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day
 
 
 removeTodo :: Connection -> Server ()
 removeTodo conn =
-    S.post "remove-todo" $ do
+    S.post (var <//> var <//> var <//> "todo-remove") $ \year month day -> do
         todoid <- S.param' "todoid"
-        dayid <- S.param' "dayid"
         _ <- liftIO $ DBU.removeTodo conn todoid
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day
 
 
 updateTodo :: Connection -> Server ()
 updateTodo conn =
-    S.post "update-todo" $ do
+    S.post (var <//> var <//> var <//> "todo-update") $ \year month day -> do
         todoid <- S.param' "todoid"
-        dayid <- S.param' "dayid"
         desc <- S.param' "desc"
         _ <- liftIO $ DBU.updateTodo conn todoid desc
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day

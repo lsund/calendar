@@ -33,19 +33,19 @@ layout b =
         body_ $ div_ [class_ "content"] b
 
 
-index :: MonadIO m => TimeOfDay -> [Day] -> [Weather] -> [TODO] -> ActionCtxT cxt m b
-index t days fc todos =
-    layout $ do
-        div_ (VC.todo 0 todos)
-        h1_ $ toHtml $ Day.timeFormat t
-        forM_ (pairForecast days fc) $
-            \(d, wd) -> VC.day d wd t
+-- index :: MonadIO m => TimeOfDay -> [Day] -> [Weather] -> [TODO] -> ActionCtxT cxt m b
+-- index t days fc todos =
+--     layout $ do
+--         div_ (VC.todo 0 todos)
+--         h1_ $ toHtml $ Day.timeFormat t
+--         forM_ (pairForecast days fc) $
+--             \(d, wd) -> VC.day d wd t
 
 
 day :: MonadIO m => Day -> TimeOfDay -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
 day d tod w todos =
     layout $ do
-        div_ (VC.todo (Day._id d) todos)
+        div_ (VC.todo d todos)
         div_ [class_ "center-wrapper"] $
             span_ [class_ "center"] $
                 h1_ [class_ "time"] $ toHtml $ Day.timeFormat tod

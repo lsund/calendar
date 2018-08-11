@@ -15,8 +15,8 @@ app :: Server ()
 app = do
     S.middleware $ staticPolicy $ addBase "static"
     conn <- liftIO makeConnection
-    getWeather conn
-    getRoot conn
+    -- getWeather conn
+    -- getRoot conn
     getDay conn
     add conn
     update conn

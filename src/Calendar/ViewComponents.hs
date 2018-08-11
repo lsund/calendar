@@ -34,9 +34,7 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
 
 hiddenUpdateData :: DayID -> Entry -> Date -> HtmlT Identity ()
 hiddenUpdateData id e d = do
-    input_ [type_ "hidden", name_ "dayid", value_ (show id)]
     input_ [type_ "hidden", name_ "entryid", value_ (show (Entry._id e))]
-    input_ [type_ "hidden", name_ "day", value_ (show d)]
     input_ [type_ "hidden", name_ "done", value_ (show (Entry._done e))]
 
 
@@ -64,10 +62,11 @@ entry route id d e
 
     | otherwise =
         tr_ $ do
+            -- Update Entry
             td_ $
                 form_ [class_ C.form
                       , method_ "post"
-                      , action_ "update"] $ do
+                      , action_ (route <> "/entry-update")] $ do
                     hiddenUpdateData id e d
                     input_ [type_ "hidden"
                            , name_ "desc"
@@ -76,11 +75,10 @@ entry route id d e
                            , type_ "text"
                             , name_ "time"
                             , value_ $ (showTime . Entry._time) e]
-            -- Update description
             td_ $
                 form_ [class_ C.form
                       , method_ "post"
-                      , action_ "update"] $ do
+                      , action_ (route <> "/entry-update")] $ do
                     hiddenUpdateData id e d
                     input_ [ type_ "hidden"
                         , name_ "time"
@@ -90,24 +88,24 @@ entry route id d e
                             , name_ "desc"
                             , value_ (Entry._desc e :: Text)]
             -- Mark as done
-            td_ $ updateForm id e (route <> "/done")
+            td_ $ updateForm id e (route <> "/entry-done")
             -- Delete
-            td_ $ updateForm id e "delete"
+            td_ $ updateForm id e (route <> "/entry-delete")
             -- Push to next day
-            td_ $ updateForm id e "push"
+            td_ $ updateForm id e (route <> "/entry-push")
         where
             stripJust = T.take 5 . T.drop 5
 
 
-newEntry :: Int -> HtmlT Identity ()
-newEntry id =
-    form_ [class_ C.form, method_ "post", action_ "add"] $ do
-        input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+newEntry :: Route -> DayID -> HtmlT Identity ()
+newEntry route id =
+    form_ [class_ C.form, method_ "post"
+          , action_ (route <> "/entry-add")] $ do
+        input_ [type_ "hidden" , name_ "dayid", value_ (show id)]
         div_ [class_ C.desc] $ do
             input_ [type_ "text", name_ "desc", placeholder_ "Description"]
-            input_
-                [ class_ $ C.button <> " add-button"
-                , type_ "submit", value_ "Add Entry"]
+            input_ [ class_ $ C.button <> " add-button"
+                   , type_ "submit", value_ "Add Entry"]
 
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
@@ -115,7 +113,7 @@ day d@(Day id date es) wd _ =
     div_ [class_ "day"] $ do
         div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
         div_ [class_ "date"] $ h2_ $ toHtml (Day.dateFormat date)
-        div_ [class_ "new"] $ newEntry id
+        div_ [class_ "new"] $ newEntry (Day.dayURL d) id
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
             table_ $ do
@@ -131,8 +129,8 @@ day d@(Day id date es) wd _ =
                         (tr_ . entry (Day.dayURL d) id date)
 
 
-todo :: DayID -> [TODO] -> HtmlT Identity ()
-todo id todos =
+todo :: Day -> [TODO] -> HtmlT Identity ()
+todo d@(Day id _ _)  todos =
     div_ [class_ "todo"] $ do
         table_ [class_ "todo-table"] $ do
             thead_ $
@@ -145,9 +143,8 @@ todo id todos =
                         td_ $
                             form_ [class_ C.form
                                   , method_ "post"
-                                  , action_ "update-todo"] $ do
-                                input_ [type_ "hidden"
-                                       , name_ "dayid", value_ (show id)]
+                                  , action_ (Day.dayURL d <>
+                                             "/todo-update")] $ do
                                 input_ [ type_ "hidden"
                                        , name_ "todoid"
                                        , value_ (show (TODO._id e))]
@@ -156,9 +153,8 @@ todo id todos =
                                        , value_ (TODO._desc e)]
                         td_ $
                             form_ [method_ "post"
-                                  , action_ "remove-todo"] $ do
-                                input_ [type_ "hidden"
-                                       , name_ "dayid", value_ (show id)]
+                                  , action_ (Day.dayURL d <>
+                                             "/todo-remove")] $ do
                                 input_ [ type_ "hidden"
                                        , name_ "todoid"
                                        , value_ (show (TODO._id e))]
@@ -166,8 +162,8 @@ todo id todos =
                                        , type_ "submit"
                                        , value_ "x"]
         div_ [class_ "todo-footer"] $
-            form_ [class_ C.form, method_ "post", action_ "add-todo"] $ do
-                input_ [type_ "hidden", name_ "dayid", value_ (show id)]
+            form_ [class_ C.form, method_ "post"
+                  , action_ (Day.dayURL d <> "/todo-add")] $ do
                 input_ [type_ "text", name_ "desc", placeholder_ "Description"]
                 input_ [class_ $ C.button <> " add-button"
                        , type_ "submit"
