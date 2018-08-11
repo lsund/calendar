@@ -1,6 +1,6 @@
 module Calendar.Data.Day where
 
-import           Data.Time.Calendar  as DTC
+import qualified Data.Time.Calendar  as DTC
 import           Data.Time.LocalTime
 import           Data.Time.Format
 import           Protolude
@@ -23,3 +23,10 @@ dateURL :: Date -> Text
 dateURL date =
     let (year, month, day) = DTC.toGregorian date
     in pack $ printf "/%d/%d/%d" year month day
+
+dayURL :: Day -> Text
+dayURL d = pack $ printf "/%d/%d/%d" year month day
+    where (year, month, day) = DTC.toGregorian (_date d)
+
+makeURL :: Integer -> Int -> Int -> Text
+makeURL year month day = pack $ printf "/%d/%d/%d" year month day

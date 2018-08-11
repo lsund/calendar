@@ -10,7 +10,7 @@ import           Web.Spock                  ((<//>), var)
 import qualified Web.Spock                  as S
 
 import           Calendar.Config
-import           Calendar.Data.Day          as D
+import           Calendar.Data.Day          as Day
 import           Calendar.Data.Entry
 import qualified Calendar.Database.Query    as DBQ
 import qualified Calendar.Database.Update   as DBU
@@ -33,7 +33,7 @@ getDay _ =
         R.day day tod Nothing todos
 
 
-daysAndTime :: SpockContext ([D.Day], TimeOfDay)
+daysAndTime :: SpockContext ([Day.Day], TimeOfDay)
 daysAndTime = do
     d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
@@ -86,11 +86,12 @@ update conn =
 
 done :: Connection -> Server ()
 done conn =
-    S.post "done" $ do
+    S.post (var <//> var <//> var <//> "done") $ \year month day -> do
         entryid <- S.param' "entryid"
-        dayid <- S.param' "dayid"
+        -- dayid <- S.param' "dayid"
         _ <- liftIO $ DBU.entryDone conn entryid
-        S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
+        S.redirect $ Day.makeURL year month day
+        -- S.redirect $ makeQueryString "/day" ("id", show (dayid :: Int))
 
 
 delete :: Connection -> Server ()

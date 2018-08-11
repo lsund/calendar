@@ -5,7 +5,6 @@ import           Database.PostgreSQL.Simple
 updateEntry :: Query
 updateEntry = "update entry set ts=?, description=?, done=? where id=?"
 
-
 updateDone :: Query
 updateDone = "update entry set done=true where id=?"
 

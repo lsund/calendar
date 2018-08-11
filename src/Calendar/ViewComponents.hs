@@ -18,6 +18,7 @@ type TODO = TODO.TODO
 type Date = Day.Date
 type DayID = Int
 type Entry = Entry.Entry
+type Route = Text
 
 showTime :: Maybe TimeOfDay -> Text
 showTime (Just t) = T.take 5 $ show t
@@ -51,8 +52,8 @@ updateForm id e action =
 -- Public API
 
 
-entry :: DayID -> Date -> Entry -> HtmlT Identity ()
-entry id d e
+entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()
+entry route id d e
     | Entry._done e =
         tr_ [class_ "done"] $ do
             td_ [class_ "done"] $ (toHtml . showTime . Entry._time) e
@@ -89,7 +90,7 @@ entry id d e
                             , name_ "desc"
                             , value_ (Entry._desc e :: Text)]
             -- Mark as done
-            td_ $ updateForm id e "done"
+            td_ $ updateForm id e (route <> "/done")
             -- Delete
             td_ $ updateForm id e "delete"
             -- Push to next day
@@ -110,10 +111,10 @@ newEntry id =
 
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
-day (Day id d es) wd _ =
+day d@(Day id date es) wd _ =
     div_ [class_ "day"] $ do
         div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
-        div_ [class_ "date"] $ h2_ $ toHtml (Day.dateFormat d)
+        div_ [class_ "date"] $ h2_ $ toHtml (Day.dateFormat date)
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
@@ -127,7 +128,7 @@ day (Day id d es) wd _ =
                         th_ "Push"
                 tbody_ $
                     ul_ $ forM_ (Entry.sort es)
-                        (tr_ . entry id d)
+                        (tr_ . entry (Day.dayURL d) id date)
 
 
 todo :: DayID -> [TODO] -> HtmlT Identity ()
