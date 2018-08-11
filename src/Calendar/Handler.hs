@@ -26,9 +26,9 @@ type SpockContext a = S.ActionCtxT () SpockState a
 getDay :: Connection -> Server ()
 getDay _ =
     S.get (var <//> var <//> var) $ \year month day -> do
-        let d = T.fromGregorian year month day
+        let calenderDay = T.fromGregorian year month day
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        day <- liftIO $ DBQ.getDayfromDate d
+        day <- liftIO $ DBQ.getDay calenderDay
         todos <- liftIO DBQ.getTodos
         R.day day tod Nothing todos
 
@@ -38,7 +38,7 @@ daysAndTime = do
     d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
     let dates = take nfiles $ iterate succ d
-    days <- liftIO $ mapM DBQ.getDayfromDate dates
+    days <- liftIO $ mapM DBQ.getDay dates
     return (days, tod)
 
 
