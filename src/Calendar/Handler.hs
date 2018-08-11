@@ -9,7 +9,6 @@ import           Protolude
 import           Web.Spock                  ((<//>), var)
 import qualified Web.Spock                  as S
 
-import           Calendar.Config
 import           Calendar.Data.Day          as Day
 import           Calendar.Data.Entry
 import qualified Calendar.Database.Query    as DBQ
@@ -23,8 +22,8 @@ type SpockState = S.WebStateM () () ()
 type SpockContext a = S.ActionCtxT () SpockState a
 
 
-getDay :: Connection -> Server ()
-getDay _ =
+day :: Connection -> Server ()
+day _ =
     S.get (var <//> var <//> var) $ \year month day -> do
         let calenderDay = T.fromGregorian year month day
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
@@ -33,34 +32,8 @@ getDay _ =
         R.day day tod Nothing todos
 
 
-daysAndTime :: SpockContext ([Day.Day], TimeOfDay)
-daysAndTime = do
-    d   <- (localDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-    tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-    let dates = take nfiles $ iterate succ d
-    days <- liftIO $ mapM DBQ.getDay dates
-    return (days, tod)
-
-
--- getRoot :: Connection -> Server ()
--- getRoot _ =
---     S.get S.root $ do
---         (days, tod) <- daysAndTime
---         todos <- liftIO DBQ.getTodos
---         R.index tod days [] todos
-
-
--- getWeather :: Connection -> Server ()
--- getWeather _ =
---     S.get "weather" $ do
---         (Just fc) <- liftIO getForecast
---         (days, tod) <- daysAndTime
---         todos <- liftIO DBQ.getTodos
---         R.index tod days fc todos
-
-
-add :: Connection -> Server ()
-add conn =
+entryAdd :: Connection -> Server ()
+entryAdd conn =
     S.post (var <//> var <//> var <//> "entry-add") $ \year month day -> do
         desc <- S.param' "desc"
         dayid   <- S.param' "dayid"
@@ -69,8 +42,8 @@ add conn =
         S.redirect $ Day.makeURL year month day
 
 
-update :: Connection -> Server ()
-update conn =
+entryUpdate :: Connection -> Server ()
+entryUpdate conn =
     S.post (var <//> var <//> var <//> "entry-update") $ \year month day -> do
         t    <- S.param' "time"
         desc <- S.param' "desc"
@@ -82,48 +55,48 @@ update conn =
         S.redirect $ Day.makeURL year month day
 
 
-done :: Connection -> Server ()
-done conn =
+entryDone :: Connection -> Server ()
+entryDone conn =
     S.post (var <//> var <//> var <//> "entry-done") $ \year month day -> do
         entryid <- S.param' "entryid"
         _ <- liftIO $ DBU.entryDone conn entryid
         S.redirect $ Day.makeURL year month day
 
 
-delete :: Connection -> Server ()
-delete conn =
+entryDelete :: Connection -> Server ()
+entryDelete conn =
     S.post (var <//> var <//> var <//> "entry-delete") $ \year month day -> do
         entryid <- S.param' "entryid"
         _ <- liftIO $ DBU.deleteEntry conn entryid
         S.redirect $ Day.makeURL year month day
 
 
-push :: Connection -> Server ()
-push conn =
+entryPush :: Connection -> Server ()
+entryPush conn =
     S.post (var <//> var <//> var <//> "entry-push") $ \year month day -> do
         entryid <- S.param' "entryid"
         _ <- liftIO $ DBU.push conn entryid
         S.redirect $ Day.makeURL year month day
 
 
-addTodo :: Connection -> Server ()
-addTodo conn =
+todoAdd :: Connection -> Server ()
+todoAdd conn =
     S.post (var <//> var <//> var <//> "todo-add") $ \year month day -> do
         t <- S.param' "desc"
         _ <- liftIO $ DBU.insertTodo conn t
         S.redirect $ Day.makeURL year month day
 
 
-removeTodo :: Connection -> Server ()
-removeTodo conn =
+todoRemove :: Connection -> Server ()
+todoRemove conn =
     S.post (var <//> var <//> var <//> "todo-remove") $ \year month day -> do
         todoid <- S.param' "todoid"
         _ <- liftIO $ DBU.removeTodo conn todoid
         S.redirect $ Day.makeURL year month day
 
 
-updateTodo :: Connection -> Server ()
-updateTodo conn =
+todoUpdate :: Connection -> Server ()
+todoUpdate conn =
     S.post (var <//> var <//> var <//> "todo-update") $ \year month day -> do
         todoid <- S.param' "todoid"
         desc <- S.param' "desc"
