@@ -2,9 +2,11 @@ module Calendar.Handler where
 
 import           Control.Monad.IO.Class     (liftIO)
 import           Data.Time
+import           Data.Time.Calendar  as T
 -- import           Data.Time.LocalTime
 import           Database.PostgreSQL.Simple
 import           Protolude
+import           Web.Spock                  ((<//>), var)
 import qualified Web.Spock                  as S
 
 import           Calendar.Config
@@ -21,19 +23,14 @@ type SpockState = S.WebStateM () () ()
 type SpockContext a = S.ActionCtxT () SpockState a
 
 
--- TODO find out a url like /2018/06/02 could be parsed
---
---
 getDay :: Connection -> Server ()
 getDay _ =
-    S.get "day" $ do
-        x <- S.param' "id"
+    S.get (var <//> var <//> var) $ \year month day -> do
+        let d = T.fromGregorian year month day
         tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        day <- liftIO $ DBQ.getDayFromID x
+        day <- liftIO $ DBQ.getDayfromDate d
         todos <- liftIO DBQ.getTodos
-        case day of
-            Just d -> R.day x tod d  Nothing todos
-            Nothing -> R.err "No day with that ID"
+        R.day day tod Nothing todos
 
 
 daysAndTime :: SpockContext ([D.Day], TimeOfDay)

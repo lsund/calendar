@@ -7,15 +7,17 @@ import           Lucid
 import           Protolude
 
 import qualified Calendar.CssClasses as C
-import           Calendar.Data.Day
+import qualified Calendar.Data.Day as Day
+import           Calendar.Data.Day (Day(..))
 import qualified Calendar.Data.Todo as TODO
-import           Calendar.Data.Entry
+import qualified Calendar.Data.Entry as Entry
 import           Calendar.Forecast (Weather)
 import qualified Calendar.Forecast as FC
 
 type TODO = TODO.TODO
-
+type Date = Day.Date
 type DayID = Int
+type Entry = Entry.Entry
 
 showTime :: Maybe TimeOfDay -> Text
 showTime (Just t) = T.take 5 $ show t
@@ -32,16 +34,16 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
 hiddenUpdateData :: DayID -> Entry -> Date -> HtmlT Identity ()
 hiddenUpdateData id e d = do
     input_ [type_ "hidden", name_ "dayid", value_ (show id)]
-    input_ [type_ "hidden", name_ "entryid", value_ (show (_id e))]
+    input_ [type_ "hidden", name_ "entryid", value_ (show (Entry._id e))]
     input_ [type_ "hidden", name_ "day", value_ (show d)]
-    input_ [type_ "hidden", name_ "done", value_ (show (_done e))]
+    input_ [type_ "hidden", name_ "done", value_ (show (Entry._done e))]
 
 
 updateForm :: DayID -> Entry -> Text -> HtmlT Identity ()
 updateForm id e action =
     form_ [class_ C.form , method_ "post" , action_ action] $ do
         input_ [type_ "hidden" , name_ "dayid" , value_ (show id)]
-        input_ [type_ "hidden" , name_ "entryid" , value_ (show (_id e))]
+        input_ [type_ "hidden" , name_ "entryid" , value_ (show (Entry._id e))]
         input_ [class_ C.button, type_ "submit", value_ "x"]
 
 
@@ -52,10 +54,10 @@ updateForm id e action =
 
 entry :: DayID -> Date -> Entry -> HtmlT Identity ()
 entry id d e
-    | _done e =
+    | Entry._done e =
         tr_ [class_ "done"] $ do
-            td_ [class_ "done"] $ (toHtml . showTime . _time) e
-            td_ [class_ "done"] (toHtml (_desc e :: Text))
+            td_ [class_ "done"] $ (toHtml . showTime . Entry._time) e
+            td_ [class_ "done"] (toHtml (Entry._desc e :: Text))
             td_ [class_ "done"] (toHtml ("" :: Text))
             td_ [class_ "done"] (toHtml ("" :: Text))
             td_ [class_ "done"] (toHtml ("" :: Text))
@@ -69,11 +71,11 @@ entry id d e
                     hiddenUpdateData id e d
                     input_ [type_ "hidden"
                            , name_ "desc"
-                           , value_ (_desc e :: Text)]
+                           , value_ (Entry._desc e :: Text)]
                     input_ [class_ C.time
                            , type_ "text"
                             , name_ "time"
-                            , value_ $ (showTime . _time) e]
+                            , value_ $ (showTime . Entry._time) e]
             -- Update description
             td_ $
                 form_ [class_ C.form
@@ -82,11 +84,11 @@ entry id d e
                     hiddenUpdateData id e d
                     input_ [ type_ "hidden"
                         , name_ "time"
-                        , value_ (stripJust (show (_time e)))]
+                        , value_ (stripJust (show (Entry._time e)))]
                     input_ [class_ C.desc
                             , type_ "text"
                             , name_ "desc"
-                            , value_ (_desc e :: Text)]
+                            , value_ (Entry._desc e :: Text)]
             -- Mark as done
             td_ $ updateForm id e "done"
             -- Delete
@@ -112,7 +114,7 @@ day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
 day (Day id d es) wd _ =
     div_ [class_ "day"] $ do
         div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
-        div_ [class_ "date"] $ h2_ $ toHtml (dayFormat d)
+        div_ [class_ "date"] $ h2_ $ toHtml (Day.dayFormat d)
         div_ [class_ "new"] $ newEntry id
         div_ [class_ "sep-y mui-divider"] ""
         div_ [class_ "entries"] $
@@ -125,12 +127,12 @@ day (Day id d es) wd _ =
                         th_ "Delete"
                         th_ "Push"
                 tbody_ $
-                    ul_ $ forM_ (sortEntries es)
+                    ul_ $ forM_ (Entry.sort es)
                         (tr_ . entry id d)
 
 
 todo :: DayID -> [TODO] -> HtmlT Identity ()
-todo id es =
+todo id todos =
     div_ [class_ "todo"] $ do
         table_ [class_ "todo-table"] $ do
             thead_ $
@@ -138,7 +140,7 @@ todo id es =
                     th_ [class_ "first-todo-column"] "TodoItem"
                     th_ "Remove"
             tbody_ $
-                forM_ es $ \e ->
+                forM_ todos $ \e ->
                     tr_ $ do
                         td_ $
                             form_ [class_ C.form

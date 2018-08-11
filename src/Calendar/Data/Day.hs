@@ -10,8 +10,7 @@ import           Calendar.Data.Entry
 
 type Date = T.Day
 
--- Day ID Date Entries
-data Day = Day Int Date [Entry] deriving (Show)
+data Day = Day { _id :: Int, _date :: Date, _entries :: [Entry] } deriving (Show)
 
 dayFormat :: T.Day -> Text
 dayFormat = pack . formatTime defaultTimeLocale "%A %F"
