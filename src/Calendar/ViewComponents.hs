@@ -12,7 +12,6 @@ import qualified Calendar.Data.Day   as Day
 import qualified Calendar.Data.Entry as Entry
 import qualified Calendar.Data.Todo  as TODO
 import           Calendar.Forecast   (Weather)
-import qualified Calendar.Forecast   as FC
 
 type TODO = TODO.TODO
 type Date = Day.Date
@@ -109,11 +108,11 @@ newEntry route id =
 
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
-day d@(Day id date es) wd _ =
+day d@(Day id date es) wd tod =
     div_ [class_ "day"] $ do
-        div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
+        div_ [class_ "time"] $ toHtml $ Day.timeFormat tod
         div_ [class_ "center-wrapper"] $
-            h2_ [class_ "center"] $ toHtml (Day.dateFormat date)
+            h2_ [class_ "center"] $ toHtml $ Day.dateFormat date
         div_ [class_ "entries"] $
             table_ $ do
                 thead_$
@@ -174,9 +173,9 @@ navbar date =
     div_ [class_ "mui-appbar"] $
         table_ [width_ "100%"] $
             tr_ [style_ "vertical-align:middle;"] $ do
-                td_  [class_ "mui-appbar-height"] $
+                td_  [class_ "mui--appbar-height"] $
                     form_ [method_ "get", action_ (Day.dateURL (pred date))] $
                         input_ [ class_ C.button , type_ "submit", value_ "previous"]
-                td_  [class_ "mui-appbar-height appbar-right"] $
+                td_  [class_ "mui--appbar-height"] $
                     form_ [method_ "get", action_ (Day.dateURL (succ date))] $
                         input_ [ class_ C.button , type_ "submit", value_ "next"]

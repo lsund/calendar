@@ -1,19 +1,19 @@
 module Calendar.Handler where
 
 import           Control.Monad.IO.Class     (liftIO)
-import           Data.Time
-import           Data.Time.Calendar  as T
--- import           Data.Time.LocalTime
+import qualified Data.Time                  as T
+import qualified Data.Time.Calendar         as DTC
 import           Database.PostgreSQL.Simple
 import           Protolude
-import           Web.Spock                  ((<//>), var)
+import           Web.Spock                  (var, (<//>))
 import qualified Web.Spock                  as S
 
-import           Calendar.Data.Day          as Day
+import           Calendar.Data.Day          (Day)
+import qualified Calendar.Data.Day          as Day
 import           Calendar.Data.Entry
+import           Calendar.Data.Todo         (TODO)
 import qualified Calendar.Database.Query    as DBQ
 import qualified Calendar.Database.Update   as DBU
--- import           Calendar.Forecast
 import qualified Calendar.Renderer          as R
 import           Calendar.Util
 
@@ -21,14 +21,26 @@ type Server a = S.SpockM () () () a
 type SpockState = S.WebStateM () () ()
 type SpockContext a = S.ActionCtxT () SpockState a
 
+dayContent :: Integer -> Int -> Int -> IO (Day, T.TimeOfDay, [TODO])
+dayContent year month day = do
+    let calenderDay = DTC.fromGregorian year month day
+    tod <- (T.localTimeOfDay . T.zonedTimeToLocalTime) <$>
+            liftIO T.getZonedTime
+    calendarDay <- liftIO $ DBQ.getDay calenderDay
+    todos <- liftIO DBQ.getTodos
+    return (calendarDay, tod, todos)
+
+week :: Connection -> Server ()
+week _ =
+    S.get (var <//> var <//> var <//> "week") $ \year month day -> do
+        (calendarDay, _, _) <- liftIO $ dayContent year month day
+        R.week calendarDay
+
 
 day :: Connection -> Server ()
 day _ =
     S.get (var <//> var <//> var) $ \year month day -> do
-        let calenderDay = T.fromGregorian year month day
-        tod <- (localTimeOfDay . zonedTimeToLocalTime) <$> liftIO getZonedTime
-        day <- liftIO $ DBQ.getDay calenderDay
-        todos <- liftIO DBQ.getTodos
+        (day, tod, todos) <- liftIO $ dayContent year month day
         R.day day tod Nothing todos
 
 

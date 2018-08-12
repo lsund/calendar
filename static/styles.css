@@ -75,7 +75,3 @@ input.submit {
 td.done {
     border-bottom: 1px solid #cccccc;
 }
-
-.appbar-right {
-    float: right;
-}

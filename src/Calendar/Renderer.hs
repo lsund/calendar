@@ -33,24 +33,20 @@ layout b =
         body_ $ div_ [class_ "content"] b
 
 
--- index :: MonadIO m => TimeOfDay -> [Day] -> [Weather] -> [TODO] -> ActionCtxT cxt m b
--- index t days fc todos =
---     layout $ do
---         div_ (VC.todo 0 todos)
---         h1_ $ toHtml $ Day.timeFormat t
---         forM_ (pairForecast days fc) $
---             \(d, wd) -> VC.day d wd t
-
-
 day :: MonadIO m => Day -> TimeOfDay -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
 day d tod w todos =
     layout $
         div_ [class_ "mui-container"] $ do
-            div_ [class_ "center-wrapper"] $
-                h1_ [class_ "center time"] $ toHtml $ Day.timeFormat tod
             VC.navbar (Day._date d)
             VC.day d w tod
             div_ (VC.todo d todos)
+
+
+week :: MonadIO m => Day -> ActionCtxT ctx m b
+week d =
+    layout $
+        div_ [class_ "mui-container"] $ toHtml ("Test" :: Text)
+
 
 err :: MonadIO m => Text -> ActionCtxT cxt m b
 err msg = layout $ do
