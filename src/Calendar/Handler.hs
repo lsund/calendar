@@ -1,20 +1,21 @@
 module Calendar.Handler where
 
-import           Control.Monad.IO.Class     (liftIO)
-import qualified Data.Time                  as T
-import qualified Data.Time.Calendar         as DTC
+import           Control.Monad.IO.Class      (liftIO)
+import qualified Data.Time                   as T
+import qualified Data.Time.Calendar          as DTC
+import           Data.Time.Calendar.WeekDate
 import           Database.PostgreSQL.Simple
 import           Protolude
-import           Web.Spock                  (var, (<//>))
-import qualified Web.Spock                  as S
+import           Web.Spock                   (var, (<//>))
+import qualified Web.Spock                   as S
 
-import           Calendar.Data.Day          (Day)
-import qualified Calendar.Data.Day          as Day
-import           Calendar.Data.Entry        (Entry (..))
-import           Calendar.Data.Todo         (TODO)
-import qualified Calendar.Database.Query    as DBQ
-import qualified Calendar.Database.Update   as DBU
-import qualified Calendar.Renderer          as R
+import           Calendar.Data.Day           (Day)
+import qualified Calendar.Data.Day           as Day
+import           Calendar.Data.Entry         (Entry (..))
+import           Calendar.Data.Todo          (TODO)
+import qualified Calendar.Database.Query     as DBQ
+import qualified Calendar.Database.Update    as DBU
+import qualified Calendar.Renderer           as R
 import           Calendar.Util
 
 type Server a = S.SpockM () () () a
@@ -33,13 +34,12 @@ dayContent year month day = do
 week :: Connection -> Server ()
 week _ =
     S.get (var <//> var <//> var <//> "week") $ \year month day -> do
-        (calendarDay, _, _) <- liftIO $ dayContent year month day
-        let wd = Day.dayOfWeek year month day
+        let (_, wn, wd) = toWeekDate $ DTC.fromGregorian year month day
             d = DTC.fromGregorian year month day
         let past = sort (take wd $ iterate pred d)
             future = sort (take (7 - wd) $ iterate succ (succ d))
             days = past ++ future
-        R.week days
+        R.week wn days
 
 
 day :: Connection -> Server ()

@@ -50,7 +50,9 @@ updateForm id e action =
 
 
 weekDay :: Date -> HtmlT Identity ()
-weekDay d = div_ $ toHtml (show d :: Text)
+weekDay d =
+    form_ [class_ C.form , method_ "get" , action_ (Day.dateURL d)] $
+        input_ [class_ C.button, type_ "submit", value_ (show d)]
 
 
 entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()

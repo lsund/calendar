@@ -2,7 +2,6 @@ module Calendar.Data.Day where
 
 import           Data.Text                   (pack)
 import qualified Data.Time.Calendar          as DTC
-import           Data.Time.Calendar.WeekDate
 import           Data.Time.Format
 import           Data.Time.LocalTime
 import           Protolude
@@ -13,11 +12,6 @@ import           Calendar.Data.Entry
 type Date = DTC.Day
 
 data Day = Day { _id :: Int, _date :: Date, _entries :: [Entry] } deriving (Show)
-
-dayOfWeek :: Integer -> Int -> Int -> Int
-dayOfWeek day month year =
-    let (_, _, d) = toWeekDate $ DTC.fromGregorian day month year
-    in d
 
 dateFormat :: Date -> Text
 dateFormat = pack . formatTime defaultTimeLocale "%A %F"

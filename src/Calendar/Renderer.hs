@@ -42,10 +42,12 @@ day d tod w todos =
             div_ (VC.todo d todos)
 
 
-week :: MonadIO m => [Day.Date] -> ActionCtxT ctx m b
-week ds =
+week :: MonadIO m => Int -> [Day.Date] -> ActionCtxT ctx m b
+week wn ds =
     layout $
-        div_ [class_ "mui-container"] $
+        div_ [class_ "mui-container"] $ do
+            div_ [class_ "mui-appbar"]
+                (h3_ $ toHtml ("Week " <> show wn :: Text))
             ul_ $ forM_ ds VC.weekDay
 
 
