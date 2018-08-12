@@ -48,11 +48,21 @@ updateForm id e action =
 -------------------------------------------------------------------------------
 -- Public API
 
+dayOfWeekString :: Int -> Text
+dayOfWeekString 1 = "Monday"
+dayOfWeekString 2 = "Tuesday"
+dayOfWeekString 3 = "Wednesday"
+dayOfWeekString 4 = "Thursday"
+dayOfWeekString 5 = "Friday"
+dayOfWeekString 6 = "Saturday"
+dayOfWeekString 7 = "Sunday"
 
-weekDay :: Date -> HtmlT Identity ()
-weekDay d =
+
+weekDay :: (Int, Date) -> HtmlT Identity ()
+weekDay (n, d) =
     form_ [class_ C.form , method_ "get" , action_ (Day.dateURL d)] $
-        input_ [class_ C.button, type_ "submit", value_ (show d)]
+        input_ [ class_ C.button, type_ "submit"
+               , value_ $ dayOfWeekString n <> " " <> show d]
 
 
 entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()
@@ -185,3 +195,6 @@ navbar date =
                 td_  [class_ "mui--appbar-height"] $
                     form_ [method_ "get", action_ (Day.dateURL (succ date))] $
                         input_ [ class_ C.button , type_ "submit", value_ "next"]
+                td_  [class_ "mui--appbar-height"] $
+                    form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
+                        input_ [ class_ C.button , type_ "submit", value_ "week"]

@@ -48,7 +48,7 @@ week wn ds =
         div_ [class_ "mui-container"] $ do
             div_ [class_ "mui-appbar"]
                 (h3_ $ toHtml ("Week " <> show wn :: Text))
-            ul_ $ forM_ ds VC.weekDay
+            ul_ $ forM_ (zip [1..] ds) (li_ . VC.weekDay)
 
 
 
