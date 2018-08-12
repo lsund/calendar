@@ -10,7 +10,7 @@ import qualified Web.Spock                  as S
 
 import           Calendar.Data.Day          (Day)
 import qualified Calendar.Data.Day          as Day
-import           Calendar.Data.Entry
+import           Calendar.Data.Entry        (Entry (..))
 import           Calendar.Data.Todo         (TODO)
 import qualified Calendar.Database.Query    as DBQ
 import qualified Calendar.Database.Update   as DBU
@@ -34,7 +34,12 @@ week :: Connection -> Server ()
 week _ =
     S.get (var <//> var <//> var <//> "week") $ \year month day -> do
         (calendarDay, _, _) <- liftIO $ dayContent year month day
-        R.week calendarDay
+        let wd = Day.dayOfWeek year month day
+            d = DTC.fromGregorian year month day
+        let past = sort (take wd $ iterate pred d)
+            future = sort (take (7 - wd) $ iterate succ (succ d))
+            days = past ++ future
+        R.week days
 
 
 day :: Connection -> Server ()

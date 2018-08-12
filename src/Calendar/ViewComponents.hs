@@ -49,6 +49,10 @@ updateForm id e action =
 -- Public API
 
 
+weekDay :: Date -> HtmlT Identity ()
+weekDay d = div_ $ toHtml (show d :: Text)
+
+
 entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()
 entry route id d e
     | Entry._done e =
