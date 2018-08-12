@@ -43,7 +43,7 @@
 [x] TODO items description should be directly editable
 [x] Put each day in a url like GET /2018/01/05
 [x] Automatically create new day when not exists
-[ ] Fix the routes in ViewComponents
+[x] Fix the routes in ViewComponents
 [ ] Style main page. Mainly separate done from todo
 [ ] Add Weekly view
 [ ] Add monthly view

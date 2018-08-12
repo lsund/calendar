@@ -1,26 +1,19 @@
-table {
-    width: 100%;
+.todo-table {
+    margin-left: 200px;
 }
 
-.todo-table {
-    width: 90%;
+.todo-desc {
+    width: 700px;
+}
+
+.todo-footer {
+    margin-top: 50px;
+    margin-left: 200px;
 }
 
 form {
     display: inline-block;
-}
-
-ul {
-    list-style-type : none;
-    margin-left: -40;
-}
-
-th {
-    text-align: left;
-}
-
-table {
-    margin: 25px;
+    margin-bottom: 0px;
 }
 
 input.submit {
@@ -28,8 +21,6 @@ input.submit {
 }
 
 .center-wrapper {
-  height: 50px;
-  line-height: 50px;
   text-align: center;
 }
 
@@ -39,100 +30,52 @@ input.submit {
   line-height: normal;
 }
 
-.navbar {
-    width: 1250px;
-    top: 0px;
-    height: 50px;
-    margin-left: 50px;
-    margin-right: 50px;
-}
-
 .next {
     float: right;
 }
 
 .todo {
-    width: 500px;
-    float: right;
     margin-top: 100px;
-    margin-right: 50px;
     border: 1px solid grey;
 }
 
-.first-todo-column {
-    width: 400px;
-}
-
-.todo-footer {
-    margin: 25px;
-    bottom: 0;
+.todo-desc {
+    width: 700px;
 }
 
 .day {
     border: 1px solid grey;
-    margin-left: 50px;
-    width: 1250px;
     height: 100%;
-}
-
-.date {
-    margin-left: 10px;
-    width: 150px;
-    float: left;
-    display: inline-block;
-    height: 100px;
-    text-align: center;
 }
 
 .new {
     margin-top: 50px;
-    margin-left: 50px;
+    margin-left: 200px;
     display: inline-block;
-    width: 1000px;
 }
 
 .entries {
-    margin-left: 225px;
-    margin-right: 225px;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-left: 100px;
 }
 
 .time {
-    width: 80px;
+    width: 100px;
 }
 
 .desc {
-    width: 500px;
-    margin-left: 10px;
-}
-
-.add-button {
-    left: 25px;
-}
-
-.sep-x-20 {
-    margin-left: 20px;
-}
-
-.sep-x-75 {
-    margin-left: 75px;
-}
-
-.sep-y {
-    margin-top: 50px;
+    width: 600px;
 }
 
 .done {
-    /* width       : 800px; */
     color       : grey;
     font-size   : 18px;
     padding-top : 10px;
-    margin-bottom: 50px;
-    height      : 32px;
 }
 
 td.done {
-
     border-bottom: 1px solid #cccccc;
+}
+
+.appbar-right {
+    float: right;
 }

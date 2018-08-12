@@ -7,17 +7,17 @@ import           Calendar.Data.Entry
 
 entry :: Entry -> TimeOfDay -> Text
 entry e _
-    | _done e             = "done mui--divider-bottom"
-    | otherwise           = "mui-textfield"
+    | _done e             = ""
+    | otherwise           = ""
 
 
 button :: Text
 -- button = ""
-button = "submit mui-btn"
+button = ""
 
 
 form :: Text
-form = "mui-form--inline"
+form = ""
 
 
 time :: Text

@@ -112,9 +112,8 @@ day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
 day d@(Day id date es) wd _ =
     div_ [class_ "day"] $ do
         div_ [class_ "weather"] $ toHtml $ FC.weatherFormat wd
-        div_ [class_ "date"] $ h2_ $ toHtml (Day.dateFormat date)
-        div_ [class_ "new"] $ newEntry (Day.dayURL d) id
-        div_ [class_ "sep-y mui-divider"] ""
+        div_ [class_ "center-wrapper"] $
+            h2_ [class_ "center"] $ toHtml (Day.dateFormat date)
         div_ [class_ "entries"] $
             table_ $ do
                 thead_$
@@ -127,28 +126,29 @@ day d@(Day id date es) wd _ =
                 tbody_ $
                     ul_ $ forM_ (Entry.sort es)
                         (tr_ . entry (Day.dayURL d) id date)
+        div_ [class_ "new"] $ newEntry (Day.dayURL d) id
 
 
 todo :: Day -> [TODO] -> HtmlT Identity ()
-todo d@(Day id _ _)  todos =
+todo d todos =
     div_ [class_ "todo"] $ do
         table_ [class_ "todo-table"] $ do
             thead_ $
                 tr_ $ do
-                    th_ [class_ "first-todo-column"] "TodoItem"
+                    th_ "TodoItem"
                     th_ "Remove"
             tbody_ $
                 forM_ todos $ \e ->
                     tr_ $ do
                         td_ $
-                            form_ [class_ C.form
-                                  , method_ "post"
+                            form_ [ method_ "post"
                                   , action_ (Day.dayURL d <>
                                              "/todo-update")] $ do
                                 input_ [ type_ "hidden"
                                        , name_ "todoid"
                                        , value_ (show (TODO._id e))]
-                                input_ [ type_ "text"
+                                input_ [ class_ "todo-desc"
+                                       , type_ "text"
                                        , name_ "desc"
                                        , value_ (TODO._desc e)]
                         td_ $
@@ -158,8 +158,7 @@ todo d@(Day id _ _)  todos =
                                 input_ [ type_ "hidden"
                                        , name_ "todoid"
                                        , value_ (show (TODO._id e))]
-                                input_ [class_ C.button
-                                       , type_ "submit"
+                                input_ [ type_ "submit"
                                        , value_ "x"]
         div_ [class_ "todo-footer"] $
             form_ [class_ C.form, method_ "post"
@@ -172,10 +171,12 @@ todo d@(Day id _ _)  todos =
 
 navbar :: Date -> HtmlT Identity ()
 navbar date =
-    div_ [class_ "navbar"] $ do
-        span_ $
-            form_ [method_ "get", action_ (Day.dateURL (pred date))] $
-                input_ [ class_ C.button , type_ "submit", value_ "previous"]
-        span_ [class_ "next"] $
-            form_ [method_ "get", action_ (Day.dateURL (succ date))] $
-                input_ [ class_ C.button , type_ "submit", value_ "next"]
+    div_ [class_ "mui-appbar"] $
+        table_ [width_ "100%"] $
+            tr_ [style_ "vertical-align:middle;"] $ do
+                td_  [class_ "mui-appbar-height"] $
+                    form_ [method_ "get", action_ (Day.dateURL (pred date))] $
+                        input_ [ class_ C.button , type_ "submit", value_ "previous"]
+                td_  [class_ "mui-appbar-height appbar-right"] $
+                    form_ [method_ "get", action_ (Day.dateURL (succ date))] $
+                        input_ [ class_ C.button , type_ "submit", value_ "next"]

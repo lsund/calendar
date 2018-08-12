@@ -44,13 +44,13 @@ layout b =
 
 day :: MonadIO m => Day -> TimeOfDay -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
 day d tod w todos =
-    layout $ do
-        div_ (VC.todo d todos)
-        div_ [class_ "center-wrapper"] $
-            span_ [class_ "center"] $
-                h1_ [class_ "time"] $ toHtml $ Day.timeFormat tod
-        VC.navbar (Day._date d)
-        VC.day d w tod
+    layout $
+        div_ [class_ "mui-container"] $ do
+            div_ [class_ "center-wrapper"] $
+                h1_ [class_ "center time"] $ toHtml $ Day.timeFormat tod
+            VC.navbar (Day._date d)
+            VC.day d w tod
+            div_ (VC.todo d todos)
 
 err :: MonadIO m => Text -> ActionCtxT cxt m b
 err msg = layout $ do
