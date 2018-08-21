@@ -60,9 +60,8 @@ dayOfWeekString 7 = "Sunday"
 
 weekDay :: (Int, Date) -> HtmlT Identity ()
 weekDay (n, d) =
-    form_ [class_ C.form , method_ "get" , action_ (Day.dateURL d)] $
-        input_ [ class_ C.button, type_ "submit"
-               , value_ $ dayOfWeekString n <> " " <> show d]
+    div_ [class_ "mui-panel"] $
+        a_ [href_ (Day.dateURL d)] $ toHtml $ dayOfWeekString n <> " " <> show d
 
 
 entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()
@@ -190,11 +189,11 @@ navbar date =
         table_ [width_ "100%"] $
             tr_ [style_ "vertical-align:middle;"] $ do
                 td_  [class_ "mui--appbar-height"] $
+                    form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
+                        input_ [ class_ C.button , type_ "submit", value_ "week"]
+                td_  [class_ "mui--appbar-height"] $
                     form_ [method_ "get", action_ (Day.dateURL (pred date))] $
                         input_ [ class_ C.button , type_ "submit", value_ "previous"]
                 td_  [class_ "mui--appbar-height"] $
                     form_ [method_ "get", action_ (Day.dateURL (succ date))] $
                         input_ [ class_ C.button , type_ "submit", value_ "next"]
-                td_  [class_ "mui--appbar-height"] $
-                    form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
-                        input_ [ class_ C.button , type_ "submit", value_ "week"]

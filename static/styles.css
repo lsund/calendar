@@ -1,3 +1,17 @@
+ul {
+    list-style-type: none;
+}
+
+form {
+    display: inline-block;
+    margin-bottom: 0px;
+}
+
+input.submit {
+    background-color: #eeeeee;
+}
+
+
 .todo-table {
     margin-left: 200px;
 }
@@ -9,15 +23,6 @@
 .todo-footer {
     margin-top: 50px;
     margin-left: 200px;
-}
-
-form {
-    display: inline-block;
-    margin-bottom: 0px;
-}
-
-input.submit {
-    background-color: #eeeeee;
 }
 
 .center-wrapper {
