@@ -29,5 +29,7 @@ app = do
 
 main :: IO ()
 main = do
+    let port = 3002
     cfg <- defaultSpockCfg () PCNoDatabase ()
-    S.runSpock 8080 (S.spock cfg app)
+    S.runSpock port (S.spock cfg app)
+    putStrLn $ "Running on port: " ++ show port

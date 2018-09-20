@@ -67,7 +67,6 @@ entryUpdate conn =
         entryid <- S.param' "entryid"
         isdone <- S.param' "done"
         let mt = parseMaybeTime t
-        print desc
         _ <- liftIO $ DBU.updateEntry conn entryid mt desc isdone
         S.redirect $ Day.makeURL year month day
 
