@@ -49,6 +49,13 @@ day _ =
         R.day day tod Nothing todos
 
 
+browseDate :: Connection -> Server ()
+browseDate _ =
+    S.post "browseDate" $ do
+        d <- S.param' "date"
+        let (year, month, day) = DTC.toGregorian d
+        S.redirect $ Day.makeURL year month day
+
 entryAdd :: Connection -> Server ()
 entryAdd conn =
     S.post (var <//> var <//> var <//> "entry-add") $ \year month day -> do

@@ -25,6 +25,7 @@ app = do
     todoAdd conn
     todoRemove conn
     todoUpdate conn
+    browseDate conn
 
 
 main :: IO ()

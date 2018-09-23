@@ -111,21 +111,6 @@ entry route id d e
             stripJust = T.take 5 . T.drop 5
 
 
-newEntry :: Route -> DayID -> HtmlT Identity ()
-newEntry route id =
-    form_ [class_ C.form, method_ "post"
-          , action_ (route <> "/entry-add")] $ do
-        input_ [type_ "hidden" , name_ "dayid", value_ (show id)]
-        div_ $ do
-            h3_ $ toHtml ("New entry" :: Text)
-            input_ [class_ C.time
-                    , type_ "text"
-                    , name_ "time"
-                    , placeholder_ "hh:mm"]
-            input_ [class_ C.desc, type_ "text", name_ "desc", placeholder_ "Description"]
-            input_ [ class_ $ C.button <> " add-button"
-                   , type_ "submit", value_ "Add Entry"]
-
 entries :: Day -> HtmlT Identity ()
 entries d@(Day id date es) =
     div_ [class_ "entries"] $
@@ -143,6 +128,21 @@ entries d@(Day id date es) =
                         (tr_ . entry (Day.dayURL d) id date)
         else ""
 
+
+newEntry :: Route -> DayID -> HtmlT Identity ()
+newEntry route id =
+    form_ [class_ C.form, method_ "post"
+          , action_ (route <> "/entry-add")] $ do
+        input_ [type_ "hidden" , name_ "dayid", value_ (show id)]
+        div_ $ do
+            h3_ $ toHtml ("New entry" :: Text)
+            input_ [class_ C.time
+                    , type_ "text"
+                    , name_ "time"
+                    , placeholder_ "hh:mm"]
+            input_ [class_ C.desc, type_ "text", name_ "desc", placeholder_ "Description"]
+            input_ [ class_ $ C.button <> " add-button"
+                   , type_ "submit", value_ "Add Entry"]
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
 day d@(Day id date _) _ tod =
@@ -199,12 +199,15 @@ navbar date =
     div_ [class_ "mui-appbar"] $
         table_ [width_ "100%"] $
             tr_ [style_ "vertical-align:middle;"] $ do
-                td_  [class_ "mui--appbar-height"] $
+                td_  [class_ "mui--appbar-height", width_ "33%"] $
                     form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
-                        input_ [ class_ C.button , type_ "submit", value_ "week"]
-                td_  [class_ "mui--appbar-height"] $
+                        input_ [ class_ C.button , type_ "submit", value_ "Week"]
+                td_  [class_ "mui--appbar-height", width_ "33%"] $ do
                     form_ [method_ "get", action_ (Day.dateURL (pred date))] $
-                        input_ [ class_ C.button , type_ "submit", value_ "previous"]
-                td_  [class_ "mui--appbar-height"] $
+                        input_ [ class_ C.button , type_ "submit", value_ "Previous"]
                     form_ [method_ "get", action_ (Day.dateURL (succ date))] $
-                        input_ [ class_ C.button , type_ "submit", value_ "next"]
+                        input_ [ class_ C.button , type_ "submit", value_ "Next"]
+                td_  [class_ "mui--appbar-height", width_ "33%"] $
+                    form_ [method_ "post", action_ "/browseDate"] $ do
+                        input_ [ type_ "date", name_ "date"]
+                        input_ [ type_ "submit", style_ "visibility: hidden;"]
