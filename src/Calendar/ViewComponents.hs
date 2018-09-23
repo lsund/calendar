@@ -1,7 +1,7 @@
 module Calendar.ViewComponents where
 
 import           Control.Monad       (forM_)
-import           Data.Text           as T
+import qualified Data.Text           as T
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
@@ -116,8 +116,13 @@ newEntry route id =
     form_ [class_ C.form, method_ "post"
           , action_ (route <> "/entry-add")] $ do
         input_ [type_ "hidden" , name_ "dayid", value_ (show id)]
-        div_ [class_ C.desc] $ do
-            input_ [type_ "text", name_ "desc", placeholder_ "Description"]
+        div_ $ do
+            h3_ $ toHtml ("New entry" :: Text)
+            input_ [class_ C.time
+                    , type_ "text"
+                    , name_ "time"
+                    , placeholder_ "hh:mm"]
+            input_ [class_ C.desc, type_ "text", name_ "desc", placeholder_ "Description"]
             input_ [ class_ $ C.button <> " add-button"
                    , type_ "submit", value_ "Add Entry"]
 
@@ -129,17 +134,19 @@ day d@(Day id date es) wd tod =
         div_ [class_ "center-wrapper"] $
             h2_ [class_ "center"] $ toHtml $ Day.dateFormat date
         div_ [class_ "entries"] $
-            table_ $ do
-                thead_$
-                    tr_ $ do
-                        th_ "Time"
-                        th_ "Desc"
-                        th_ "Done"
-                        th_ "Delete"
-                        th_ "Push"
-                tbody_ $
-                    ul_ $ forM_ (Entry.sort es)
-                        (tr_ . entry (Day.dayURL d) id date)
+            if (not . null) es then
+                table_ $ do
+                    thead_$
+                        tr_ $ do
+                            th_ "Time"
+                            th_ "Desc"
+                            th_ "Done"
+                            th_ "Delete"
+                            th_ "Push"
+                    tbody_ $
+                        ul_ $ forM_ (Entry.sort es)
+                            (tr_ . entry (Day.dayURL d) id date)
+            else ""
         div_ [class_ "new"] $ newEntry (Day.dayURL d) id
 
 
