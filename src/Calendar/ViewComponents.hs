@@ -126,27 +126,31 @@ newEntry route id =
             input_ [ class_ $ C.button <> " add-button"
                    , type_ "submit", value_ "Add Entry"]
 
+entries :: Day -> HtmlT Identity ()
+entries d@(Day id date es) =
+    div_ [class_ "entries"] $
+        if (not . null) es then
+            table_ $ do
+                thead_$
+                    tr_ $ do
+                        th_ "Time"
+                        th_ "Desc"
+                        th_ "Done"
+                        th_ "Delete"
+                        th_ "Push"
+                tbody_ $
+                    ul_ $ forM_ (Entry.sort es)
+                        (tr_ . entry (Day.dayURL d) id date)
+        else ""
+
 
 day :: Day -> Maybe Weather -> TimeOfDay -> HtmlT Identity ()
-day d@(Day id date es) wd tod =
+day d@(Day id date _) _ tod =
     div_ [class_ "day"] $ do
         div_ [class_ "time"] $ toHtml $ Day.timeFormat tod
-        div_ [class_ "center-wrapper"] $
+        div_ [class_ "center-wrapper"] $ do
             h2_ [class_ "center"] $ toHtml $ Day.dateFormat date
-        div_ [class_ "entries"] $
-            if (not . null) es then
-                table_ $ do
-                    thead_$
-                        tr_ $ do
-                            th_ "Time"
-                            th_ "Desc"
-                            th_ "Done"
-                            th_ "Delete"
-                            th_ "Push"
-                    tbody_ $
-                        ul_ $ forM_ (Entry.sort es)
-                            (tr_ . entry (Day.dayURL d) id date)
-            else ""
+            entries d
         div_ [class_ "new"] $ newEntry (Day.dayURL d) id
 
 
