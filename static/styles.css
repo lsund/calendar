@@ -72,6 +72,18 @@ input.submit {
     margin-left: 100px;
 }
 
+.entry-time {
+    width: 100px;
+}
+
+.entry-desc {
+    width: 600px;
+}
+
+.entry-button {
+    width: 59px;
+}
+
 .time {
     width: 100px;
 }

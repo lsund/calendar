@@ -126,11 +126,11 @@ entries d@(Day id date es) =
             table_ $ do
                 thead_$
                     tr_ $ do
-                        th_ "Time"
-                        th_ "Desc"
-                        th_ "Done"
-                        th_ "Delete"
-                        th_ "Push"
+                        th_ [class_ "entry-time"] "Time"
+                        th_ [class_ "entry-desc"] "Desc"
+                        th_ [class_ "entry-button"] "Done"
+                        th_ [class_ "entry-button"] "Delete"
+                        th_ [class_ "entry-button"] "Push"
                 tbody_ $
                     ul_ $ forM_ (Entry.sort es)
                         (tr_ . entry (Day.dayURL d) id date)
