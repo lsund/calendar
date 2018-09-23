@@ -32,7 +32,6 @@ getDay date = do
                 makeEntry (id, _, tod, desc, isdone) = Entry id tod desc isdone
 
 
-
 getTodos :: IO [TODO]
 getTodos = do
     conn <- makeConnection

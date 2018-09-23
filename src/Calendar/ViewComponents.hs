@@ -1,6 +1,7 @@
 module Calendar.ViewComponents where
 
 import           Control.Monad       (forM_)
+import           Data.List           ((!!))
 import qualified Data.Text           as T
 import           Data.Time.LocalTime
 import           Lucid
@@ -45,9 +46,6 @@ updateForm id e action =
         input_ [class_ C.button, type_ "submit", value_ "x"]
 
 
--------------------------------------------------------------------------------
--- Public API
-
 dayOfWeekString :: Int -> Text
 dayOfWeekString 1 = "Monday"
 dayOfWeekString 2 = "Tuesday"
@@ -57,11 +55,21 @@ dayOfWeekString 5 = "Friday"
 dayOfWeekString 6 = "Saturday"
 dayOfWeekString 7 = "Sunday"
 
+emptyHTML :: HtmlT Identity ()
+emptyHTML  = toHtml ("" :: Text)
 
-weekDay :: (Int, Date) -> HtmlT Identity ()
-weekDay (n, d) =
-    div_ [class_ "mui-panel"] $
-        a_ [href_ (Day.dateURL d)] $ toHtml $ dayOfWeekString n <> " " <> show d
+-------------------------------------------------------------------------------
+-- Public API
+
+
+weekDay :: (Int, Day) -> HtmlT Identity ()
+weekDay (n, d) = do
+    div_ [class_ "mui-panel"] $ do
+        a_ [href_ (Day.dateURL (_date d))] $
+            toHtml $ dayOfWeekString n <> " " <> show (_date d)
+        if (not . null) (_entries d)
+            then div_ [class_ "has-entry"] emptyHTML
+            else emptyHTML
 
 
 entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()
@@ -70,9 +78,9 @@ entry route id d e
         tr_ [class_ "done"] $ do
             td_ [class_ "done"] $ (toHtml . showTime . Entry._time) e
             td_ [class_ "done"] (toHtml (Entry._desc e :: Text))
-            td_ [class_ "done"] (toHtml ("" :: Text))
-            td_ [class_ "done"] (toHtml ("" :: Text))
-            td_ [class_ "done"] (toHtml ("" :: Text))
+            td_ [class_ "done"] emptyHTML
+            td_ [class_ "done"] emptyHTML
+            td_ [class_ "done"] emptyHTML
 
     | otherwise =
         tr_ $ do
@@ -198,7 +206,7 @@ navbar :: Date -> HtmlT Identity ()
 navbar date =
     div_ [class_ "mui-appbar"] $
         table_ [width_ "100%"] $
-            tr_ [style_ "vertical-align:middle;"] $ do
+            tr_ [style_ "tvertical-align:middle;"] $ do
                 td_  [class_ "mui--appbar-height", width_ "33%"] $
                     form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
                         input_ [ class_ C.button , type_ "submit", value_ "Week"]
@@ -206,6 +214,27 @@ navbar date =
                     form_ [method_ "get", action_ (Day.dateURL (pred date))] $
                         input_ [ class_ C.button , type_ "submit", value_ "Previous"]
                     form_ [method_ "get", action_ (Day.dateURL (succ date))] $
+                        input_ [ class_ C.button , type_ "submit", value_ "Next"]
+                td_  [class_ "mui--appbar-height", width_ "33%"] $
+                    form_ [method_ "post", action_ "/browseDate"] $ do
+                        input_ [ type_ "date", name_ "date"]
+                        input_ [ type_ "submit", style_ "visibility: hidden;"]
+
+
+weekNavbar :: Date -> HtmlT Identity ()
+weekNavbar date =
+    div_ [class_ "mui-appbar"] $
+        table_ [width_ "100%"] $
+            tr_ [style_ "tvertical-align:middle;"] $ do
+                td_  [class_ "mui--appbar-height", width_ "33%"] $
+                    form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
+                        input_ [ class_ C.button , type_ "submit", value_ "Week"]
+                td_  [class_ "mui--appbar-height", width_ "33%"] $ do
+                    form_ [ method_ "get"
+                          , action_ (Day.dateURL (enumFromThen date (pred date) !! 7) <> "/week") ] $
+                        input_ [ class_ C.button , type_ "submit", value_ "Previous"]
+                    form_ [ method_ "get"
+                          , action_ (Day.dateURL (enumFrom date !! 7) <> "/week")] $
                         input_ [ class_ C.button , type_ "submit", value_ "Next"]
                 td_  [class_ "mui--appbar-height", width_ "33%"] $
                     form_ [method_ "post", action_ "/browseDate"] $ do

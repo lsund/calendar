@@ -38,8 +38,9 @@ week _ =
             d = DTC.fromGregorian year month day
         let past = sort (take wd $ iterate pred d)
             future = sort (take (7 - wd) $ iterate succ (succ d))
-            days = past ++ future
-        R.week wn days
+            dates = past ++ future
+        days <- liftIO $ mapM DBQ.getDay dates
+        R.week wn d days
 
 
 day :: Connection -> Server ()
