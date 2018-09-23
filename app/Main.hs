@@ -16,6 +16,7 @@ app = do
     S.middleware $ staticPolicy $ addBase "static"
     conn <- liftIO makeConnection
     week conn
+    month conn
     day conn
     entryAdd conn
     entryUpdate conn

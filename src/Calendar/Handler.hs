@@ -40,14 +40,25 @@ week _ =
             future = sort (take (7 - wd) $ iterate succ (succ d))
             dates = past ++ future
         days <- liftIO $ mapM DBQ.getDay dates
-        R.week wn d days
+        R.weekLayout wn d days
+
+
+month :: Connection -> Server ()
+month _ =
+    S.get (var <//> var <//> var <//> "month") $
+        \year month day -> do
+            let date =  DTC.fromGregorian year month day
+                first = DTC.fromGregorian year month 1
+                dates = takeWhile (\d -> Day.dateMonth d == month) (iterate succ first)
+            days <- liftIO $ mapM DBQ.getDay dates
+            R.monthLayout date days
 
 
 day :: Connection -> Server ()
 day _ =
     S.get (var <//> var <//> var) $ \year month day -> do
         (day, tod, todos) <- liftIO $ dayContent year month day
-        R.day day tod Nothing todos
+        R.dayLayout day tod Nothing todos
 
 
 browseDate :: Connection -> Server ()

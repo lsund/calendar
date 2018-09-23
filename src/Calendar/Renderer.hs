@@ -1,18 +1,20 @@
 module Calendar.Renderer where
 
+import           Data.List               ((!!))
 import           Data.Time.LocalTime
 import           Lucid
 import           Protolude
 import           Web.Spock
 import           Web.Spock.Lucid         (lucid)
 
-import           Calendar.Data.Day (Day(..))
+import           Calendar.Data.Day       (Day (..))
 import qualified Calendar.Data.Day       as Day
 import qualified Calendar.Data.Todo      as TODO
 import           Calendar.Forecast
 import qualified Calendar.ViewComponents as VC
 
 type TODO = TODO.TODO
+type Date = Day.Date
 
 pairForecast :: [Day] -> [Weather] -> [(Day, Maybe Weather)]
 pairForecast days fc = map f days
@@ -23,6 +25,43 @@ pairForecast days fc = map f days
                     Nothing -> (d, Nothing)
 
 
+monthNavbar :: Date -> HtmlT Identity ()
+monthNavbar date =
+    VC.navbar
+        date
+        "/month"
+        "/week"
+        "Week"
+        ""
+        "Day"
+        (Day.addMonth date)
+        (Day.subMonth date)
+
+
+weekNavbar :: Date -> HtmlT Identity ()
+weekNavbar date =
+    VC.navbar
+        date
+        "/week"
+        "/month"
+        "Month"
+        ""
+        "Day"
+        (enumFromThen date (pred date) !! 7)
+        (enumFrom date !! 7)
+
+
+dayNavbar :: Date -> HtmlT Identity ()
+dayNavbar date =
+    VC.navbar
+        date
+        ""
+        "/week"
+        "Week"
+        "/month"
+        "Month"
+        (pred date)
+        (succ date)
 layout :: MonadIO m => HtmlT Identity a -> ActionCtxT cxt m b
 layout b =
     lucid $ do
@@ -33,23 +72,30 @@ layout b =
         body_ $ div_ [class_ "content"] b
 
 
-day :: MonadIO m => Day -> TimeOfDay -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
-day d tod w todos =
+dayLayout :: MonadIO m => Day -> TimeOfDay -> Maybe Weather -> [TODO] -> ActionCtxT cxt m b
+dayLayout day tod w todos =
     layout $
         div_ [class_ "mui-container"] $ do
-            VC.navbar (Day._date d)
-            VC.day d w tod
-            div_ (VC.todo d todos)
+            dayNavbar (Day._date day)
+            VC.day day w tod
+            div_ (VC.todo day todos)
 
 
-week :: MonadIO m => Int -> Day.Date -> [Day] -> ActionCtxT ctx m b
-week wn d ds = do
+weekLayout :: MonadIO m => Int -> Day.Date -> [Day] -> ActionCtxT ctx m b
+weekLayout wn date days =
     layout $
         div_ [class_ "mui-container"] $ do
-            VC.weekNavbar d
+            weekNavbar date
             div_ (h3_ $ toHtml ("Week " <> show wn :: Text))
-            ul_ $ forM_ (zip [1..] ds) (\(i, d) -> (li_ $ VC.weekDay (i, d)))
+            ul_ $ forM_ (zip [1..] days) (\(i, d) -> (li_ $ VC.weekDay (i, d)))
 
+
+monthLayout :: MonadIO m => Day.Date -> [Day] -> ActionCtxT ctx m b
+monthLayout date days =
+    layout $
+        div_ [class_ "mui-container"] $ do
+            monthNavbar date
+            ul_ $ forM_ (zip (cycle [1..7]) days) (\(i, d) -> (li_ $ VC.weekDay (i, d)))
 
 
 err :: MonadIO m => Text -> ActionCtxT cxt m b

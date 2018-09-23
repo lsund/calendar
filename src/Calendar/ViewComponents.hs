@@ -1,7 +1,6 @@
 module Calendar.ViewComponents where
 
 import           Control.Monad       (forM_)
-import           Data.List           ((!!))
 import qualified Data.Text           as T
 import           Data.Time.LocalTime
 import           Lucid
@@ -32,8 +31,8 @@ isPast (TimeOfDay h m _) (TimeOfDay h' m' _)
     | otherwise         = False
 
 
-hiddenUpdateData :: DayID -> Entry -> Date -> HtmlT Identity ()
-hiddenUpdateData id e d = do
+hiddenUpdateData :: Entry -> HtmlT Identity ()
+hiddenUpdateData e = do
     input_ [type_ "hidden", name_ "entryid", value_ (show (Entry._id e))]
     input_ [type_ "hidden", name_ "done", value_ (show (Entry._done e))]
 
@@ -54,6 +53,7 @@ dayOfWeekString 4 = "Thursday"
 dayOfWeekString 5 = "Friday"
 dayOfWeekString 6 = "Saturday"
 dayOfWeekString 7 = "Sunday"
+dayOfWeekString _ = "Error"
 
 emptyHTML :: HtmlT Identity ()
 emptyHTML  = toHtml ("" :: Text)
@@ -63,7 +63,7 @@ emptyHTML  = toHtml ("" :: Text)
 
 
 weekDay :: (Int, Day) -> HtmlT Identity ()
-weekDay (n, d) = do
+weekDay (n, d) =
     div_ [class_ "mui-panel"] $ do
         a_ [href_ (Day.dateURL (_date d))] $
             toHtml $ dayOfWeekString n <> " " <> show (_date d)
@@ -72,8 +72,8 @@ weekDay (n, d) = do
             else emptyHTML
 
 
-entry :: Route -> DayID -> Date -> Entry -> HtmlT Identity ()
-entry route id d e
+entry :: Route -> DayID -> Entry -> HtmlT Identity ()
+entry route id e
     | Entry._done e =
         tr_ [class_ "done"] $ do
             td_ [class_ "done"] $ (toHtml . showTime . Entry._time) e
@@ -89,7 +89,7 @@ entry route id d e
                 form_ [class_ C.form
                       , method_ "post"
                       , action_ (route <> "/entry-update")] $ do
-                    hiddenUpdateData id e d
+                    hiddenUpdateData e
                     input_ [type_ "hidden"
                            , name_ "desc"
                            , value_ (Entry._desc e :: Text)]
@@ -101,7 +101,7 @@ entry route id d e
                 form_ [class_ C.form
                       , method_ "post"
                       , action_ (route <> "/entry-update")] $ do
-                    hiddenUpdateData id e d
+                    hiddenUpdateData e
                     input_ [ type_ "hidden"
                         , name_ "time"
                         , value_ (stripJust (show (Entry._time e)))]
@@ -120,7 +120,7 @@ entry route id d e
 
 
 entries :: Day -> HtmlT Identity ()
-entries d@(Day id date es) =
+entries d@(Day id _ es) =
     div_ [class_ "entries"] $
         if (not . null) es then
             table_ $ do
@@ -133,7 +133,7 @@ entries d@(Day id date es) =
                         th_ [class_ "entry-button"] "Push"
                 tbody_ $
                     ul_ $ forM_ (Entry.sort es)
-                        (tr_ . entry (Day.dayURL d) id date)
+                        (tr_ . entry (Day.dayURL d) id)
         else ""
 
 
@@ -202,41 +202,34 @@ todo d todos =
                        , value_ "Add"]
 
 
-navbar :: Date -> HtmlT Identity ()
-navbar date =
+navbar ::
+    Date ->
+    Text ->
+    Text ->
+    Text ->
+    Text ->
+    Text ->
+    Date ->
+    Date ->
+    HtmlT Identity ()
+navbar date mainPath alt1Path alt1Name alt2Path alt2Name prevDate nextDate =
     div_ [class_ "mui-appbar"] $
         table_ [width_ "100%"] $
             tr_ [style_ "tvertical-align:middle;"] $ do
-                td_  [class_ "mui--appbar-height", width_ "33%"] $
-                    form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
-                        input_ [ class_ C.button , type_ "submit", value_ "Week"]
-                td_  [class_ "mui--appbar-height", width_ "33%"] $ do
-                    form_ [method_ "get", action_ (Day.dateURL (pred date))] $
-                        input_ [ class_ C.button , type_ "submit", value_ "Previous"]
-                    form_ [method_ "get", action_ (Day.dateURL (succ date))] $
-                        input_ [ class_ C.button , type_ "submit", value_ "Next"]
-                td_  [class_ "mui--appbar-height", width_ "33%"] $
-                    form_ [method_ "post", action_ "/browseDate"] $ do
-                        input_ [ type_ "date", name_ "date"]
-                        input_ [ type_ "submit", style_ "visibility: hidden;"]
-
-
-weekNavbar :: Date -> HtmlT Identity ()
-weekNavbar date =
-    div_ [class_ "mui-appbar"] $
-        table_ [width_ "100%"] $
-            tr_ [style_ "tvertical-align:middle;"] $ do
-                td_  [class_ "mui--appbar-height", width_ "33%"] $
-                    form_ [method_ "get", action_ (Day.dateURL date <> "/week")] $
-                        input_ [ class_ C.button , type_ "submit", value_ "Week"]
-                td_  [class_ "mui--appbar-height", width_ "33%"] $ do
+                td_  [class_ "mui--appbar-height", width_ "25%"] $
+                    form_ [method_ "get", action_ (Day.dateURL date <> alt1Path)] $
+                        input_ [ class_ C.button , type_ "submit", value_ alt1Name]
+                td_  [class_ "mui--appbar-height", width_ "25%"] $
+                    form_ [method_ "get", action_ (Day.dateURL date <> alt2Path)] $
+                        input_ [ class_ C.button , type_ "submit", value_ alt2Name]
+                td_  [class_ "mui--appbar-height", width_ "25%"] $ do
                     form_ [ method_ "get"
-                          , action_ (Day.dateURL (enumFromThen date (pred date) !! 7) <> "/week") ] $
+                          , action_ (Day.dateURL prevDate <> mainPath) ] $
                         input_ [ class_ C.button , type_ "submit", value_ "Previous"]
                     form_ [ method_ "get"
-                          , action_ (Day.dateURL (enumFrom date !! 7) <> "/week")] $
+                          , action_ (Day.dateURL nextDate <> mainPath)] $
                         input_ [ class_ C.button , type_ "submit", value_ "Next"]
-                td_  [class_ "mui--appbar-height", width_ "33%"] $
+                td_  [class_ "mui--appbar-height", width_ "25%"] $
                     form_ [method_ "post", action_ "/browseDate"] $ do
                         input_ [ type_ "date", name_ "date"]
                         input_ [ type_ "submit", style_ "visibility: hidden;"]
