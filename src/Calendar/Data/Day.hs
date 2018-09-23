@@ -2,6 +2,7 @@ module Calendar.Data.Day where
 
 import           Data.Text                   (pack)
 import qualified Data.Time.Calendar          as DTC
+import           Data.Time.Calendar.WeekDate
 import           Data.Time.Format
 import           Data.Time.LocalTime
 import           Protolude
@@ -53,3 +54,14 @@ addMonth date =
     let (y, m, d) = DTC.toGregorian date
     in DTC.fromGregorian y (succ m) d
 
+
+dayOfWeek :: Date -> Int
+dayOfWeek date =
+    let (_, _, n) = toWeekDate date
+    in n
+
+
+weekNumber :: Date -> Int
+weekNumber date =
+    let (_, n, _) = toWeekDate date
+    in n

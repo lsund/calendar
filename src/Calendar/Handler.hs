@@ -3,7 +3,6 @@ module Calendar.Handler where
 import           Control.Monad.IO.Class      (liftIO)
 import qualified Data.Time                   as T
 import qualified Data.Time.Calendar          as DTC
-import           Data.Time.Calendar.WeekDate
 import           Database.PostgreSQL.Simple
 import           Protolude
 import           Web.Spock                   (var, (<//>))
@@ -34,13 +33,13 @@ dayContent year month day = do
 week :: Connection -> Server ()
 week _ =
     S.get (var <//> var <//> var <//> "week") $ \year month day -> do
-        let (_, wn, wd) = toWeekDate $ DTC.fromGregorian year month day
-            d = DTC.fromGregorian year month day
+        let d = DTC.fromGregorian year month day
+            wd = Day.dayOfWeek d
         let past = sort (take wd $ iterate pred d)
             future = sort (take (7 - wd) $ iterate succ (succ d))
             dates = past ++ future
         days <- liftIO $ mapM DBQ.getDay dates
-        R.weekLayout wn d days
+        R.weekLayout (Day.weekNumber d) d days
 
 
 month :: Connection -> Server ()

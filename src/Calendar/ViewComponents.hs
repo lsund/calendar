@@ -61,6 +61,15 @@ emptyHTML  = toHtml ("" :: Text)
 -------------------------------------------------------------------------------
 -- Public API
 
+date :: Day -> HtmlT Identity ()
+date day =
+    div_ [class_ "mui-panel"] $ do
+        a_ [href_ (Day.dateURL (_date day))] $
+            toHtml (show (_date day) :: Text)
+        if (not . null) (_entries day)
+            then div_ [class_ "has-entry"] emptyHTML
+            else emptyHTML
+
 
 weekDay :: (Int, Day) -> HtmlT Identity ()
 weekDay (n, d) =

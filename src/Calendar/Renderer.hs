@@ -1,10 +1,10 @@
 module Calendar.Renderer where
 
-import           Data.List               ((!!))
+import           Data.List               (head, (!!))
 import           Data.Time.LocalTime
 import           Lucid
-import           Protolude
-import           Web.Spock
+import           Protolude               hiding (head)
+import           Web.Spock               hiding (head)
 import           Web.Spock.Lucid         (lucid)
 
 import           Calendar.Data.Day       (Day (..))
@@ -34,8 +34,8 @@ monthNavbar date =
         "Week"
         ""
         "Day"
-        (Day.addMonth date)
         (Day.subMonth date)
+        (Day.addMonth date)
 
 
 weekNavbar :: Date -> HtmlT Identity ()
@@ -95,7 +95,10 @@ monthLayout date days =
     layout $
         div_ [class_ "mui-container"] $ do
             monthNavbar date
-            ul_ $ forM_ (zip (cycle [1..7]) days) (\(i, d) -> (li_ $ VC.weekDay (i, d)))
+            ul_ $ forM_ (zip dayCycle days) (\(i, d) -> (li_ $ VC.weekDay (i, d)))
+        where
+            firstWeekDay = pred (Day.dayOfWeek $ (_date . head) days)
+            dayCycle = drop firstWeekDay (cycle [1..7])
 
 
 err :: MonadIO m => Text -> ActionCtxT cxt m b

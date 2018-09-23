@@ -8,7 +8,8 @@ updateEntry = "update entry set ts=?, description=?, done=? where id=?"
 updateDone :: Query
 updateDone = "update entry set done=true where id=?"
 
-
+-- TODO This does not work. Increment ID does not mean that the date gets
+-- incremented by one
 push :: Query
 push = "update entry set dayid=dayid+1 where id=?"
 
